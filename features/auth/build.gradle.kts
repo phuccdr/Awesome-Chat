@@ -10,6 +10,10 @@ android {
     namespace = "com.rikkeisoft.awesome"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
+    defaultConfig {
+        minSdk = libs.versions.minSdk.get().toInt()
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true

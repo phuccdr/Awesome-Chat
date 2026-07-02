@@ -19,4 +19,16 @@
 
     <color name="color_hint_edit_text">#333333</color>
 
+    //Surface
+    <color name="main_color">#FF4356B4</color>
+    <color name="start_gradient_color">#FF4356B4</color>
+    <color name="end_gradient_color">#FF3DCFCF</color>
+    <color name="button_disable">#FFCACACA</color>
+
+    //Text
+    <color name="text_primary">#FF000000</color>
+    <color name="text_white">#FFFFFFFF</color>
+    <color name="text_gray">#FF676767</color>
+    <color name="text_second_gray">#FF999999</color>
+
 </resources>
