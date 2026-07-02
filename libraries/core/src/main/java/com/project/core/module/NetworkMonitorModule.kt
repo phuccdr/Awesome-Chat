@@ -16,16 +16,13 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 class NetworkMonitorModule {
-
     @Provides
     @Singleton
-    fun provideCoroutineScope() =
-        CoroutineScope(Dispatchers.Default + SupervisorJob())
+    fun provideCoroutineScope() = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     @Provides
     @Singleton
     fun bindNetworkConnectionManager(
-        @ApplicationContext context: Context,
-        coroutineScope: CoroutineScope
+        @ApplicationContext context: Context, coroutineScope: CoroutineScope
     ): NetworkConnectionManager = NetworkConnectionManagerImpl(context, coroutineScope)
 }

@@ -1,6 +1,5 @@
 package com.project.core.base.activity
 
-import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.MotionEvent
@@ -13,7 +12,6 @@ import androidx.databinding.ViewDataBinding
 import com.project.core.utils.dialog.LoadingDialog
 
 abstract class BaseActivityNotRequireViewModel<BD : ViewDataBinding> : AppCompatActivity() {
-
     private var _binding: BD? = null
     protected val binding: BD get() = _binding!!
 
@@ -53,7 +51,7 @@ abstract class BaseActivityNotRequireViewModel<BD : ViewDataBinding> : AppCompat
                 v.getGlobalVisibleRect(outRect)
                 if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
                     v.clearFocus()
-                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(v.windowToken, 0)
                 }
             }

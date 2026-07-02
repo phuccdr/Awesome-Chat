@@ -13,10 +13,8 @@ import kotlin.math.max
  * @param viewHolderSupplier — instance of a [ViewHolderSupplier] that will handle the actual item creation
  */
 class PrefetchViewPool(
-    private val defaultMaxRecycledViews: Int,
-    private val viewHolderSupplier: ViewHolderSupplier
+    private val defaultMaxRecycledViews: Int, private val viewHolderSupplier: ViewHolderSupplier
 ) : RecyclerView.RecycledViewPool() {
-
     private val recycledViewsBounds = mutableMapOf<Int, Int>()
 
     init {
@@ -66,7 +64,6 @@ class PrefetchViewPool(
     }
 
     companion object {
-
         const val DEFAULT_MAX_RECYCLED_VIEWS = 5
     }
 }

@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 fun RecyclerView.RecycledViewPool.bindToLifecycle(lifecycleOwner: LifecycleOwner) {
     val observer = object : LifecycleObserver {
-
         @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         fun onDestroy() {
             this@bindToLifecycle.clear()

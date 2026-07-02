@@ -5,9 +5,9 @@ versionCode = "1"   #only use INT
 versionName = "1.0.0"
 
 javaVersion = "17"
-compileSdk = "36"
+compileSdk = "34"
 targetSdk = "34"
-minSdk = "24"
+minSdk = "28"
 fragment = "1.6.2"
 appcompat = "1.6.1"
 kotlin = "1.9.23"

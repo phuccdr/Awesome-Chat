@@ -4,56 +4,56 @@
     <!-- Thin -->
     <font
         android:font="@font/lato_thin"
-        android:fontWeight="100"
-        android:fontStyle="normal" />
+        android:fontStyle="normal"
+        android:fontWeight="100" />
 
     <font
         android:font="@font/lato_thinitalic"
-        android:fontWeight="100"
-        android:fontStyle="italic" />
+        android:fontStyle="italic"
+        android:fontWeight="100" />
 
     <!-- Light -->
     <font
         android:font="@font/lato_light"
-        android:fontWeight="300"
-        android:fontStyle="normal" />
+        android:fontStyle="normal"
+        android:fontWeight="300" />
 
     <font
         android:font="@font/lato_lightitalic"
-        android:fontWeight="300"
-        android:fontStyle="italic" />
+        android:fontStyle="italic"
+        android:fontWeight="300" />
 
     <!-- Regular -->
     <font
         android:font="@font/lato_regular"
-        android:fontWeight="400"
-        android:fontStyle="normal" />
+        android:fontStyle="normal"
+        android:fontWeight="400" />
 
     <font
         android:font="@font/lato_italic"
-        android:fontWeight="400"
-        android:fontStyle="italic" />
+        android:fontStyle="italic"
+        android:fontWeight="400" />
 
     <!-- Bold -->
     <font
         android:font="@font/lato_bold"
-        android:fontWeight="700"
-        android:fontStyle="normal" />
+        android:fontStyle="normal"
+        android:fontWeight="700" />
 
     <font
         android:font="@font/lato_bolditalic"
-        android:fontWeight="700"
-        android:fontStyle="italic" />
+        android:fontStyle="italic"
+        android:fontWeight="700" />
 
     <!-- Black -->
     <font
         android:font="@font/lato_black"
-        android:fontWeight="900"
-        android:fontStyle="normal" />
+        android:fontStyle="normal"
+        android:fontWeight="900" />
 
     <font
         android:font="@font/lato_blackitalic"
-        android:fontWeight="900"
-        android:fontStyle="italic" />
+        android:fontStyle="italic"
+        android:fontWeight="900" />
 
 </font-family>

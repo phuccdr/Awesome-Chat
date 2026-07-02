@@ -18,9 +18,7 @@ class PreCachingLayoutManager : LinearLayoutManager {
     }
 
     constructor(context: Context, orientation: Int, reverseLayout: Boolean) : super(
-        context,
-        orientation,
-        reverseLayout
+        context, orientation, reverseLayout
     ) {
         this.context = context
     }

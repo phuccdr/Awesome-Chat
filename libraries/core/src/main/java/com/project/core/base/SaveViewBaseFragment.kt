@@ -13,13 +13,10 @@ import com.project.core.base.fragment.BaseFragment
  */
 abstract class SaveViewBaseFragment<BD : ViewDataBinding, VM : BaseViewModel>(@LayoutRes id: Int) :
     BaseFragment<BD, VM>(id) {
-
     private var mContainerView: View? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         if (mContainerView == null) {
             mContainerView = super.onCreateView(inflater, container, savedInstanceState)

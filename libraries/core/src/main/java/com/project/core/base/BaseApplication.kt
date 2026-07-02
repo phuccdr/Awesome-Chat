@@ -6,7 +6,6 @@ import com.project.core.utils.resource.ResourceUtils
 import timber.log.Timber
 
 open class BaseApplication : Application() {
-
     override fun onCreate() {
         super.onCreate()
 

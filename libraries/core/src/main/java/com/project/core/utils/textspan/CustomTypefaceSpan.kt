@@ -8,7 +8,6 @@ import android.text.style.MetricAffectingSpan
 class CustomTypefaceSpan(
     private val typeface: Typeface
 ) : MetricAffectingSpan() {
-
     override fun updateDrawState(tp: TextPaint) {
         apply(tp)
     }

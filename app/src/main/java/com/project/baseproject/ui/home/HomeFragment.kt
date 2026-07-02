@@ -18,10 +18,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.fragment_home) {
-
     @Inject
     lateinit var appNavigation: AppNavigation
-
     private val viewModel: HomeViewModel by viewModels()
 
     override fun initView(savedInstanceState: Bundle?) {
@@ -51,9 +49,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         Timber.tag("VietBH").d("A   " + "onCreateView")
         return super.onCreateView(inflater, container, savedInstanceState)

@@ -4,6 +4,6 @@ import android.os.Bundle
 import com.project.core.navigationComponent.BaseNavigator
 
 interface AppNavigation : BaseNavigator {
-
     fun openSplashToHomeScreen(bundle: Bundle? = null)
+    fun openSplashToLoginScreen(bundle: Bundle? = null)
 }

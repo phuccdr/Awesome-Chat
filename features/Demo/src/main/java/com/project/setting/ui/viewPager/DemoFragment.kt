@@ -9,7 +9,6 @@ import com.project.setting.R
 import com.project.setting.databinding.FragmentDemoBinding
 
 class DemoFragment : BaseFragment<FragmentDemoBinding, DemoViewModel>(R.layout.fragment_demo) {
-
     private val mShareViewModel: DemoViewPagerViewModel by activityViewModels()
     private val mViewModel: DemoViewModel by viewModels()
 

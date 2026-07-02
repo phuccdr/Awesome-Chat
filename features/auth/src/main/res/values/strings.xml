@@ -1,4 +1,11 @@
 <resources>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tr_i_nghi_m_awesome_chat">Trải nghiệm Awesome chat</string>
+    <string name="ng_nh_p">Đăng nhập</string>
+    <string name="email">EMAIL</string>
+    <string name="yourname_gmail_com">yourname@gmail.com</string>
+    <string name="hintPassword">********</string>
+    <string name="m_t_kh_u">MẬT KHẨU</string>
+    <string name="qu_n_m_t_kh_u">Quên mật khẩu?</string>
 </resources>

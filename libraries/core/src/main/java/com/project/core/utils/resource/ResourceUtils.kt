@@ -10,24 +10,19 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 
 object ResourceUtils {
-
     lateinit var context: Application
         private set
+
     fun init(appContext: Application) {
         context = appContext
     }
 
-    fun getString(@StringRes resId: Int): String =
-        context.getString(resId)
+    fun getString(@StringRes resId: Int): String = context.getString(resId)
 
-    fun getString(@StringRes resId: Int, vararg args: Any): String =
-        context.getString(resId, *args)
+    fun getString(@StringRes resId: Int, vararg args: Any): String = context.getString(resId, *args)
 
-    fun getColor(@ColorRes resId: Int): Int =
-        ContextCompat.getColor(context, resId)
+    fun getColor(@ColorRes resId: Int): Int = ContextCompat.getColor(context, resId)
 
-    fun getDrawable(@DrawableRes resId: Int) =
-        ContextCompat.getDrawable(context, resId)
-    fun getFont(@FontRes fontId: Int): Typeface? =
-        ResourcesCompat.getFont(context, fontId)
+    fun getDrawable(@DrawableRes resId: Int) = ContextCompat.getDrawable(context, resId)
+    fun getFont(@FontRes fontId: Int): Typeface? = ResourcesCompat.getFont(context, fontId)
 }

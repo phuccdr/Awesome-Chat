@@ -9,7 +9,6 @@ import com.project.core.R
 const val NOTICE_DIALOG_FRAGMENT = "NOTICE_DIALOG_FRAGMENT"
 
 class NoticeDialog : BaseDialogFragment() {
-
     var dialogListener: NoticeDialogListener? = null
 
     override fun onAttach(context: Context) {
@@ -29,10 +28,9 @@ class NoticeDialog : BaseDialogFragment() {
         val title = arguments?.getString(NOTICE_DIALOG_TITLE) ?: ""
         val type = arguments?.getInt(NOTICE_DIALOG_TYPE)
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-        builder.setTitle(title)
-            .setPositiveButton(R.string.ok) { _, _ ->
-                dialogListener?.onClickOk(type)
-            }
+        builder.setTitle(title).setPositiveButton(R.string.ok) { _, _ ->
+            dialogListener?.onClickOk(type)
+        }
         return builder.create()
     }
 

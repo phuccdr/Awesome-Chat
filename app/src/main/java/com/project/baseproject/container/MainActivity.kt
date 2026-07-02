@@ -22,7 +22,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), ConfirmDialogListener {
-
     @Inject
     lateinit var appNavigation: AppNavigation
 
@@ -31,13 +30,12 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
 
     @Inject
     lateinit var rxPreferences: RxPreferences
-
     override val layoutId = R.layout.activity_main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
         appNavigation.bind(navHostFragment.navController)
 
         lifecycleScope.launch {
@@ -45,15 +43,13 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
             language?.let { setLanguage(it) }
         }
 
-        networkConnectionManager.isNetworkConnectedFlow
-            .onEach {
-                if (it) {
-                    Timber.tag("VietBH").d("onCreate: Network connected")
-                } else {
-                    Timber.tag("VietBH").d("onCreate: Network disconnected")
-                }
+        networkConnectionManager.isNetworkConnectedFlow.onEach {
+            if (it) {
+                Timber.tag("VietBH").d("onCreate: Network connected")
+            } else {
+                Timber.tag("VietBH").d("onCreate: Network disconnected")
             }
-            .launchIn(lifecycleScope)
+        }.launchIn(lifecycleScope)
     }
 
     override fun onStart() {

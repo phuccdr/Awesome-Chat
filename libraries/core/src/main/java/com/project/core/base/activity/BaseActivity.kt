@@ -6,7 +6,6 @@ import com.project.core.base.BaseViewModel
 
 abstract class BaseActivity<BD : ViewDataBinding, VM : BaseViewModel> :
     BaseActivityNotRequireViewModel<BD>() {
-
     private lateinit var viewModel: VM
 
     abstract fun getVM(): VM

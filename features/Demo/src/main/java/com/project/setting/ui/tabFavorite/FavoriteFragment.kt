@@ -11,7 +11,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FavoriteFragment :
     BaseFragment<FragmentFavoriteBinding, FavoriteViewModel>(R.layout.fragment_favorite) {
-
     private val viewModel: FavoriteViewModel by viewModels()
 
     override fun getVM(): FavoriteViewModel = viewModel

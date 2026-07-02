@@ -12,13 +12,11 @@ import retrofit2.HttpException
 import java.net.ConnectException
 
 abstract class BaseViewModel : ViewModel() {
-
     var messageError = SingleLiveEvent<Any>()
     var isLoading = MutableLiveData<Boolean>()
 
     fun handleError(
-        throwable: Throwable,
-        callBack: ((result: ErrorResponse) -> Unit?)?
+        throwable: Throwable, callBack: ((result: ErrorResponse) -> Unit?)?
     ) {
         if (throwable is ConnectException) {
             messageError.postValue(throwable.message)
@@ -31,11 +29,9 @@ abstract class BaseViewModel : ViewModel() {
             }
             var response: ErrorResponse? = null
             try {
-                response =
-                    Gson().fromJson(
-                        errorBody,
-                        ErrorResponse::class.java
-                    )
+                response = Gson().fromJson(
+                    errorBody, ErrorResponse::class.java
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -67,11 +63,9 @@ abstract class BaseViewModel : ViewModel() {
         }
         var response: T? = null
         try {
-            response =
-                Gson().fromJson(
-                    errorBody,
-                    T::class.java
-                )
+            response = Gson().fromJson(
+                errorBody, T::class.java
+            )
         } catch (e: Exception) {
             e.printStackTrace()
         }

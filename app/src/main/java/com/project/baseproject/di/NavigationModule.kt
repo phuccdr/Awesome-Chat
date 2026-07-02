@@ -4,6 +4,7 @@ import com.project.baseproject.navigation.AppNavigation
 import com.project.baseproject.navigation.AppNavigatorImpl
 import com.project.core.navigationComponent.BaseNavigator
 import com.project.setting.DemoNavigation
+import com.rikkeisoft.awesome.AuthNavigation
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -13,7 +14,6 @@ import dagger.hilt.android.scopes.ActivityScoped
 @Module
 @InstallIn(ActivityComponent::class)
 abstract class NavigationModule {
-
     @Binds
     @ActivityScoped
     abstract fun provideBaseNavigation(navigation: AppNavigatorImpl): BaseNavigator
@@ -25,4 +25,8 @@ abstract class NavigationModule {
     @Binds
     @ActivityScoped
     abstract fun provideDemoNavigation(navigation: AppNavigatorImpl): DemoNavigation
+
+    @Binds
+    @ActivityScoped
+    abstract fun provideAuthNavigation(navigation: AppNavigatorImpl): AuthNavigation
 }

@@ -2,7 +2,6 @@ include(":features:Demo")
 include(":libraries:core")
 include(":libraries:permission")
 include(":app")
-include(":features:user")
 include(":features:auth")
 rootProject.name = "Awesome Chat 2026"
 

@@ -6,6 +6,10 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+kotlin {
+    jvmToolchain(libs.versions.javaVersion.get().toInt())
+}
+
 android {
     namespace = "com.rikkeisoft.awesome"
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -30,6 +34,7 @@ android {
 }
 
 dependencies {
+
     implementation(project(":libraries:core"))
     implementation(project(":libraries:permission"))
 

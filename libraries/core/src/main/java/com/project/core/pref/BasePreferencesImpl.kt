@@ -14,13 +14,11 @@ private val Context.userPreferencesDataStore: DataStore<Preferences> by preferen
 )
 
 abstract class BasePreferencesImpl(context: Context) : BasePreferences {
-
     private val dataStore by lazy {
         context.userPreferencesDataStore
     }
 
-    override fun <T> getValue(key: Preferences.Key<T>): Flow<T?> =
-        dataStore.data.map { it[key] }
+    override fun <T> getValue(key: Preferences.Key<T>): Flow<T?> = dataStore.data.map { it[key] }
 
     override suspend fun <T> putValue(key: Preferences.Key<T>, value: T) {
         dataStore.edit {

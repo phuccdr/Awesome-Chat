@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import com.project.core.R
 
 class LoadingDialog private constructor(private var mActivity: Activity?) {
-
     private var isShow = false
     private lateinit var dialog: AlertDialog
 
@@ -51,16 +50,14 @@ class LoadingDialog private constructor(private var mActivity: Activity?) {
 
     init {
         if (mActivity != null && !isShow) {
-            val dialogBuilder =
-                AlertDialog.Builder(mActivity)
+            val dialogBuilder = AlertDialog.Builder(mActivity)
             val li = LayoutInflater.from(mActivity)
             val dialogView = li.inflate(R.layout.layout_loading, null)
             dialogBuilder.setView(dialogView)
             dialogBuilder.setCancelable(false)
             dialog = dialogBuilder.create()
             if (dialog.window != null) {
-                dialog.window!!
-                    .setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             }
             dialog.setCancelable(false)
             dialog.setCanceledOnTouchOutside(false)
