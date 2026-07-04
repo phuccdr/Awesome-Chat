@@ -2,6 +2,7 @@ package com.rikkeisoft.awesome.ui.login
 
 import androidx.lifecycle.viewModelScope
 import com.project.core.base.BaseViewModel
+import com.project.core.utils.SingleLiveEvent
 import com.project.core.utils.StringUtils.isEmailValid
 import com.project.core.utils.StringUtils.validatepassword
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor() : BaseViewModel() {
+
+    val actionLogin = SingleLiveEvent<LoginActionState>()
     private val _email: MutableStateFlow<String> = MutableStateFlow("")
     val email: StateFlow<String> = _email.asStateFlow()
     private val _password: MutableStateFlow<String> = MutableStateFlow("")
@@ -42,9 +45,14 @@ class LoginViewModel @Inject constructor() : BaseViewModel() {
         }
     }
 
+    fun onRegister(){
+        actionLogin.value = LoginActionState.NavToRegisterScreen
+    }
+
     sealed class LoginActionState {
         data object NavToHomeScreen : LoginActionState()
         data object NavToRegisterScreen : LoginActionState()
     }
+
 
 }

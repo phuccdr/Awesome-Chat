@@ -31,4 +31,8 @@ class AppNavigatorImpl @Inject constructor() : BaseNavigatorImpl(), AppNavigatio
         openScreen(R.id.action_loginFragment_to_registerFragment, bundle)
     }
 
+    override fun openRegisterToLogin(bundle: Bundle?) {
+        navigateUp()
+    }
+
 }

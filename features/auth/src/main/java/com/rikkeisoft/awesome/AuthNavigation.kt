@@ -6,4 +6,6 @@ interface AuthNavigation {
     fun openLoginToHomeScreen(bundle: Bundle? = null)
 
     fun openLoginToRegisterScreen(bundle: Bundle? = null)
+
+    fun openRegisterToLogin(bundle: Bundle? = null)
 }
