@@ -7,10 +7,14 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.project.core.base.dialog.CONFIRM_DIALOG_FRAGMENT
+import com.project.core.base.dialog.NoticeDialog
+import com.project.core.base.dialog.NoticeDialogListener
 import com.project.core.base.fragment.BaseFragment
 import com.project.core.utils.resource.ResourceUtils
 import com.project.core.utils.setOnSafeClickListener
@@ -21,11 +25,13 @@ import com.rikkeisoft.awesome.R
 import com.rikkeisoft.awesome.databinding.FragmentLoginBinding
 import com.rikkeisoft.awesome.ui.AsteriskPasswordTransformationMethod
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layout.fragment_login) {
+class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layout.fragment_login),
+    NoticeDialogListener {
     @Inject
     lateinit var appNavigator: AuthNavigation
     private val viewModel: LoginViewModel by viewModels()
@@ -35,11 +41,25 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
 
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
+        setupRegisterText()
+        setupEmailEdt()
+        setupPasswordEdt()
+    }
+
+    private fun setupEmailEdt() {
+        binding.edtEmail.doAfterTextChanged { text ->
+            viewModel.onEmailChanged(text.toString())
+        }
+    }
+
+    private fun setupPasswordEdt() {
         binding.edtPassword.apply {
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             transformationMethod = AsteriskPasswordTransformationMethod()
+            doAfterTextChanged { text ->
+                viewModel.onPasswordChange(text.toString())
+            }
         }
-        setupRegisterText()
     }
 
     fun setupRegisterText() {
@@ -78,18 +98,39 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
         super.bindingStateView()
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.enableLogin.collect { enable ->
-                    binding.btnLogin.isEnabled = enable
+                launch {
+                    viewModel.enableLogin.collect { enable ->
+                        binding.btnLogin.isEnabled = enable
+                    }
+                }
+                launch {
+                    viewModel.isShowNoticeDialog.filter { it.first }.collect {
+                        showUpNoticeDialog(it.second)
+                    }
                 }
             }
+        }
+    }
+
+    private fun showUpNoticeDialog(title: String) {
+        if (childFragmentManager.findFragmentByTag(CONFIRM_DIALOG_FRAGMENT) == null) {
+            val demoDialog = NoticeDialog.getInstance(title)
+            demoDialog.dialogListener = this@LoginFragment
+            demoDialog.show(childFragmentManager, CONFIRM_DIALOG_FRAGMENT)
         }
     }
 
     override fun bindingAction() {
         super.bindingAction()
         viewModel.actionLogin.observe(viewLifecycleOwner) { action ->
-            if (action == LoginViewModel.LoginActionState.NavToRegisterScreen) {
-                appNavigator.openLoginToRegisterScreen()
+            when (action) {
+                is LoginViewModel.LoginActionState.NavToRegisterScreen -> {
+                    appNavigator.openLoginToRegisterScreen()
+                }
+
+                is LoginViewModel.LoginActionState.NavToHomeScreen -> {
+                    appNavigator.openLoginToHomeScreen()
+                }
             }
         }
     }
@@ -102,5 +143,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
 
     }
 
-
+    override fun onClickOk(type: Int?) {
+        viewModel.onCloseNoticeDialog()
+    }
 }

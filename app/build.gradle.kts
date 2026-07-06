@@ -67,6 +67,7 @@ dependencies {
     implementation(project(":libraries:permission"))
     implementation(project(":features:Demo"))
     implementation(project(":features:auth"))
+    implementation(project(":features:conversation"))
 
     //appcompat
     implementation(libs.bundles.common)

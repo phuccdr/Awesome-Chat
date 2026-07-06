@@ -12,6 +12,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.project.core.base.dialog.CONFIRM_DIALOG_FRAGMENT
+import com.project.core.base.dialog.NoticeDialog
+import com.project.core.base.dialog.NoticeDialogListener
 import com.project.core.base.fragment.BaseFragment
 import com.project.core.utils.resource.ResourceUtils
 import com.project.core.utils.setOnSafeClickListener
@@ -22,12 +25,14 @@ import com.rikkeisoft.awesome.R
 import com.rikkeisoft.awesome.databinding.FragmentRegisterBinding
 import com.rikkeisoft.awesome.ui.AsteriskPasswordTransformationMethod
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class RegisterFragment :
-    BaseFragment<FragmentRegisterBinding, RegisterViewModel>(R.layout.fragment_register) {
+    BaseFragment<FragmentRegisterBinding, RegisterViewModel>(R.layout.fragment_register),
+    NoticeDialogListener {
     private val viewModel: RegisterViewModel by viewModels()
     override fun getVM(): RegisterViewModel {
         return viewModel
@@ -44,6 +49,7 @@ class RegisterFragment :
         setupEmailEdt()
         setupPasswordEdt()
         setupCheckBox()
+        setupRegisterButton()
     }
     private fun setupUserNameEdt(){
         binding.edtName.
@@ -62,18 +68,36 @@ class RegisterFragment :
             )
         }
     }
-    private fun setupPasswordEdt(){
-        binding.edtPassword.apply {
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            transformationMethod = AsteriskPasswordTransformationMethod()
 
-            doAfterTextChanged { text ->
-                viewModel.onPasswordChange(
-                    text.toString()
-                )
-            }
+    private fun setupPasswordEdt() {
+    binding.edtPassword.apply {
+        inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        transformationMethod = AsteriskPasswordTransformationMethod()
+
+        doAfterTextChanged { text ->
+            viewModel.onPasswordChange(text.toString())
         }
+
+//        setOnFocusChangeListener { _, hasFocus ->
+//            if (hasFocus) {
+//                scrollDown()
+//            }else{
+//                scrollUp()
+//            }
+//        }
     }
+}
+
+//private fun scrollDown() {
+//    binding.scrollView.postDelayed({
+//        binding.scrollView.fullScroll(android.view.View.FOCUS_DOWN)
+//    }, 300)
+//}
+//    private fun scrollUp() {
+//        binding.scrollView.postDelayed({
+//            binding.scrollView.fullScroll(android.view.View.FOCUS_UP)
+//        }, 300)
+//    }
     private fun setupCheckBox() {
         binding.btnCheckBox.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onCheckedTermsAndConditions(isChecked)
@@ -114,7 +138,7 @@ class RegisterFragment :
                 spannable.length,
                 ResourceUtils.getColor(com.project.core.R.color.colorPrimary)
             ) {
-viewModel.onBack()
+                viewModel.onBack()
             }
 
             binding.tvBackLogin.apply {
@@ -176,23 +200,46 @@ viewModel.onBack()
             }
     }}
 
+    private fun setupRegisterButton(){
+        binding.btnRegister.setOnSafeClickListener {
+            viewModel.onRegister()
+        }
+    }
+
     override fun bindingAction(){
         super.bindingAction()
         viewModel.registerAction.observe(viewLifecycleOwner){action->
             if(action == RegisterViewModel.RegisterActionState.NavToLoginScreen){
                 appNavigator.openRegisterToLogin()
+            }else if(action == RegisterViewModel.RegisterActionState.NavToHomeScreen){
+
             }
         }
 }
 
     override fun bindingStateView() {
         super.bindingStateView()
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                viewModel.isEnableRegisterButton.collect { isEnable ->
-                    binding.btnRegister.isEnabled = isEnable
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.isEnableRegisterButton.collect { enable ->
+                        binding.btnRegister.isEnabled = enable
+                    }
+                }
+                launch {
+                    viewModel.isShowNoticeDialog.filter { it.first }.collect {
+                        showUpNoticeDialog(it.second)
+                    }
                 }
             }
+        }
+    }
+
+    private fun showUpNoticeDialog(title:String){
+        if (childFragmentManager.findFragmentByTag(CONFIRM_DIALOG_FRAGMENT) == null) {
+            val demoDialog = NoticeDialog.getInstance(title)
+            demoDialog.dialogListener = this
+            demoDialog.show(childFragmentManager, CONFIRM_DIALOG_FRAGMENT)
         }
     }
 
@@ -203,6 +250,10 @@ viewModel.onBack()
             viewModel.onBack()
         }
         }
+    }
+
+    override fun onClickOk(type: Int?) {
+        viewModel.onCloseNoticeDialog()
     }
 
 }

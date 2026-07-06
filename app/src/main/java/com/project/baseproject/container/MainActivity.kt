@@ -50,6 +50,7 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
                 Timber.tag("VietBH").d("onCreate: Network disconnected")
             }
         }.launchIn(lifecycleScope)
+
     }
 
     override fun onStart() {

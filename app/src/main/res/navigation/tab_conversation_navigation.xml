@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tab_conversation_navigation"
+    app:startDestination="@id/listConversationFragment">
+    <fragment
+        android:id="@+id/listConversationFragment"
+        android:name="com.rikkeisoft.awesome.ui.conversation.ListConversationFragment"
+        tools:layout="@layout/fragment_list_conversation" />
+
+    <fragment
+        android:id="@+id/searchMessageFragment"
+        android:name="com.rikkeisoft.awesome.ui.search.SearchMessageFragment"
+        tools:layout="@layout/fragment_search_message" />
+</navigation>

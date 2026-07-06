@@ -19,41 +19,39 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvGreet"
+            style="@style/AppText.Exo.Light.26"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/greet"
             android:textColor="@color/text_primary"
-            android:textFontWeight="300"
-            android:textSize="26sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imvIconApp" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTitleLogin"
+            style="@style/AppText.Exo.Black.32"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/login"
             android:textColor="@color/text_secondary"
-            android:textFontWeight="800"
-            android:textSize="32sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvGreet" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTitleEmail"
+            style="@style/AppText.Lato.Medium.14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
             android:text="@string/email"
             android:textColor="@color/text_gray_secondary"
-            android:textFontWeight="500"
-            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitleLogin" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edtEmail"
+            style="@style/AppText.Lato.Medium.18"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
@@ -65,8 +63,6 @@
             android:inputType="textEmailAddress"
             android:textColor="@color/text_primary"
             android:textColorHint="@color/text_gray"
-            android:textFontWeight="500"
-            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitleEmail" />
@@ -84,18 +80,18 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTitlePassword"
+            style="@style/AppText.Lato.Medium.14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:text="@string/password"
             android:textColor="@color/text_gray_secondary"
-            android:textFontWeight="500"
-            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divideEmail" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edtPassword"
+            style="@style/AppText.Lato.Medium.18"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
@@ -107,8 +103,6 @@
             android:inputType="textPassword"
             android:textColor="@color/text_primary"
             android:textColorHint="@color/text_gray"
-            android:textFontWeight="500"
-            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitlePassword" />
@@ -125,6 +119,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvForgotPassword"
+            style="@style/AppText.Lato.Bold.14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -132,13 +127,12 @@
             android:focusable="true"
             android:text="@string/forgot_password"
             android:textColor="@color/text_secondary"
-            android:textFontWeight="700"
-            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dividePassword" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnLogin"
+            style="@style/AppText.Lato.Bold.16"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
@@ -150,20 +144,18 @@
             android:paddingVertical="16dp"
             android:text="@string/login"
             android:textColor="@color/text_white"
-            android:textFontWeight="700"
-            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvForgotPassword" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvRegister"
+            style="@style/AppText.Lato.Regular.14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             android:clickable="true"
             android:focusable="true"
-            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

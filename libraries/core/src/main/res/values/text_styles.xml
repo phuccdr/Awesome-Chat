@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppText" parent="android:Widget.TextView">
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Exo Font Styles -->
+    <style name="AppText.Exo" parent="AppText">
+        <item name="android:fontFamily">@font/exo</item>
+    </style>
+
+    <style name="AppText.Exo.Black" parent="AppText.Exo">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textFontWeight">900</item>
+    </style>
+
+    <style name="AppText.Exo.Light" parent="AppText.Exo">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textFontWeight">300</item>
+    </style>
+
+    <!-- Specific Exo Styles -->
+    <style name="AppText.Exo.Black.32" parent="AppText.Exo.Black">
+        <item name="android:textSize">@dimen/text_size_32</item>
+    </style>
+
+    <style name="AppText.Exo.Light.26" parent="AppText.Exo.Light">
+        <item name="android:textSize">@dimen/text_size_26</item>
+    </style>
+
+    <!-- Lato Font Styles -->
+    <style name="AppText.Lato" parent="AppText">
+        <item name="android:fontFamily">@font/lato</item>
+    </style>
+
+    <style name="AppText.Lato.Regular" parent="AppText.Lato">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <style name="AppText.Lato.Medium" parent="AppText.Lato">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+
+    <style name="AppText.Lato.Bold" parent="AppText.Lato">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textFontWeight">700</item>
+    </style>
+
+    <!-- Specific Lato Styles -->
+    <style name="AppText.Lato.Medium.14" parent="AppText.Lato.Medium">
+        <item name="android:textSize">@dimen/text_size_14</item>
+    </style>
+
+    <style name="AppText.Lato.Medium.18" parent="AppText.Lato.Medium">
+        <item name="android:textSize">@dimen/text_size_18</item>
+    </style>
+
+    <style name="AppText.Lato.Bold.14" parent="AppText.Lato.Bold">
+        <item name="android:textSize">@dimen/text_size_14</item>
+    </style>
+
+    <style name="AppText.Lato.Bold.16" parent="AppText.Lato.Bold">
+        <item name="android:textSize">@dimen/text_size_16</item>
+    </style>
+
+    <style name="AppText.Lato.Regular.14" parent="AppText.Lato.Regular">
+        <item name="android:textSize">@dimen/text_size_14</item>
+    </style>
+
+</resources>
