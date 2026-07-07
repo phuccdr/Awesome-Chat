@@ -21,8 +21,8 @@ import com.project.core.utils.setOnSafeClickListener
 import com.project.core.utils.textspan.CustomTypefaceSpan
 import com.project.core.utils.textspan.setClickableSpan
 import com.rikkeisoft.awesome.AuthNavigation
-import com.rikkeisoft.awesome.R
-import com.rikkeisoft.awesome.databinding.FragmentLoginBinding
+import com.rikkeisoft.awesome.auth.R
+import com.rikkeisoft.awesome.auth.databinding.FragmentLoginBinding
 import com.rikkeisoft.awesome.ui.AsteriskPasswordTransformationMethod
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filter
@@ -83,7 +83,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         spannable.setClickableSpan(
-            18, spannable.length, ResourceUtils.getColor(com.project.core.R.color.colorPrimary)
+            18, spannable.length, ResourceUtils.getColor(com.project.core.R.color.primary_color)
         ) {
             viewModel.onRegister()
         }

@@ -21,8 +21,8 @@ import com.project.core.utils.setOnSafeClickListener
 import com.project.core.utils.textspan.CustomTypefaceSpan
 import com.project.core.utils.textspan.setClickableSpan
 import com.rikkeisoft.awesome.AuthNavigation
-import com.rikkeisoft.awesome.R
-import com.rikkeisoft.awesome.databinding.FragmentRegisterBinding
+import com.rikkeisoft.awesome.auth.R
+import com.rikkeisoft.awesome.auth.databinding.FragmentRegisterBinding
 import com.rikkeisoft.awesome.ui.AsteriskPasswordTransformationMethod
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filter
@@ -136,7 +136,7 @@ class RegisterFragment :
             spannable.setClickableSpan(
                 17,
                 spannable.length,
-                ResourceUtils.getColor(com.project.core.R.color.colorPrimary)
+                ResourceUtils.getColor(com.project.core.R.color.primary_color)
             ) {
                 viewModel.onBack()
             }
@@ -187,10 +187,10 @@ class RegisterFragment :
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
 
-        spannable.setClickableSpan(19, 29, ResourceUtils.getColor(com.project.core.R.color.colorPrimary)) {
+        spannable.setClickableSpan(19, 29, ResourceUtils.getColor(com.project.core.R.color.primary_color)) {
             //Open Chính sách
         }
-        spannable.setClickableSpan(33,spannable.length, ResourceUtils.getColor(com.project.core.R.color.colorPrimary)){
+        spannable.setClickableSpan(33,spannable.length, ResourceUtils.getColor(com.project.core.R.color.primary_color)){
             //Open diều kiện
         }
             binding.tvTermsAndConditions.apply {

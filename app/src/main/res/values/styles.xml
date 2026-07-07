@@ -9,7 +9,7 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:fitsSystemWindows">false</item>
         <item name="android:windowBackground">@color/white</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/primary_color</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:fontFamily">@font/lato</item>
         <item name="fontFamily">@font/lato</item>
@@ -18,5 +18,19 @@
     <!-- Splash Screen theme. -->
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:windowBackground">@drawable/launcher_screen</item>
+    </style>
+
+    <style name="BottomNavTextActive">
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontWeight">700</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <style name="BottomNavTextInactive">
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontWeight">500</item>
+        <item name="android:textColor">@color/text_gray_secondary</item>
     </style>
 </resources>

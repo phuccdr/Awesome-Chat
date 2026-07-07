@@ -5,6 +5,7 @@ import com.project.baseproject.navigation.AppNavigatorImpl
 import com.project.core.navigationComponent.BaseNavigator
 import com.project.setting.DemoNavigation
 import com.rikkeisoft.awesome.AuthNavigation
+import com.rikkeisoft.awesome.ConversationNavigation
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -29,4 +30,8 @@ abstract class NavigationModule {
     @Binds
     @ActivityScoped
     abstract fun provideAuthNavigation(navigation: AppNavigatorImpl): AuthNavigation
+
+    @Binds
+    @ActivityScoped
+    abstract fun provideConversationNavigation(navigation: AppNavigatorImpl): ConversationNavigation
 }

@@ -6,7 +6,7 @@ import com.project.core.utils.EdtState
 import com.project.core.utils.SingleLiveEvent
 import com.project.core.utils.StringUtils.isEmailValid
 import com.project.core.utils.StringUtils.validatepassword
-import com.rikkeisoft.awesome.R
+import com.rikkeisoft.awesome.auth.R
 import com.rikkeisoft.awesome.ui.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -29,7 +29,6 @@ class RegisterViewModel @Inject constructor(
     val registerAction = SingleLiveEvent<RegisterActionState>()
     private val _isShowNoticeDialog = MutableSharedFlow<Pair<Boolean, String>>()
     val isShowNoticeDialog = _isShowNoticeDialog.asSharedFlow()
-
     private val _username: MutableStateFlow<String> = MutableStateFlow("")
     val username: StateFlow<String> = _username.asStateFlow()
     private val _email: MutableStateFlow<String> = MutableStateFlow("")
@@ -70,10 +69,12 @@ class RegisterViewModel @Inject constructor(
         val handlerException = CoroutineExceptionHandler { _, e ->
             isLoading.value = false
             viewModelScope.launch {
-                _isShowNoticeDialog.emit(Pair(
-                    true,
-                    com.project.core.utils.resource.ResourceUtils.getString(R.string.failed_register_message)
-                ))
+                _isShowNoticeDialog.emit(
+                    Pair(
+                        true,
+                        com.project.core.utils.resource.ResourceUtils.getString(R.string.failed_register_message)
+                    )
+                )
             }
         }
 
@@ -88,10 +89,12 @@ class RegisterViewModel @Inject constructor(
         } else {
             isLoading.value = false
             viewModelScope.launch {
-                _isShowNoticeDialog.emit(Pair(
-                    true,
-                    com.project.core.utils.resource.ResourceUtils.getString(R.string.error_validate_email_password_field)
-                ))
+                _isShowNoticeDialog.emit(
+                    Pair(
+                        true,
+                        com.project.core.utils.resource.ResourceUtils.getString(R.string.error_validate_email_password_field)
+                    )
+                )
             }
         }
     }

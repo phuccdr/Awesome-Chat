@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF4356B4</color>
+    <color name="primary_color">#FF4356B4</color>
     <!--    <color name="colorPrimaryDark">#00574B</color>-->
     <!--    <color name="colorAccent">#D81B60</color>-->
     <color name="white">#FFFFFF</color>
@@ -14,6 +14,7 @@
     <color name="background_common">@color/white</color>
     <color name="background_color_white">@color/white</color>
     <color name="background_color_gray">#EFEFF4</color>
+    <color name="background_bottom_nav">#FFF6F6F6</color>
     <color name="start_color_btn_common">#087EFF</color>
     <color name="end_color_btn_common">#05E8BA</color>
 

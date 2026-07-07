@@ -5,8 +5,18 @@
     android:id="@+id/main_tab_navigation"
     app:startDestination="@+id/listConversationFragment"
     tools:ignore="InvalidNavigation">
-    <include app:graph="@navigation/tab_conversation_navigation" />
-    <include app:graph="@navigation/tab_friends_navigation" />
-    <include app:graph="@navigation/tab_profile_navigation" />
+    <fragment
+        android:id="@+id/listConversationFragment"
+        android:name="com.rikkeisoft.awesome.ui.conversation.ListConversationFragment"
+        tools:layout="@layout/fragment_list_conversation" />
+    <fragment
+        android:id="@+id/friendsFragment"
+        android:name="com.rikkeisoft.awesome.FriendsFragment"
+        tools:layout="@layout/fragment_friends" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.rikkeisoft.awesome.ProfileFragment"
+        tools:layout="@layout/fragment_profile" />
+
 
 </navigation>

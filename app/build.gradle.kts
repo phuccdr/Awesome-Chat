@@ -68,6 +68,8 @@ dependencies {
     implementation(project(":features:Demo"))
     implementation(project(":features:auth"))
     implementation(project(":features:conversation"))
+    implementation(project(":features:friends"))
+    implementation(project(":features:profile"))
 
     //appcompat
     implementation(libs.bundles.common)

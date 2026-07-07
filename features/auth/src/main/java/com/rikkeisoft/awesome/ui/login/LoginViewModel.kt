@@ -7,7 +7,7 @@ import com.project.core.utils.SingleLiveEvent
 import com.project.core.utils.StringUtils.isEmailValid
 import com.project.core.utils.StringUtils.validatepassword
 import com.project.core.utils.resource.ResourceUtils
-import com.rikkeisoft.awesome.R
+import com.rikkeisoft.awesome.auth.R
 import com.rikkeisoft.awesome.ui.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler

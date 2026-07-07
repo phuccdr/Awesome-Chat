@@ -5,13 +5,11 @@
         <layer-list>
             <item>
                 <shape android:shape="oval">
-                    <solid android:color="@color/colorPrimary"/>
+                    <solid android:color="@color/primary_color" />
                 </shape>
             </item>
 
-            <item
-                android:drawable="@drawable/ic_tick"
-                android:gravity="center"/>
+            <item android:drawable="@drawable/ic_tick" android:gravity="center" />
         </layer-list>
     </item>
 
@@ -19,13 +17,11 @@
         <layer-list>
             <item>
                 <shape android:shape="oval">
-                    <solid android:color="@color/color_button_disable"/>
+                    <solid android:color="@color/color_button_disable" />
                 </shape>
             </item>
 
-            <item
-                android:drawable="@drawable/ic_tick"
-                android:gravity="center"/>
+            <item android:drawable="@drawable/ic_tick" android:gravity="center" />
         </layer-list>
     </item>
 

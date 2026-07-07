@@ -11,7 +11,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.rikkeisoft.awesome"
+    namespace = "com.rikkeisoft.awesome.friends"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
