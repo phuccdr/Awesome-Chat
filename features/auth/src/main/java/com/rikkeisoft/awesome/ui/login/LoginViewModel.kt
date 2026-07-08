@@ -61,7 +61,7 @@ class LoginViewModel @Inject constructor(
         isLoading.value = true
         if (_email.value.isEmailValid() && _password.value.validatepassword() == EdtState.SUCCESS) {
             viewModelScope.launch(handlerException) {
-//                authRepository.login(_email.value, _password.value)
+                authRepository.login(_email.value, _password.value)
                 isLoading.value = false
                 actionLogin.value = LoginActionState.NavToHomeScreen
             }

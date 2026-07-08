@@ -59,4 +59,6 @@ dependencies {
     //fireauth
     implementation(libs.firebaseAuth)
 
+    implementation(libs.shimmer)
+
 }

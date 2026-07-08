@@ -41,17 +41,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             R.id.nav_host_container
         ) as NavHostFragment
         navController = navHostFragment.navController
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.chatFragment -> {
-                    binding.bottomNav.root.visibility = View.GONE
-                }
-
-                else -> {
-                    binding.bottomNav.root.visibility = View.VISIBLE
-                }
-            }
-        }
         binding.apply {
             bottomNav.btnConversation.setOnSafeClickListener {
                 viewModel.onItemSelected(1)

@@ -54,6 +54,10 @@
         <item name="android:textSize">@dimen/text_size_14</item>
     </style>
 
+    <style name="AppText.Lato.Medium.16" parent="AppText.Lato.Medium">
+        <item name="android:textSize">@dimen/text_size_16</item>
+    </style>
+
     <style name="AppText.Lato.Medium.18" parent="AppText.Lato.Medium">
         <item name="android:textSize">@dimen/text_size_18</item>
     </style>

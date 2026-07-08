@@ -9,25 +9,146 @@
         android:background="@color/white"
         tools:context=".ui.conversation.ListConversationFragment">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="220dp"
-            android:text="List Conversation Fragment"
+        <View
+            android:id="@+id/viewTop"
+            android:layout_width="0dp"
+            android:layout_height="228dp"
+            android:background="@drawable/gradient_splash"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/btnChat"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/titleMessage"
+            style="@style/AppText.Lato.Bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="120dp"
-            android:text="Chat Fragment"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="54dp"
+            android:text="@string/message"
+            android:textColor="@color/text_white"
+            android:textSize="30sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <View
+            android:id="@+id/bg_new_message"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="54dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/bg_oval"
+            app:layout_constraintEnd_toEndOf="@+id/viewTop"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:elevation="2dp"
+            android:src="@drawable/ic_create_conversation"
+            app:layout_constraintBottom_toBottomOf="@+id/bg_new_message"
+            app:layout_constraintEnd_toEndOf="@+id/bg_new_message"
+            app:layout_constraintStart_toStartOf="@+id/bg_new_message"
+            app:layout_constraintTop_toTopOf="@+id/bg_new_message" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edtSearch"
+            style="@style/AppText.Lato.Medium.16"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/bg_corner30_white"
+            android:drawableStart="@drawable/ic_search"
+            android:drawablePadding="12dp"
+            android:drawableTint="@color/primary_color"
+            android:hint="@string/search_message"
+            android:paddingVertical="12dp"
+            android:paddingStart="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleMessage" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvConversations"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_top_corner30"
+            android:paddingHorizontal="12dp"
+            android:paddingTop="30dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edtSearch" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSearchMessage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_top_corner30"
+            android:paddingHorizontal="12dp"
+            android:paddingTop="62dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edtSearch" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTitleSearchMessage"
+            style="@style/AppText.Lato.Bold.14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="26dp"
+            android:text="@string/message"
+            android:textColor="@color/text_gray_secondary"
+            app:layout_constraintStart_toStartOf="@id/rvSearchMessage"
+            app:layout_constraintTop_toTopOf="@+id/rvSearchMessage" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ic_no_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="112dp"
+            android:src="@drawable/ic_no_result"
+            app:layout_constraintEnd_toEndOf="@id/rvSearchMessage"
+            app:layout_constraintStart_toStartOf="@id/rvSearchMessage"
+            app:layout_constraintTop_toTopOf="@id/rvSearchMessage" />
+
+        <TextView
+            android:id="@+id/tvNoResult"
+            style="@style/AppText.Lato.Bold.16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/no_result"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@id/rvSearchMessage"
+            app:layout_constraintStart_toStartOf="@id/rvSearchMessage"
+
+            app:layout_constraintTop_toBottomOf="@+id/ic_no_result" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupSearchMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:constraint_referenced_ids="tvTitleSearchMessage,rvSearchMessage" />
+
+        <androidx.constraintlayout.widget.Group
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="ic_no_result,tvNoResult" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

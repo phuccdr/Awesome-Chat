@@ -9,4 +9,7 @@
     <string name="viet_nam">VietNam</string>
     <string name="english">English</string>
     <string name="register_account">Chưa có tài khoản? Đăng ký ngay</string>
+    <string name="message">Tin nhắn</string>
+    <string name="yesterday">Hôm qua</string>
+    <string name="today">Hôm nay</string>
 </resources>

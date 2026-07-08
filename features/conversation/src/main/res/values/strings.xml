@@ -1,4 +1,6 @@
 <resources>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search_message">Tìm kiếm tin nhắn...</string>
+    <string name="no_result">Không tìm thấy kết quả phù hợp</string>
 </resources>
