@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,8 +35,14 @@ class ListConversationViewModel @Inject constructor(
     var hasMoreData = true
     val isLoadingNextConversation: StateFlow<Boolean> = _isLoadingNextConversation.asStateFlow()
     private val querySearch: MutableStateFlow<String> = MutableStateFlow("")
+    val isSearching: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val currentUserUid = firebaseAuth.currentUser?.uid ?: ""
+    private val limitFlow = MutableStateFlow(PAGE_SIZE)
+    private val _items: MutableStateFlow<List<ConversationItem>> = MutableStateFlow(emptyList())
 
-  val isSearching : MutableStateFlow<Boolean> = MutableStateFlow(false)
+    init {
+        startObserveConversations()
+    }
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val resultSearch = isSearching.flatMapLatest { searchMode ->
@@ -53,26 +58,15 @@ class ListConversationViewModel @Inject constructor(
             querySearch.value = ""
             flowOf(emptyList())
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(500),emptyList())
-
-
-    
-    private val _items: MutableStateFlow<List<ConversationItem>> = MutableStateFlow(emptyList())
-    val items: StateFlow<List<ConversationItem>> = combine(_items, _isLoadingNextConversation) { data, isLoading ->
-        if (isLoading) {
-            data + ConversationItem.LoadingFooter
-        } else data
-    }.stateIn(
-        viewModelScope, SharingStarted.WhileSubscribed(500),
-        listOf()
-    )
-
-    private val currentUserUid = firebaseAuth.currentUser?.uid ?: ""
-    private val limitFlow = MutableStateFlow(PAGE_SIZE)
-
-    init {
-        startObserveConversations()
-    }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(500), emptyList())
+    val items: StateFlow<List<ConversationItem>> =
+        combine(_items, _isLoadingNextConversation) { data, isLoading ->
+            if (isLoading) {
+                data + ConversationItem.LoadingFooter
+            } else data
+        }.stateIn(
+            viewModelScope, SharingStarted.WhileSubscribed(500), listOf()
+        )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun startObserveConversations() {
@@ -83,30 +77,28 @@ class ListConversationViewModel @Inject constructor(
                 _isLoadingNextConversation.value = true
                 val fetchedUiItems = mutableListOf<ConversationItem.ConversationUi>()
 
-                // Xử lý song song việc lấy thông tin user cho từng conversation
-                conversations.asFlow().flatMapMerge(concurrency = CONCURRENCY_COROUTINE) { conversation ->
-                    flow {
-                        val user = repo.handleGetFriendByMembers(conversation.members) ?: User()
-                        val conversationUI = ConversationItem.ConversationUi(
-                            id = conversation.id,
-                            friendName = user.username,
-                            avatarFriend = user.avatar,
-                            lastMessage = conversation.lastMessage,
-                            lastUpdate = TimeUtils.format(conversation.lastUpdate),
-                            isLastMessageSender = conversation.lastSenderId == currentUserUid,
-                            unreadMessageCount = conversation.unreadMessage[currentUserUid] ?: 0
-                        )
-                        emit(conversationUI)
+                conversations.asFlow()
+                    .flatMapMerge(concurrency = CONCURRENCY_COROUTINE) { conversation ->
+                        flow {
+                            val user = repo.handleGetFriendByMembers(conversation.members) ?: User()
+                            val conversationUI = ConversationItem.ConversationUi(
+                                id = conversation.id,
+                                friendName = user.username,
+                                avatarFriend = user.avatar,
+                                lastMessage = conversation.lastMessage,
+                                lastUpdate = TimeUtils.format(conversation.lastUpdate),
+                                isLastMessageSender = conversation.lastSenderId == currentUserUid,
+                                unreadMessageCount = conversation.unreadMessage[currentUserUid] ?: 0
+                            )
+                            emit(conversationUI)
+                        }
+                    }.collect { uiItem ->
+                        fetchedUiItems.add(uiItem)
                     }
-                }.collect { uiItem ->
-                    fetchedUiItems.add(uiItem)
-                }
-
-                // Sắp xếp lại danh sách UI theo đúng thứ tự thời gian từ Firestore
                 val sortedUiItems = conversations.mapNotNull { conv ->
                     fetchedUiItems.find { it.id == conv.id }
                 }
-                
+
                 _items.value = sortedUiItems
                 hasMoreData = conversations.size.toLong() >= limitFlow.value
                 _isLoadingNextConversation.value = false
@@ -119,12 +111,11 @@ class ListConversationViewModel @Inject constructor(
         limitFlow.value += PAGE_SIZE
     }
 
-    fun onSearch(keyword:String){
+    fun onSearch(keyword: String) {
         querySearch.value = keyword
-        Timber.d(keyword)
     }
 
-    fun setSearching(status:Boolean){
+    fun setSearching(status: Boolean) {
         isSearching.value = status
     }
 }
