@@ -35,5 +35,6 @@
 
     <color name="color_divide">#FFD2D2D2</color>
     <color name="color_button_disable">#FFCACACA</color>
+    <color name="color_red">#FFC92323</color>
 
 </resources>

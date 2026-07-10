@@ -21,7 +21,7 @@ object TimeUtils {
 
         return when {
             isSameDay(now, messageCal) -> {
-                ResourceUtils.getString(R.string.today)
+                timeFormat.format(messageTime)
             }
 
             isYesterday(now, messageCal) -> {

@@ -16,42 +16,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-        <FrameLayout
-            android:id="@+id/frameAvatarUnread"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivAvatarUnread"
-                android:layout_width="58dp"
-                android:layout_height="58dp"
-                android:background="@drawable/bg_avatar_unread_message"
-                android:padding="4.5dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/imv_avatar" />
-
-            <TextView
-                android:id="@+id/tvBadge"
-                style="@style/AppText.Lato.Bold.14"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="top|end"
-                android:layout_marginTop="-2dp"
-                android:layout_marginEnd="-2dp"
-                android:background="@drawable/bg_badge_unread_message"
-                android:gravity="center"
-                android:text="5"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-        </FrameLayout>
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvFriendName"
             style="@style/AppText.Lato.Bold.16"
@@ -66,7 +30,7 @@
             app:layout_constraintTop_toTopOf="@id/ivAvatar" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvLastMessage"
+            android:id="@+id/tvCountMessage"
             style="@style/AppText.Lato.Medium.14"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -75,15 +39,6 @@
             android:maxLines="1"
             app:layout_constraintStart_toStartOf="@id/tvFriendName"
             app:layout_constraintTop_toBottomOf="@id/tvFriendName" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_last_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="10:09"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/ivAvatar" />
 
         <View
             android:layout_width="0dp"

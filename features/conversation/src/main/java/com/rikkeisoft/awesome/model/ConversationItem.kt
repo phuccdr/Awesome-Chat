@@ -7,7 +7,7 @@ sealed class ConversationItem {
         val avatarFriend: String = "",
         val lastMessage: String = "",
         val lastUpdate: String = "",
-        val lastSender: String = "",
+        val isLastMessageSender: Boolean = false,
         val unreadMessageCount: Int = 0
     ) : ConversationItem()
 

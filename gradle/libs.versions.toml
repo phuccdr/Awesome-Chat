@@ -42,6 +42,7 @@ kotlinVersion = "1.9.23"
 coreKtx = "1.19.0"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
+activity = "1.13.0"
 
 [libraries]
 androidGradle = { module = "com.android.tools.build:gradle", version.ref = "androidGradle" }
@@ -110,6 +111,7 @@ mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 coreKtx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 extJunit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVersion" }

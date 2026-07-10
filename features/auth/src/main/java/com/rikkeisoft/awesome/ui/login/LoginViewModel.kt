@@ -2,10 +2,8 @@ package com.rikkeisoft.awesome.ui.login
 
 import androidx.lifecycle.viewModelScope
 import com.project.core.base.BaseViewModel
-import com.project.core.utils.EdtState
 import com.project.core.utils.SingleLiveEvent
 import com.project.core.utils.StringUtils.isEmailValid
-import com.project.core.utils.StringUtils.validatepassword
 import com.project.core.utils.resource.ResourceUtils
 import com.rikkeisoft.awesome.auth.R
 import com.rikkeisoft.awesome.ui.AuthRepository
@@ -59,7 +57,7 @@ class LoginViewModel @Inject constructor(
             }
         }
         isLoading.value = true
-        if (_email.value.isEmailValid() && _password.value.validatepassword() == EdtState.SUCCESS) {
+        if (_email.value.isEmailValid()) {
             viewModelScope.launch(handlerException) {
                 authRepository.login(_email.value, _password.value)
                 isLoading.value = false

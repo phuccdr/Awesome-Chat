@@ -5,42 +5,48 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.project.core.model.firebase.Conversation
+import com.project.core.model.firebase.Message
 import com.project.core.model.firebase.User
+import com.rikkeisoft.awesome.model.SearchMessage
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
+const val PAGE_SIZE = 12L
+
 class ConversationRepository @Inject constructor(
-    private val auth: FirebaseAuth, private val db: FirebaseFirestore
+    auth: FirebaseAuth, private val db: FirebaseFirestore
 ) {
     private var lastDocument: DocumentSnapshot? = null
-    private var currentUserUid: String = auth.currentUser?.uid ?: ""
+    private val currentUserUid: String = auth.currentUser?.uid ?: ""
 
     suspend fun getNextPage(): List<Conversation> {
-        var query = db.collection("conversations").orderBy("lastUpdate", Query.Direction.DESCENDING)
-            .limit(20)
+        var query = db.collection("conversations").whereArrayContains("members", currentUserUid)
+            .orderBy("lastUpdate", Query.Direction.DESCENDING).limit(PAGE_SIZE)
 
         lastDocument?.let {
             query = query.startAfter(it)
         }
         val snapshot = query.get().await()
-
-        Timber.d(snapshot.documents.toString())
-
         if (snapshot.documents.isNotEmpty()) {
             lastDocument = snapshot.documents.last()
         }
         return snapshot.documents.mapNotNull { document ->
-            document.toObject(Conversation::class.java)
+            document.toObject(Conversation::class.java)?.copy(id = document.id)
         }
     }
 
     suspend fun handleGetFriendByMembers(members: List<String>?): User? {
-        if (members.isNullOrEmpty()) return User();
-        val friendId = members.toMutableList().apply { remove(currentUserUid) }.first()
+        if (members.isNullOrEmpty()) return null
+        val friendId = members.firstOrNull { it != currentUserUid } ?: return null
         return getUserByUid(friendId)
     }
 
@@ -50,14 +56,16 @@ class ConversationRepository @Inject constructor(
         return snapshot.toObject(User::class.java)
     }
 
-    fun observeConversations(): Flow<List<Conversation>> = callbackFlow {
-        val registration = db.collection("conversations").addSnapshotListener { snapshot, error ->
+    fun observeConversations(limit: Long = PAGE_SIZE): Flow<List<Conversation>> = callbackFlow {
+        val query = db.collection("conversations").whereArrayContains("members", currentUserUid)
+            .orderBy("lastUpdate", Query.Direction.DESCENDING).limit(limit)
+        val registration = query.addSnapshotListener { snapshot, error ->
             if (error != null) {
-                close(error)
+                Timber.e(error, "Error observing conversations")
                 return@addSnapshotListener
             }
-            val conversations = snapshot?.documents?.mapNotNull {
-                it.toObject(Conversation::class.java)
+            val conversations = snapshot?.documents?.mapNotNull { document ->
+                document.toObject(Conversation::class.java)?.copy(id = document.id)
             } ?: emptyList()
 
             trySend(conversations)
@@ -65,6 +73,34 @@ class ConversationRepository @Inject constructor(
 
         awaitClose {
             registration.remove()
+        }
+    }
+
+    suspend fun searchConversation(keyword: String): List<SearchMessage> {
+        val snapshot = db.collectionGroup("messages").orderBy("content").startAt(keyword)
+            .endAt(keyword + "\uf8ff").limit(50).get().await()
+        val sortedDocs = snapshot.documents.sortedByDescending {
+            it.toObject(Message::class.java)?.createdAt
+        }
+        Timber.d(sortedDocs.toString())
+        val conversationsGrouped = sortedDocs.groupBy { it.reference.parent.parent }
+        val semaphore = Semaphore(20)
+
+        return coroutineScope {
+            conversationsGrouped.map { (conversationRef, docs) ->
+                async {
+                    semaphore.withPermit {
+                        val messages = docs.mapNotNull { it.toObject(Message::class.java) }
+                        val conversation =
+                            conversationRef?.get()?.await()?.toObject(Conversation::class.java)
+                                ?: return@withPermit null
+                        val friend =
+                            handleGetFriendByMembers(conversation.members) ?: return@withPermit null
+
+                        SearchMessage(conversationRef, messages, friend)
+                    }
+                }
+            }.awaitAll().filterNotNull()
         }
     }
 }
