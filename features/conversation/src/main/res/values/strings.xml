@@ -6,4 +6,5 @@
     <string name="you_last_message">Bạn: %1$s</string>
     <string name="Cancel">Hủy</string>
     <string name="message_match">%1$s tin nhắn phù hợp</string>
+    <string name="conversation_not_found">Cuộc hội thoại không tồn tại</string>
 </resources>

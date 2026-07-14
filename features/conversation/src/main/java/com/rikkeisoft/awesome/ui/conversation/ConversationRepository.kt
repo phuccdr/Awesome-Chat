@@ -95,9 +95,9 @@ class ConversationRepository @Inject constructor(
                         val conversation =
                             conversationRef?.get()?.await()?.toObject(Conversation::class.java)
                                 ?: return@withPermit null
+                        if (!conversation.members.contains(currentUserUid)) return@withPermit null
                         val friend =
                             handleGetFriendByMembers(conversation.members) ?: return@withPermit null
-
                         SearchMessage(conversationRef, messages, friend)
                     }
                 }

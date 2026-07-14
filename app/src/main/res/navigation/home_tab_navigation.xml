@@ -5,6 +5,5 @@
     app:startDestination="@+id/conversations_graph">
     <include app:graph="@navigation/conversation_navigation" />
     <include app:graph="@navigation/friends_navigation" />
-
     <include app:graph="@navigation/profile_navigation" />
 </navigation>

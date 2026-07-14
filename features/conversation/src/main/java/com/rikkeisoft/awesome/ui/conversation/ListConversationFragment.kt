@@ -32,7 +32,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ListConversationFragment :
-    BaseFragment<FragmentListConversationBinding, ListConversationViewModel>(R.layout.fragment_list_conversation
+    BaseFragment<FragmentListConversationBinding, ListConversationViewModel>(
+        R.layout.fragment_list_conversation
     ) {
     val PRELOAD_CONVERSATION = 5
     private var adapterConversation: ListConversationAdapter? = null
@@ -50,13 +51,14 @@ class ListConversationFragment :
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun setupSearchTextInput(){
+    private fun setupSearchTextInput() {
         binding.apply {
             edtSearch.setOnFocusChangeListener { _, hasFocus ->
                 viewModel.setSearching(true)
             }
             edtSearch.doAfterTextChanged { text ->
                 viewModel.onSearch(text.toString())
+                Timber.tag("SearchConversation").d(text.toString())
                 edtSearch.setCompoundDrawablesWithIntrinsicBounds(
                     edtSearch.compoundDrawables[0], null, if (text.isNullOrBlank()) {
                         null
@@ -85,9 +87,9 @@ class ListConversationFragment :
     }
 
     private fun initAdapter() {
-        adapterConversation = ListConversationAdapter{conversationId ->
+        adapterConversation = ListConversationAdapter { conversationId ->
             val data = Bundle().apply {
-                putString(CONVERSATION_ID , conversationId)
+                putString(CONVERSATION_ID, conversationId)
             }
             appNavigator.openListConversationToChat(data)
         }
@@ -102,17 +104,12 @@ class ListConversationFragment :
 
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    // FIX: Chỉ xử lý khi cuộn xuống và danh sách có dữ liệu
                     if (dy <= 0) return
-                    
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val totalItemCount = layoutManager.itemCount
                     val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-                    if (!viewModel.isLoadingNextConversation.value && 
-                        viewModel.hasMoreData && 
-                        totalItemCount > 0 && 
-                        lastVisibleItem >= totalItemCount - PRELOAD_CONVERSATION) {
+                    if (!viewModel.isLoadingNextConversation.value && viewModel.hasMoreData && totalItemCount > 0 && lastVisibleItem >= totalItemCount - PRELOAD_CONVERSATION) {
                         viewModel.loadNextPageConversations()
                     }
                 }
@@ -136,23 +133,25 @@ class ListConversationFragment :
                     }
                 }
                 launch {
-                    viewModel.resultSearch.collect { results ->
-                        adapterSearch?.submitList(results)
-                        val isSearching = !binding.edtSearch.text.isNullOrBlank()
-                        Timber.d((isSearching && results.isEmpty()).toString())
-                        binding.icNoResult.isVisible = isSearching && results.isEmpty()
-                        binding.tvNoResult.isVisible = isSearching && results.isEmpty()
+                    viewModel.resultSearch.collect { state ->
+                        adapterSearch?.submitList(state.results)
+                        
+                        val currentText = binding.edtSearch.text.toString()
+                        val shouldShowNoResult = currentText.isNotBlank() && state.results.isEmpty()
+                        
+                        binding.icNoResult.isVisible = shouldShowNoResult
+                        binding.tvNoResult.isVisible = shouldShowNoResult
                     }
                 }
-                launch{
+                launch {
                     viewModel.isSearching.collect { isSearching ->
-                        if(isSearching){
-                            binding.apply{
+                        if (isSearching) {
+                            binding.apply {
                                 rvConversations.visibility = View.GONE
                                 groupSearchMessage.isVisible = true
                             }
-                        }else{
-                            binding.apply{
+                        } else {
+                            binding.apply {
                                 rvConversations.visibility = View.VISIBLE
                                 groupSearchMessage.isVisible = false
                                 edtSearch.text?.clear()
@@ -185,9 +184,7 @@ class ListConversationFragment :
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         Timber.d("onCreateView: View initialized")
         return super.onCreateView(inflater, container, savedInstanceState)

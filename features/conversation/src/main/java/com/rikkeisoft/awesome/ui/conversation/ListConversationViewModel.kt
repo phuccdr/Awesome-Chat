@@ -6,7 +6,9 @@ import com.project.core.base.BaseViewModel
 import com.project.core.model.firebase.User
 import com.project.core.utils.TimeUtils
 import com.rikkeisoft.awesome.model.ConversationItem
+import com.rikkeisoft.awesome.model.SearchMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,17 +16,25 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
+
+data class SearchUIState(
+    val results: List<SearchMessage> = emptyList(),
+    val isSearching: Boolean = false,
+    val lastUpdate: Long = System.currentTimeMillis()
+)
 
 @HiltViewModel
 class ListConversationViewModel @Inject constructor(
@@ -47,18 +57,19 @@ class ListConversationViewModel @Inject constructor(
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val resultSearch = isSearching.flatMapLatest { searchMode ->
         if (searchMode) {
-            querySearch.debounce(300).distinctUntilChanged().mapLatest { keyword ->
+            querySearch.debounce(300).mapLatest { keyword ->
                 if (keyword.isBlank()) {
-                    emptyList()
+                    SearchUIState(results = emptyList(), isSearching = true)
                 } else {
-                    repo.searchConversation(keyword)
+                    val result = repo.searchConversation(keyword)
+                    SearchUIState(results = result, isSearching = true)
                 }
-            }
+            }.flowOn(Dispatchers.IO)
         } else {
             querySearch.value = ""
-            flowOf(emptyList())
+            flowOf(SearchUIState(isSearching = false))
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(500), emptyList())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(500), SearchUIState())
     val items: StateFlow<List<ConversationItem>> =
         combine(_items, _isLoadingNextConversation) { data, isLoading ->
             if (isLoading) {
@@ -73,7 +84,7 @@ class ListConversationViewModel @Inject constructor(
         viewModelScope.launch {
             limitFlow.flatMapLatest { limit ->
                 repo.observeConversations(limit)
-            }.collect { conversations ->
+            }.flowOn(Dispatchers.IO).collectLatest { conversations ->
                 _isLoadingNextConversation.value = true
                 val fetchedUiItems = mutableListOf<ConversationItem.ConversationUi>()
 
@@ -92,14 +103,10 @@ class ListConversationViewModel @Inject constructor(
                             )
                             emit(conversationUI)
                         }
-                    }.collect { uiItem ->
+                    }.flowOn(Dispatchers.IO).collect { uiItem ->
                         fetchedUiItems.add(uiItem)
                     }
-                val sortedUiItems = conversations.mapNotNull { conv ->
-                    fetchedUiItems.find { it.id == conv.id }
-                }
-
-                _items.value = sortedUiItems
+                _items.value = fetchedUiItems
                 hasMoreData = conversations.size.toLong() >= limitFlow.value
                 _isLoadingNextConversation.value = false
             }
@@ -113,6 +120,7 @@ class ListConversationViewModel @Inject constructor(
 
     fun onSearch(keyword: String) {
         querySearch.value = keyword
+        Timber.tag("SearchConversation").d("Update querySearch: ${keyword}")
     }
 
     fun setSearching(status: Boolean) {

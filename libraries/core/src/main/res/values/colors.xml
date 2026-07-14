@@ -14,19 +14,19 @@
     <color name="background_common">@color/white</color>
     <color name="background_color_white">@color/white</color>
     <color name="background_color_gray">#EFEFF4</color>
-    <color name="background_bottom_nav">#FFF6F6F6</color>
+    <color name="background_color_gray_secondary">#FFF6F6F6</color>
     <color name="start_color_btn_common">#087EFF</color>
     <color name="end_color_btn_common">#05E8BA</color>
+    <color name="color_hint_edit_text">#FF333333</color>
+    <color name="background_color_message">#0D393939</color>
 
-    <color name="color_hint_edit_text">#333333</color>
-
-    //Surface
+    <!--Surface-->
     <color name="main_color">#FF4356B4</color>
     <color name="start_gradient_color">#FF4356B4</color>
     <color name="end_gradient_color">#FF3DCFCF</color>
     <color name="button_disable">#FFCACACA</color>
 
-    //Text
+    <!--Text-->
     <color name="text_primary">#FF000000</color>
     <color name="text_secondary">#FF4356B4</color>
     <color name="text_white">#FFFFFFFF</color>
