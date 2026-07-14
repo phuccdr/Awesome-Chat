@@ -7,12 +7,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.loadImage
 import com.project.core.utils.resource.ResourceUtils
+import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.conversation.R
 import com.rikkeisoft.awesome.conversation.databinding.ItemConversationBinding
 import com.rikkeisoft.awesome.conversation.databinding.ItemLoadingFooterBinding
 import com.rikkeisoft.awesome.model.ConversationItem
 
-class ListConversationAdapter :
+class ListConversationAdapter(private val onConversationClick: (conversationId: String) -> Unit) :
     ListAdapter<ConversationItem, RecyclerView.ViewHolder>(ConversationDiffUtil()) {
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
@@ -41,7 +42,7 @@ class ListConversationAdapter :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         if (holder is ConversationViewHolder && item is ConversationItem.ConversationUi) {
-            holder.bind(item)
+            holder.bind(item, onConversationClick)
         }
     }
 
@@ -50,7 +51,10 @@ class ListConversationAdapter :
 
     class ConversationViewHolder(private val binding: ItemConversationBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ConversationItem.ConversationUi) {
+        fun bind(item: ConversationItem.ConversationUi, onConversationClick: (String) -> Unit) {
+            binding.root.setOnSafeClickListener {
+                onConversationClick(item.id)
+            }
             if (item.unreadMessageCount > 0) {
                 binding.frameAvatarUnread.visibility = View.VISIBLE
                 binding.ivAvatar.visibility = View.INVISIBLE

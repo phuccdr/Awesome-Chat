@@ -16,6 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.base.fragment.BaseFragment
+import com.project.core.navigationComponent.BundleKeys.CONVERSATION_ID
 import com.project.core.utils.prefetcher.bindToLifecycle
 import com.project.core.utils.prefetcher.setupWithPrefetchViewPool
 import com.project.core.utils.resource.ResourceUtils
@@ -84,7 +85,12 @@ class ListConversationFragment :
     }
 
     private fun initAdapter() {
-        adapterConversation = ListConversationAdapter()
+        adapterConversation = ListConversationAdapter{conversationId ->
+            val data = Bundle().apply {
+                putString(CONVERSATION_ID , conversationId)
+            }
+            appNavigator.openListConversationToChat(data)
+        }
         binding.rvConversations.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = adapterConversation
@@ -133,6 +139,7 @@ class ListConversationFragment :
                     viewModel.resultSearch.collect { results ->
                         adapterSearch?.submitList(results)
                         val isSearching = !binding.edtSearch.text.isNullOrBlank()
+                        Timber.d((isSearching && results.isEmpty()).toString())
                         binding.icNoResult.isVisible = isSearching && results.isEmpty()
                         binding.tvNoResult.isVisible = isSearching && results.isEmpty()
                     }

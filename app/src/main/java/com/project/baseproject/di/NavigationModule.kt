@@ -2,6 +2,8 @@ package com.project.baseproject.di
 
 import com.project.baseproject.navigation.AppNavigation
 import com.project.baseproject.navigation.AppNavigatorImpl
+import com.project.baseproject.navigation.HomeNavigation
+import com.project.baseproject.navigation.HomeNavigatorImpl
 import com.project.core.navigationComponent.BaseNavigator
 import com.project.setting.DemoNavigation
 import com.rikkeisoft.awesome.AuthNavigation
@@ -33,5 +35,10 @@ abstract class NavigationModule {
 
     @Binds
     @ActivityScoped
-    abstract fun provideConversationNavigation(navigation: AppNavigatorImpl): ConversationNavigation
+    abstract fun provideHomeAppNavigation(navigation: HomeNavigatorImpl): HomeNavigation
+
+    @Binds
+    @ActivityScoped
+    abstract fun provideConversationNavigation(navigation: HomeNavigatorImpl): ConversationNavigation
+
 }

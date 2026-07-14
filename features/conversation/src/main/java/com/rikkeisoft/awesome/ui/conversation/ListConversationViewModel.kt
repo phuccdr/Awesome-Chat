@@ -47,7 +47,7 @@ class ListConversationViewModel @Inject constructor(
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val resultSearch = isSearching.flatMapLatest { searchMode ->
         if (searchMode) {
-            querySearch.debounce(500).distinctUntilChanged().mapLatest { keyword ->
+            querySearch.debounce(300).distinctUntilChanged().mapLatest { keyword ->
                 if (keyword.isBlank()) {
                     emptyList()
                 } else {

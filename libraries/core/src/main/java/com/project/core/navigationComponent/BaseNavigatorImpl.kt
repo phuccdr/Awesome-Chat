@@ -13,7 +13,7 @@ abstract class BaseNavigatorImpl : BaseNavigator {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             run {
-                Timber.tag("Back stack Navigation").d(destination.navigatorName)
+                Timber.tag("Back stack Navigation").d(destination.label.toString())
             }
         }
     }
