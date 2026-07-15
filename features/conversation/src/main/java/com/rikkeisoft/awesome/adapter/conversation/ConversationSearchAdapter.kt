@@ -1,4 +1,4 @@
-package com.rikkeisoft.awesome.adapter
+package com.rikkeisoft.awesome.adapter.conversation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

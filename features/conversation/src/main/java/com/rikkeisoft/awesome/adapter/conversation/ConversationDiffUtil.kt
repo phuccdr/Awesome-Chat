@@ -1,4 +1,4 @@
-package com.rikkeisoft.awesome.adapter
+package com.rikkeisoft.awesome.adapter.conversation
 
 import androidx.recyclerview.widget.DiffUtil
 import com.rikkeisoft.awesome.model.ConversationItem

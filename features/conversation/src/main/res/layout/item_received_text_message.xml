@@ -4,7 +4,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imvAvatar"
@@ -14,25 +14,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.rikkeisoft.awesome.custom.MessageChatTextView
             android:id="@+id/tvMessage"
             style="@style/AppText.Lato.Medium.16"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="32dp"
             android:background="@drawable/bg_corner30_white"
             android:backgroundTint="@color/background_color_message"
-            android:paddingVertical="16dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="24dp"
-            android:text="Ld ggg ggHoàng giaosdsdsdsd chưa??"
+            android:padding="16dp"
+            android:text="Ld ggg ggHoàng giaosdsdđsdsdsdsdsdsdsdsdsdssdsd chưa??"
             android:textColor="@color/text_primary"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/imvAvatar"
             app:layout_constraintTop_toTopOf="@id/imvAvatar"
-            app:layout_constraintWidth_default="wrap" />
+            app:layout_constraintWidth_default="wrap"
+            app:layout_constraintWidth_percent="0.75" />
 
         <TextView
             android:id="@+id/tvTime"

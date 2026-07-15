@@ -1,4 +1,4 @@
-package com.rikkeisoft.awesome.adapter
+package com.rikkeisoft.awesome.adapter.conversation
 
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +13,7 @@ import com.rikkeisoft.awesome.conversation.databinding.ItemConversationBinding
 import com.rikkeisoft.awesome.conversation.databinding.ItemLoadingFooterBinding
 import com.rikkeisoft.awesome.model.ConversationItem
 
-class ListConversationAdapter(private val onConversationClick: (conversationId: String) -> Unit) :
+class ConversationAdapter(private val onConversationClick: (conversationId: String) -> Unit) :
     ListAdapter<ConversationItem, RecyclerView.ViewHolder>(ConversationDiffUtil()) {
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {

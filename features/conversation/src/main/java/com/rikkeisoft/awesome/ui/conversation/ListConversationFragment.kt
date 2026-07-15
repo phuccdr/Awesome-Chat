@@ -21,8 +21,8 @@ import com.project.core.utils.prefetcher.bindToLifecycle
 import com.project.core.utils.prefetcher.setupWithPrefetchViewPool
 import com.project.core.utils.resource.ResourceUtils
 import com.rikkeisoft.awesome.ConversationNavigation
-import com.rikkeisoft.awesome.adapter.ConversationSearchAdapter
-import com.rikkeisoft.awesome.adapter.ListConversationAdapter
+import com.rikkeisoft.awesome.adapter.conversation.ConversationAdapter
+import com.rikkeisoft.awesome.adapter.conversation.ConversationSearchAdapter
 import com.rikkeisoft.awesome.conversation.R
 import com.rikkeisoft.awesome.conversation.databinding.FragmentListConversationBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +36,7 @@ class ListConversationFragment :
         R.layout.fragment_list_conversation
     ) {
     val PRELOAD_CONVERSATION = 5
-    private var adapterConversation: ListConversationAdapter? = null
+    private var adapterConversation: ConversationAdapter? = null
     private var adapterSearch: ConversationSearchAdapter? = null
     private val viewModel: ListConversationViewModel by viewModels()
     override fun getVM() = viewModel
@@ -87,7 +87,7 @@ class ListConversationFragment :
     }
 
     private fun initAdapter() {
-        adapterConversation = ListConversationAdapter { conversationId ->
+        adapterConversation = ConversationAdapter { conversationId ->
             val data = Bundle().apply {
                 putString(CONVERSATION_ID, conversationId)
             }
@@ -135,10 +135,9 @@ class ListConversationFragment :
                 launch {
                     viewModel.resultSearch.collect { state ->
                         adapterSearch?.submitList(state.results)
-                        
                         val currentText = binding.edtSearch.text.toString()
                         val shouldShowNoResult = currentText.isNotBlank() && state.results.isEmpty()
-                        
+
                         binding.icNoResult.isVisible = shouldShowNoResult
                         binding.tvNoResult.isVisible = shouldShowNoResult
                     }
