@@ -41,7 +41,7 @@ class ReceivedImageMessageViewHolder(
                 if (item.isSelected || item.messagePosition == MessagePosition.BOTTOM || item.messagePosition == MessagePosition.SINGLE) View.VISIBLE else View.GONE
 
             root.setOnClickListener {
-                onMessageClick()
+                item.isSelected = !item.isSelected
             }
         }
     }

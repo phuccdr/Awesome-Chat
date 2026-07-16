@@ -3,15 +3,17 @@ package com.rikkeisoft.awesome.custom
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
+import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
+import com.project.core.utils.dp
 import com.project.core.utils.resource.ResourceUtils
 import com.rikkeisoft.awesome.model.MessagePosition
 
 class MessageChatTextView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
-    private val LARGE_RADIUS: Float = 30F
-    private val SMALL_RADIUS: Float = 2F
+    private val LARGE_RADIUS: Float = 30F.dp()
+    private val SMALL_RADIUS: Float = 2F.dp()
     private val backgroundReceiveMessageColor: Int =
         ResourceUtils.getColor(com.project.core.R.color.background_color_message)
     private val backgroundSentMessageColor: Int =
@@ -19,6 +21,13 @@ class MessageChatTextView @JvmOverloads constructor(
     private val textReceivedMessageColor =
         ResourceUtils.getColor(com.project.core.R.color.text_primary)
     private val textSentMessageColor = ResourceUtils.getColor(com.project.core.R.color.text_white)
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        (parent as? View)?.post {
+            maxWidth = ((parent as View).width * 0.75f).toInt()
+        }
+    }
 
     fun bindWithTextMessage(
         isMine: Boolean,
@@ -115,10 +124,9 @@ class MessageChatTextView @JvmOverloads constructor(
                 largeRadius
             )
         }
-
         background = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
-            setColor(backgroundColor)
+            setTint(backgroundColor)
             cornerRadii = radii
         }
     }

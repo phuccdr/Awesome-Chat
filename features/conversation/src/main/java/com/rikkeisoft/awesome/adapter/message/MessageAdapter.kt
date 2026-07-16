@@ -4,16 +4,27 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.rikkeisoft.awesome.adapter.message.viewholdermessage.*
+import com.rikkeisoft.awesome.adapter.message.viewholdermessage.HeaderTimeViewHolder
+import com.rikkeisoft.awesome.adapter.message.viewholdermessage.ReceivedImageMessageViewHolder
+import com.rikkeisoft.awesome.adapter.message.viewholdermessage.ReceivedStickerMessageViewHolder
+import com.rikkeisoft.awesome.adapter.message.viewholdermessage.ReceivedTextMessageViewHolder
+import com.rikkeisoft.awesome.adapter.message.viewholdermessage.SentImageMessageViewHolder
+import com.rikkeisoft.awesome.adapter.message.viewholdermessage.SentStickerMessageViewHolder
+import com.rikkeisoft.awesome.adapter.message.viewholdermessage.SentTextMessageViewHolder
 import com.rikkeisoft.awesome.conversation.R
-import com.rikkeisoft.awesome.conversation.databinding.*
+import com.rikkeisoft.awesome.conversation.databinding.ItemHeaderTimeMessageBinding
+import com.rikkeisoft.awesome.conversation.databinding.ItemReceivedImageMessageBinding
+import com.rikkeisoft.awesome.conversation.databinding.ItemReceivedStickerMessageBinding
+import com.rikkeisoft.awesome.conversation.databinding.ItemReceivedTextMessageBinding
+import com.rikkeisoft.awesome.conversation.databinding.ItemSentImageMessageBinding
+import com.rikkeisoft.awesome.conversation.databinding.ItemSentStickerMessageBinding
+import com.rikkeisoft.awesome.conversation.databinding.ItemSentTextMessageBinding
 import com.rikkeisoft.awesome.model.MessageItem
 
 class MessageAdapter(
     private val onMessageClick: () -> Unit,
     private val onImageClick: (imageUrl: String) -> Unit = {}
-) :
-    ListAdapter<MessageItem, RecyclerView.ViewHolder>(MessageDiffUtil()) {
+) : ListAdapter<MessageItem, RecyclerView.ViewHolder>(MessageDiffUtil()) {
     override fun getItemViewType(position: Int): Int {
         return when (val item = getItem(position)) {
             is MessageItem.TextMessage -> {
@@ -65,12 +76,16 @@ class MessageAdapter(
 
             R.layout.item_received_image_message -> {
                 val binding = ItemReceivedImageMessageBinding.inflate(inflater, parent, false)
-                ReceivedImageMessageViewHolder(binding, onImageClick = onImageClick, onMessageClick = onMessageClick)
+                ReceivedImageMessageViewHolder(
+                    binding, onImageClick = onImageClick, onMessageClick = onMessageClick
+                )
             }
 
             R.layout.item_sent_image_message -> {
                 val binding = ItemSentImageMessageBinding.inflate(inflater, parent, false)
-                SentImageMessageViewHolder(binding, onImageClick = onImageClick, onMessageClick = onMessageClick)
+                SentImageMessageViewHolder(
+                    binding, onImageClick = onImageClick, onMessageClick = onMessageClick
+                )
             }
 
             R.layout.item_header_time_message -> {
@@ -85,7 +100,7 @@ class MessageAdapter(
 
             R.layout.item_sent_sticker_message -> {
                 val binding = ItemSentStickerMessageBinding.inflate(inflater, parent, false)
-                SentStickerMessageViewHolder(binding, onMessageClick = onMessageClick)
+                SentStickerMessageViewHolder(binding)
             }
 
             else -> throw IllegalArgumentException("Invalid view type")
@@ -100,25 +115,32 @@ class MessageAdapter(
             item is MessageItem.TextMessage && holder is ReceivedTextMessageViewHolder -> {
                 holder.bind(item)
             }
+
             item is MessageItem.TextMessage && holder is SentTextMessageViewHolder -> {
                 holder.bind(item)
             }
+
             item is MessageItem.ImageMessage && holder is ReceivedImageMessageViewHolder -> {
                 holder.bind(item)
             }
+
             item is MessageItem.ImageMessage && holder is SentImageMessageViewHolder -> {
                 holder.bind(item)
             }
+
             item is MessageItem.StickerMessage && holder is ReceivedStickerMessageViewHolder -> {
                 holder.bind(item)
             }
+
             item is MessageItem.StickerMessage && holder is SentStickerMessageViewHolder -> {
                 holder.bind(item)
             }
+
             item is MessageItem.DateHeader && holder is HeaderTimeViewHolder -> {
                 holder.bind(item.time)
             }
         }
     }
 
+    fun getItemAt(position: Int) = getItem(position)
 }

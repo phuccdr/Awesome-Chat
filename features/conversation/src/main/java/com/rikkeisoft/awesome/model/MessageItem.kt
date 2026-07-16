@@ -38,12 +38,12 @@ sealed class MessageItem {
         override val avatarFriend: String = "",
         override val isMine: Boolean = false,
         override val createAt: String = "",
-        override val isSelected: Boolean = false,
+        override var isSelected: Boolean = false,
         override val messagePosition: MessagePosition,
         val imageUrls: List<String> = emptyList(),
         val createdAt: String = "",
         val senderId: String = "",
-        ) : Message(
+    ) : Message(
         id = id,
         isMine = isMine,
         avatarFriend = avatarFriend,
@@ -59,7 +59,7 @@ sealed class MessageItem {
         override val avatarFriend: String = "",
         override val isMine: Boolean = false,
         override val createAt: String = "",
-        override val isSelected: Boolean = false,
+        override var isSelected: Boolean = false,
         override val messagePosition: MessagePosition,
         val stickerId: String = "",
         val createdAt: String = "",

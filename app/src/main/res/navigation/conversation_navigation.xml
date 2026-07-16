@@ -6,7 +6,7 @@
     app:startDestination="@id/listConversationFragment">
     <fragment
         android:id="@+id/listConversationFragment"
-        android:name="com.rikkeisoft.awesome.ui.conversation.ListConversationFragment"
+        android:name="com.rikkeisoft.awesome.ui.conversation.ConversationsFragment"
         android:label="ListConversationFragment"
         tools:layout="@layout/fragment_list_conversation">
         <action

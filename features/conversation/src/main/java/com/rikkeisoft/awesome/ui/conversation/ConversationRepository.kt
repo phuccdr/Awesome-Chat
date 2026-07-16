@@ -20,29 +20,13 @@ import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
-const val PAGE_SIZE = 12L
+const val PAGE_SIZE = 20L
 
 class ConversationRepository @Inject constructor(
     auth: FirebaseAuth, private val db: FirebaseFirestore
 ) {
     private var lastDocument: DocumentSnapshot? = null
     private val currentUserUid: String = auth.currentUser?.uid ?: ""
-
-    suspend fun getNextPage(): List<Conversation> {
-        var query = db.collection("conversations").whereArrayContains("members", currentUserUid)
-            .orderBy("lastUpdate", Query.Direction.DESCENDING).limit(PAGE_SIZE)
-
-        lastDocument?.let {
-            query = query.startAfter(it)
-        }
-        val snapshot = query.get().await()
-        if (snapshot.documents.isNotEmpty()) {
-            lastDocument = snapshot.documents.last()
-        }
-        return snapshot.documents.mapNotNull { document ->
-            document.toObject(Conversation::class.java)?.copy(id = document.id)
-        }
-    }
 
     suspend fun handleGetFriendByMembers(members: List<String>?): User? {
         if (members.isNullOrEmpty()) return null

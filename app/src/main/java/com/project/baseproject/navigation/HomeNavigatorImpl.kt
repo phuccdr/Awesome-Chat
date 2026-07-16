@@ -14,4 +14,8 @@ class HomeNavigatorImpl @Inject constructor() : BaseNavigatorImpl(), Conversatio
         openScreen(R.id.action_listConversationFragment_to_chatFragment, bundle)
 
     }
+
+    override fun back() {
+        navigateUp()
+    }
 }

@@ -31,14 +31,13 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ListConversationFragment :
-    BaseFragment<FragmentListConversationBinding, ListConversationViewModel>(
-        R.layout.fragment_list_conversation
-    ) {
+class ConversationsFragment : BaseFragment<FragmentListConversationBinding, ConversationsViewModel>(
+    R.layout.fragment_list_conversation
+) {
     val PRELOAD_CONVERSATION = 5
     private var adapterConversation: ConversationAdapter? = null
     private var adapterSearch: ConversationSearchAdapter? = null
-    private val viewModel: ListConversationViewModel by viewModels()
+    private val viewModel: ConversationsViewModel by viewModels()
     override fun getVM() = viewModel
 
     @Inject

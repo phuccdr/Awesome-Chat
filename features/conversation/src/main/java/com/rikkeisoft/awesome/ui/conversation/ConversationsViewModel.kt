@@ -37,7 +37,7 @@ data class SearchUIState(
 )
 
 @HiltViewModel
-class ListConversationViewModel @Inject constructor(
+class ConversationsViewModel @Inject constructor(
     firebaseAuth: FirebaseAuth, val repo: ConversationRepository
 ) : BaseViewModel() {
     private val CONCURRENCY_COROUTINE: Int = 5

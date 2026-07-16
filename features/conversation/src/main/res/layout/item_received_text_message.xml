@@ -20,15 +20,20 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:background="@drawable/bg_corner30_white"
-            android:backgroundTint="@color/background_color_message"
             android:padding="16dp"
-            android:text="Ld ggg ggHoàng giaosdsdđsdsdsdsdsdsdsdsdsdssdsd chưa??"
+            android:text="Ld sdsd chưa??"
             android:textColor="@color/text_primary"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/imvAvatar"
             app:layout_constraintTop_toTopOf="@id/imvAvatar"
-            app:layout_constraintWidth_default="wrap"
-            app:layout_constraintWidth_percent="0.75" />
+            app:layout_constraintWidth_default="wrap" />
+
+        <!--        <androidx.constraintlayout.widget.Guideline-->
+        <!--            android:id="@+id/guideline75"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:orientation="vertical"-->
+        <!--            app:layout_constraintGuide_percent="0.75" />-->
 
         <TextView
             android:id="@+id/tvTime"
