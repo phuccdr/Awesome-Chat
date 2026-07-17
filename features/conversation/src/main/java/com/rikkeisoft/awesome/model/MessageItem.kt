@@ -1,35 +1,41 @@
 package com.rikkeisoft.awesome.model
 
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentId
+import java.time.LocalDate
+
 sealed class MessageItem {
     abstract class Message(
-        open val id: String = "",
+        @DocumentId open val id: String = "",
         open val isMine: Boolean = false,
         open val avatarFriend: String = "",
-        open val createAt: String = "",
+        open val createdAt: Timestamp? = null,
         open val status: SendStatus = SendStatus.SENT,
         open val isSelected: Boolean = false,
-        open val messagePosition: MessagePosition = MessagePosition.SINGLE
+        open val messagePosition: MessagePosition = MessagePosition.SINGLE,
+        open val senderId: String = ""
     ) : MessageItem()
 
     data class TextMessage(
         override val id: String = "",
         override val isMine: Boolean = false,
         override val avatarFriend: String = "",
-        override val createAt: String = "",
+        override val createdAt: Timestamp? = null,
         override val status: SendStatus = SendStatus.SENT,
         override val isSelected: Boolean = false,
         val content: String = "",
         val isSeen: Boolean = true,
-        val senderId: String = "",
+        override val senderId: String = "",
         override val messagePosition: MessagePosition = MessagePosition.SINGLE,
     ) : Message(
         id = id,
         isMine = isMine,
         avatarFriend = avatarFriend,
-        createAt = createAt,
+        createdAt = createdAt,
         status = status,
         isSelected = isSelected,
-        messagePosition = messagePosition
+        messagePosition = messagePosition,
+        senderId = senderId
     )
 
     data class ImageMessage(
@@ -37,20 +43,20 @@ sealed class MessageItem {
         override val status: SendStatus = SendStatus.SENT,
         override val avatarFriend: String = "",
         override val isMine: Boolean = false,
-        override val createAt: String = "",
+        override val createdAt: Timestamp? = null,
         override var isSelected: Boolean = false,
         override val messagePosition: MessagePosition,
         val imageUrls: List<String> = emptyList(),
-        val createdAt: String = "",
-        val senderId: String = "",
+        override val senderId: String = "",
     ) : Message(
         id = id,
         isMine = isMine,
         avatarFriend = avatarFriend,
-        createAt = createAt,
+        createdAt = createdAt,
         status = status,
         isSelected = isSelected,
-        messagePosition = messagePosition
+        messagePosition = messagePosition,
+        senderId = senderId
     )
 
     data class StickerMessage(
@@ -58,24 +64,24 @@ sealed class MessageItem {
         override val status: SendStatus = SendStatus.SENT,
         override val avatarFriend: String = "",
         override val isMine: Boolean = false,
-        override val createAt: String = "",
+        override val createdAt: Timestamp? = null,
         override var isSelected: Boolean = false,
         override val messagePosition: MessagePosition,
         val stickerId: String = "",
-        val createdAt: String = "",
-        val senderId: String = "",
+        override val senderId: String = "",
     ) : Message(
         id = id,
         isMine = isMine,
         avatarFriend = avatarFriend,
-        createAt = createAt,
+        createdAt = createdAt,
         status = status,
         isSelected = isSelected,
-        messagePosition = messagePosition
+        messagePosition = messagePosition,
+        senderId = senderId
     )
 
     data class DateHeader(
-        val time: String,
+        val date: LocalDate,
     ) : MessageItem()
 
 }

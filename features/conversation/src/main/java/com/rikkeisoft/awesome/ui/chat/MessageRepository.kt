@@ -22,7 +22,7 @@ import javax.inject.Inject
 class MessageRepository @Inject constructor(
     private val db: FirebaseFirestore, private val auth: FirebaseAuth
 ) {
-    val PAGE_SIZE = 20L
+    val PAGE_SIZE = 12L
     private var lastMessage: DocumentSnapshot? = null
     private var firstMessage: DocumentSnapshot? = null
     suspend fun getConversation(conversationId: String): ConversationChat =
@@ -73,26 +73,30 @@ class MessageRepository @Inject constructor(
     fun observeLatestMessages(
         conversationId: String
     ): Flow<Message> = callbackFlow {
-        val registration =
-            db.collection("conversations").document(conversationId).collection("messages")
-                .orderBy("createdAt", Query.Direction.ASCENDING).startAfter(lastMessage)
-                .limitToLast(PAGE_SIZE).addSnapshotListener { snapshot, error ->
-                    if (error != null) {
-                        close(error)
-                        return@addSnapshotListener
-                    }
-
-                    snapshot?.documentChanges?.forEach { change ->
-                        if (change.type == DocumentChange.Type.ADDED) {
-                            val message = change.document.toObject(Message::class.java)
-                            Timber.tag("Chat Message").d("MessageRepository observeLatestMessages add: $message")
-                            trySend(message)
-                        }
-                    }
+        Timber.tag("ChatMessage").d("MessageRepository: observerLastestMessage $lastMessage")
+        val query = db.collection("conversations").document(conversationId).collection("messages")
+            .orderBy("createdAt", Query.Direction.ASCENDING)
+        if (lastMessage != null) {
+            query.startAfter(lastMessage)
+        }
+        val observer = query.addSnapshotListener { snapshot, error ->
+            Timber.d("snapshot = ${snapshot?.size()} error = $error")
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
+            }
+            snapshot?.documentChanges?.forEach { change ->
+                if (change.type == DocumentChange.Type.ADDED) {
+                    val message = change.document.toObject(Message::class.java)
+                    Timber.tag("Chat Message")
+                        .d("MessageRepository observeLatestMessages add: $message")
+                    trySend(message)
                 }
+            }
+        }
 
         awaitClose {
-            registration.remove()
+            observer.remove()
         }
     }
 
@@ -100,21 +104,21 @@ class MessageRepository @Inject constructor(
         if (conversationId == null) return emptyList()
         return withContext(Dispatchers.IO) {
             try {
-                val query = db.collection("conversations").document(conversationId).collection("messages")
-                    .orderBy("createdAt", Query.Direction.ASCENDING)
-                
+                val query =
+                    db.collection("conversations").document(conversationId).collection("messages")
+                        .orderBy("createdAt", Query.Direction.ASCENDING)
                 val finalQuery = if (firstMessage != null) {
                     query.endBefore(firstMessage!!)
                 } else {
                     query
                 }
-                
                 val snapshot = finalQuery.limitToLast(PAGE_SIZE).get().await()
-                
+
                 if (snapshot.documents.isNotEmpty()) {
                     firstMessage = snapshot.documents.firstOrNull()
                 }
-                Timber.tag("Chat Message").d("MessageRepository loadNextPage add: ${snapshot.toObjects(Message::class.java)}")
+                Timber.tag("Chat Message")
+                    .d("MessageRepository loadNextPage add: ${snapshot.toObjects(Message::class.java)}")
                 snapshot.toObjects(Message::class.java)
             } catch (e: Exception) {
                 Timber.e(e)
@@ -122,21 +126,4 @@ class MessageRepository @Inject constructor(
             }
         }
     }
-
-//    fun observeMessages(conversationId: String, limit: Long = PAGE_SIZE): Flow<List<Message>> =
-//        callbackFlow {
-//            val query =
-//                db.collection("conversations").document(conversationId).collection("messages")
-//                    .orderBy("createdAt", Query.Direction.DESCENDING).limit(limit)
-//            val registration = query.addSnapshotListener { snapshot, error ->
-//                if (error != null) {
-//                    close(error)
-//                    return@addSnapshotListener
-//                }
-//                val messages = snapshot?.toObjects(Message::class.java)?.reversed() ?: emptyList()
-//                Timber.d("observeMessages $messages")
-//                trySend(messages)
-//            }
-//            awaitClose { registration.remove() }
-//        }
 }

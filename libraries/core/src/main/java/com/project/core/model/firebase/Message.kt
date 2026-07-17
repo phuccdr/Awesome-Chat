@@ -1,9 +1,10 @@
 package com.project.core.model.firebase
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentId
 
 data class Message(
-    val id: String = "",
+    @DocumentId val id: String = "",
     val content: String = "",
     val createdAt: Timestamp? = null,
     val imageUrl: String? = null,

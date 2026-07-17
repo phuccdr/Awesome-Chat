@@ -2,11 +2,14 @@ package com.rikkeisoft.awesome.ui.chat
 
 import com.project.core.model.firebase.Message
 import com.project.core.model.firebase.MessageType
-import com.project.core.utils.TimeUtils
+import com.project.core.utils.toLocalDate
 import com.rikkeisoft.awesome.model.MessageItem
 import com.rikkeisoft.awesome.model.MessagePosition
+import java.time.LocalDate
 
 object MessageToMessageItemMapper {
+
+
 
     /**
      * Map list of messages to message items with date headers and proper positioning
@@ -25,7 +28,7 @@ object MessageToMessageItemMapper {
         val result = mutableListOf<MessageItem>()
 
         // Group messages by date
-        val messagesByDate: LinkedHashMap<String,List<Message>> = groupMessagesByDate(messages)
+        val messagesByDate: LinkedHashMap<LocalDate,List<Message>> = groupMessagesByDate(messages)
 
         messagesByDate.forEach { (date, messagesOfDate) ->
             // Add date header
@@ -69,20 +72,23 @@ object MessageToMessageItemMapper {
 
             result.addAll(messageItems)
         }
-
         return result
     }
+
+
+
 
     /**
      * Group messages by date using TimeUtils format
      */
 
-    private fun groupMessagesByDate(messages: List<Message>): LinkedHashMap<String, List<Message>> {
-        val grouped = LinkedHashMap<String, MutableList<Message>>()
+    private fun groupMessagesByDate(messages: List<Message>): LinkedHashMap<LocalDate, List<Message>> {
+        val grouped = LinkedHashMap<LocalDate, MutableList<Message>>()
 
         messages.forEach { message ->
-            val formattedDate = TimeUtils.format(message.createdAt)
-            grouped.getOrPut(formattedDate) { mutableListOf() }.add(message)
+            val day = message.createdAt?.toLocalDate()
+            day?.let{
+            grouped.getOrPut(it) { mutableListOf() }.add(message)}
         }
         return LinkedHashMap(grouped)
     }
@@ -111,14 +117,13 @@ object MessageToMessageItemMapper {
     /**
      * Map single Message to MessageItem based on its type
      */
-    private fun mapMessageToMessageItem(
+     fun mapMessageToMessageItem(
         message: Message,
         currentUserId: String,
         friendAvatar: String,
-        position: MessagePosition
+        position: MessagePosition = MessagePosition.SINGLE
     ): MessageItem.Message {
         val isMine = message.senderId == currentUserId
-        val formattedTime = TimeUtils.format(message.createdAt)
         val senderId = message.senderId
 
         return when (message.type) {
@@ -128,10 +133,9 @@ object MessageToMessageItemMapper {
                     id = message.id,
                     isMine = isMine,
                     avatarFriend = if (isMine) "" else friendAvatar,
-                    createAt = formattedTime,
+                    createdAt = message.createdAt,
                     messagePosition = position,
                     imageUrls = imageUrls,
-                    createdAt = formattedTime,
                     senderId = senderId
                 )
             }
@@ -142,7 +146,7 @@ object MessageToMessageItemMapper {
                     id = message.id,
                     isMine = isMine,
                     avatarFriend = if (isMine) "" else friendAvatar,
-                    createAt = formattedTime,
+                    createdAt = message.createdAt,
                     content = message.content,
                     isSeen = message.seen,
                     senderId = senderId,
@@ -156,7 +160,7 @@ object MessageToMessageItemMapper {
                     id = message.id,
                     isMine = isMine,
                     avatarFriend = if (isMine) "" else friendAvatar,
-                    createAt = formattedTime,
+                    createdAt = message.createdAt,
                     content = message.content,
                     isSeen = message.seen,
                     senderId = senderId,

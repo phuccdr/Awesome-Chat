@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import com.project.core.R
 
-const val CONFIRM_DIALOG_FRAGMENT = "ConfirmDialogFragment"
+const val CONFIRM_DIALOG_FRAGMENTxoa123 = "ConfirmDialogFragment"
 
 class ConfirmDialogFragment : BaseDialogFragment() {
     var dialogListener: ConfirmDialogListener? = null

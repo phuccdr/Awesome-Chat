@@ -8,15 +8,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.project.core.adapter.OnItemClickListener
-import com.project.core.base.dialog.CONFIRM_DIALOG_FRAGMENT
+import com.project.core.base.dialog.CONFIRM_DIALOG_FRAGMENTxoa123
 import com.project.core.base.dialog.ConfirmDialogListener
-import com.project.core.base.dialog.NOTICE_DIALOG_FRAGMENT
+import com.project.core.base.dialog.NOTICE_DIALOG_FRAGMENTxoa123
 import com.project.core.base.dialog.NoticeDialog
 import com.project.core.base.dialog.NoticeDialogListener
 import com.project.core.base.fragment.BaseFragment
-import com.project.core.utils.prefetcher.bindToLifecycle
-import com.project.core.utils.prefetcher.setupWithPrefetchViewPool
-import com.project.core.utils.setOnSafeClickListener
+import com.project.core.utils.prefetcher.bindToLifecyclexoa123
+import com.project.core.utils.prefetcher.setupWithPrefetchViewPoolxoa123
+import com.project.core.utils.setOnSafeClickListenerxoa123
 import com.project.core.utils.toast
 import com.project.permission.requestPermission
 import com.project.setting.DemoNavigation
@@ -75,12 +75,12 @@ class HomePageFragment :
             setHasFixedSize(true)
             adapter = adapterHomePage
 
-            setupWithPrefetchViewPool {
-                setPrefetchBound(viewType = R.layout.item_album_layout, count = 6)
-                setPrefetchBound(viewType = R.layout.item_song_layout, count = 16)
-                setPrefetchBound(viewType = R.layout.item_home_slide_layout, count = 1)
-                setPrefetchBound(viewType = R.layout.item_title_home_layout, count = 2)
-            }.bindToLifecycle(viewLifecycleOwner)
+            setupWithPrefetchViewPoolxoa123 {
+                setPrefetchBoundxoa123(viewType = R.layout.item_album_layout, count = 6)
+                setPrefetchBoundxoa123(viewType = R.layout.item_song_layout, count = 16)
+                setPrefetchBoundxoa123(viewType = R.layout.item_home_slide_layout, count = 1)
+                setPrefetchBoundxoa123(viewType = R.layout.item_title_home_layout, count = 2)
+            }.bindToLifecyclexoa123(viewLifecycleOwner)
 
         }
     }
@@ -101,19 +101,19 @@ class HomePageFragment :
     override fun setOnClick() {
         super.setOnClick()
 
-        binding.btn.setOnSafeClickListener {
+        binding.btn.setOnSafeClickListenerxoa123 {
             appNavigation.openDemoViewPager()
         }
 
-        binding.btnDialog.setOnSafeClickListener {
-            if (childFragmentManager.findFragmentByTag(NOTICE_DIALOG_FRAGMENT) == null) {
+        binding.btnDialog.setOnSafeClickListenerxoa123 {
+            if (childFragmentManager.findFragmentByTag(NOTICE_DIALOG_FRAGMENTxoa123) == null) {
                 val demoDialog = NoticeDialog.getInstance("Title")
                 demoDialog.dialogListener = this
-                demoDialog.show(childFragmentManager, CONFIRM_DIALOG_FRAGMENT)
+                demoDialog.show(childFragmentManager, CONFIRM_DIALOG_FRAGMENTxoa123)
             }
         }
 
-        binding.btnPermission.setOnSafeClickListener {
+        binding.btnPermission.setOnSafeClickListenerxoa123 {
             requestPermission(123, Manifest.permission.CAMERA)
         }
     }

@@ -1,8 +1,8 @@
 package com.project.core.utils.prefetcher
 
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.attachToPreventFromClearing
-import androidx.recyclerview.widget.factorInCreateTime
+import androidx.recyclerview.widget.attachToPreventFromClearingxoa123
+import androidx.recyclerview.widget.factorInCreateTimexoa123
 import kotlin.math.max
 
 /**
@@ -18,7 +18,7 @@ class PrefetchViewPool(
     private val recycledViewsBounds = mutableMapOf<Int, Int>()
 
     init {
-        attachToPreventFromClearing()
+        attachToPreventFromClearingxoa123()
         viewHolderSupplier.viewHolderConsumer = ::putViewFromSupplier
         viewHolderSupplier.start()
     }
@@ -30,7 +30,7 @@ class PrefetchViewPool(
      * @param count — required amount of the view holders; it is used as max amount of recycled views of [viewType]
      * in case it exceeds [defaultMaxRecycledViews]
      */
-    fun setPrefetchBound(viewType: Int, count: Int) {
+    fun setPrefetchBoundxoa123(viewType: Int, count: Int) {
         recycledViewsBounds[viewType] = max(defaultMaxRecycledViews, count)
         viewHolderSupplier.setPrefetchBound(viewType, count)
     }
@@ -59,7 +59,7 @@ class PrefetchViewPool(
      * item, created in [viewHolderSupplier], into the pool
      */
     private fun putViewFromSupplier(scrap: RecyclerView.ViewHolder, creationTimeNanos: Long) {
-        factorInCreateTime(scrap.itemViewType, creationTimeNanos)
+        factorInCreateTimexoa123(scrap.itemViewType, creationTimeNanos)
         putRecycledView(scrap)
     }
 

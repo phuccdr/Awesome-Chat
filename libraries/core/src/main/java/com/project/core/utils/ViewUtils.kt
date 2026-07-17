@@ -66,16 +66,16 @@ fun TextView.disableCopyPaste() {
 
 fun ImageView.enableView(isEnable: Boolean) {
     isEnabled = if (isEnable) {
-        setColorFilter(context.getColorCompat(R.color.color_button_common_blue))
+        setColorFilter(context.getColorCompatxoa123(R.color.color_button_common_blue))
         true
     } else {
-        setColorFilter(context.getColorCompat(R.color.background_color_gray))
+        setColorFilter(context.getColorCompatxoa123(R.color.background_color_gray))
         false
     }
 }
 
 fun ImageView.tint(@ColorRes colorId: Int) {
-    setColorFilter(context.getColorCompat(colorId))
+    setColorFilter(context.getColorCompatxoa123(colorId))
 }
 
 fun EditText.onTextChange(content: (Editable?) -> Unit) {
@@ -130,7 +130,7 @@ fun Fragment.toastMessage(message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
-fun View.setOnSafeClickListener(duration: Long = DURATION_TIME_CLICKABLE, onClick: () -> Unit) {
+fun View.setOnSafeClickListenerxoa123(duration: Long = DURATION_TIME_CLICKABLE, onClick: () -> Unit) {
     setOnClickListener {
         if (SystemClock.elapsedRealtime() - lastClick >= duration) {
             onClick()

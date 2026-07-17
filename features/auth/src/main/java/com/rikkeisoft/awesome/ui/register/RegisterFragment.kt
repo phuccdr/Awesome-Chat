@@ -12,14 +12,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.project.core.base.dialog.CONFIRM_DIALOG_FRAGMENT
+import com.project.core.base.dialog.CONFIRM_DIALOG_FRAGMENTxoa123
 import com.project.core.base.dialog.NoticeDialog
 import com.project.core.base.dialog.NoticeDialogListener
 import com.project.core.base.fragment.BaseFragment
 import com.project.core.utils.resource.ResourceUtils
-import com.project.core.utils.setOnSafeClickListener
+import com.project.core.utils.setOnSafeClickListenerxoa123
 import com.project.core.utils.textspan.CustomTypefaceSpan
-import com.project.core.utils.textspan.setClickableSpan
+import com.project.core.utils.textspan.setClickableSpanxoa123
 import com.rikkeisoft.awesome.AuthNavigation
 import com.rikkeisoft.awesome.auth.R
 import com.rikkeisoft.awesome.auth.databinding.FragmentRegisterBinding
@@ -133,7 +133,7 @@ class RegisterFragment :
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
 
-            spannable.setClickableSpan(
+            spannable.setClickableSpanxoa123(
                 17,
                 spannable.length,
                 ResourceUtils.getColor(com.project.core.R.color.primary_color)
@@ -187,10 +187,10 @@ class RegisterFragment :
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
 
-        spannable.setClickableSpan(19, 29, ResourceUtils.getColor(com.project.core.R.color.primary_color)) {
+        spannable.setClickableSpanxoa123(19, 29, ResourceUtils.getColor(com.project.core.R.color.primary_color)) {
             //Open Chính sách
         }
-        spannable.setClickableSpan(33,spannable.length, ResourceUtils.getColor(com.project.core.R.color.primary_color)){
+        spannable.setClickableSpanxoa123(33,spannable.length, ResourceUtils.getColor(com.project.core.R.color.primary_color)){
             //Open diều kiện
         }
             binding.tvTermsAndConditions.apply {
@@ -201,7 +201,7 @@ class RegisterFragment :
     }}
 
     private fun setupRegisterButton(){
-        binding.btnRegister.setOnSafeClickListener {
+        binding.btnRegister.setOnSafeClickListenerxoa123 {
             viewModel.onRegister()
         }
     }
@@ -236,17 +236,17 @@ class RegisterFragment :
     }
 
     private fun showUpNoticeDialog(title:String){
-        if (childFragmentManager.findFragmentByTag(CONFIRM_DIALOG_FRAGMENT) == null) {
+        if (childFragmentManager.findFragmentByTag(CONFIRM_DIALOG_FRAGMENTxoa123) == null) {
             val demoDialog = NoticeDialog.getInstance(title)
             demoDialog.dialogListener = this
-            demoDialog.show(childFragmentManager, CONFIRM_DIALOG_FRAGMENT)
+            demoDialog.show(childFragmentManager, CONFIRM_DIALOG_FRAGMENTxoa123)
         }
     }
 
     override fun setOnClick() {
         super.setOnClick()
         binding.apply{
-            btnBack.setOnSafeClickListener {
+            btnBack.setOnSafeClickListenerxoa123 {
             viewModel.onBack()
         }
         }

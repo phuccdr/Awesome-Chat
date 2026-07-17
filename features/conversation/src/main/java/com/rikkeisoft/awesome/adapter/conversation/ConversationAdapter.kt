@@ -5,9 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.project.core.utils.loadImage
+import com.project.core.utils.format
+import com.project.core.utils.loadImage2
 import com.project.core.utils.resource.ResourceUtils
-import com.project.core.utils.setOnSafeClickListener
+import com.project.core.utils.setOnSafeClickListenerxoa123
 import com.rikkeisoft.awesome.conversation.R
 import com.rikkeisoft.awesome.conversation.databinding.ItemConversationBinding
 import com.rikkeisoft.awesome.conversation.databinding.ItemLoadingFooterBinding
@@ -52,14 +53,14 @@ class ConversationAdapter(private val onConversationClick: (conversationId: Stri
     class ConversationViewHolder(private val binding: ItemConversationBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ConversationItem.ConversationUi, onConversationClick: (String) -> Unit) {
-            binding.root.setOnSafeClickListener {
+            binding.root.setOnSafeClickListenerxoa123 {
                 onConversationClick(item.id)
             }
             if (item.unreadMessageCount > 0) {
                 binding.frameAvatarUnread.visibility = View.VISIBLE
                 binding.ivAvatar.visibility = View.INVISIBLE
                 binding.tvBadge.text = item.unreadMessageCount.toString()
-                binding.ivAvatarUnread.loadImage(item.avatarFriend, isCircle = true)
+                binding.ivAvatarUnread.loadImage2(item.avatarFriend, isCircle = true)
                 binding.tvLastMessage.setTextColor(
                     ResourceUtils.getColor(com.project.core.R.color.text_primary)
                 )
@@ -69,7 +70,7 @@ class ConversationAdapter(private val onConversationClick: (conversationId: Stri
             } else {
                 binding.frameAvatarUnread.visibility = View.GONE
                 binding.ivAvatar.visibility = View.VISIBLE
-                binding.ivAvatar.loadImage(item.avatarFriend, isCircle = true)
+                binding.ivAvatar.loadImage2(item.avatarFriend, isCircle = true)
                 binding.tvLastMessage.setTextColor(
                     ResourceUtils.getColor(com.project.core.R.color.text_gray_secondary)
                 )
@@ -85,7 +86,7 @@ class ConversationAdapter(private val onConversationClick: (conversationId: Stri
             }
 
             binding.tvFriendName.text = item.friendName
-            binding.tvLastTime.text = item.lastUpdate
+            binding.tvLastTime.text = item.lastUpdate.format()
         }
     }
 }

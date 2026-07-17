@@ -4,19 +4,24 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.project.core.base.BaseViewModel
+import com.project.core.model.firebase.Message
 import com.project.core.navigationComponent.BundleKeys.CONVERSATION_ID
+import com.project.core.utils.isSameDay
 import com.project.core.utils.resource.ResourceUtils
+import com.project.core.utils.toLocalDate
 import com.rikkeisoft.awesome.conversation.R
+import com.rikkeisoft.awesome.ext.copyMessageItem
 import com.rikkeisoft.awesome.model.ConversationChat
 import com.rikkeisoft.awesome.model.MessageItem
+import com.rikkeisoft.awesome.model.MessagePosition
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -64,15 +69,9 @@ class ChatViewModel @Inject constructor(
 
     private fun observerLastMessage(){
         conversationId?.let {
-            viewModelScope.launch(Dispatchers.IO) {
-                repo.observeLatestMessages(it).buffer(10).collect{ message->
-                    val mapperItem = MessageToMessageItemMapper.mapMessagesToMessageItems(
-                        messages = listOf(message),
-                        currentUserId = currentUserId,
-                        friendAvatar = conversation.value?.friend?.avatar ?: "")
-//                    val item = MessageToMessageItemMapper.ma
-                    Timber.tag("Chat Message").d("observerLastMessage $mapperItem")
-                    _messageItems.value = _messageItems.value.toMutableList().apply { addAll(mapperItem) }
+            viewModelScope.launch {
+                repo.observeLatestMessages(it).buffer(5).collect{ message->
+                    appendNewMessage(message)
                 }
             }
         }
@@ -80,6 +79,7 @@ class ChatViewModel @Inject constructor(
     }
 
     fun loadNextPage() {
+        Timber.tag("ChatMessage").d("ChatViewModel: loadNextPage() called")
         if (_isLoadingNextPage.value || !hasMoreData) return
         conversationId?.let {
             viewModelScope.launch {
@@ -106,24 +106,107 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    private fun startObserveMessages(id: String) {
-//        viewModelScope.launch {
-//            limitFlow.flatMapLatest { limit ->
-//                repo.observeMessages(id, limit)
-//            }.flowOn(Dispatchers.IO).collectLatest { fetchedMessages ->
-//                val friendAvatar = conversation.value?.friend?.avatar ?: ""
-//                val mappedItems = MessageToMessageItemMapper.mapMessagesToMessageItems(
-//                    messages = fetchedMessages,
-//                    currentUserId = currentUserId,
-//                    friendAvatar = friendAvatar
-//                )
-//                _messageItems.value = mappedItems
-//                hasMoreData = fetchedMessages.size.toLong() >= limitFlow.value
-//                _isLoadingNextPage.value = false
+
+    fun appendNewMessage(message: Message) {
+        val lastMessageItem = _messageItems.value.lastOrNull()
+        val lastMessage = lastMessageItem as? MessageItem.Message
+        val lastSenderId = lastMessage?.senderId ?: ""
+        var lastMessagePosition: MessagePosition? = null
+        var newMessagePosition: MessagePosition = MessagePosition.SINGLE
+
+        val isSameDay = if (lastMessage != null) {
+            message.createdAt?.let { lastMessage.createdAt?.isSameDay(it) } ?: false
+        } else false
+
+        var headerTimeMessage: MessageItem.DateHeader? = null
+        if (!isSameDay) {
+            headerTimeMessage = MessageItem.DateHeader(message.createdAt?.toLocalDate() ?: LocalDate.now())
+        }
+
+        if (lastMessage != null && lastSenderId == message.senderId && isSameDay) {
+            when (lastMessage.messagePosition) {
+                MessagePosition.SINGLE -> {
+                    lastMessagePosition = MessagePosition.TOP
+                    newMessagePosition = MessagePosition.BOTTOM
+                }
+
+                MessagePosition.BOTTOM -> {
+                    lastMessagePosition = MessagePosition.MIDDLE
+                    newMessagePosition = MessagePosition.BOTTOM
+                }
+
+                else -> Unit
+            }
+        }
+
+        val mapperItem: MessageItem = MessageToMessageItemMapper.mapMessageToMessageItem(
+            message = message,
+            currentUserId = currentUserId,
+            friendAvatar = conversation.value?.friend?.avatar ?: "",
+            position = newMessagePosition
+        )
+        val newMessages: List<MessageItem> =
+            if (headerTimeMessage == null) listOf(mapperItem) else listOf(
+                headerTimeMessage,
+                mapperItem
+            )
+        Timber.tag("Chat Message").d("observerLastMessage $newMessages")
+
+        _messageItems.value = _messageItems.value.toMutableList().apply {
+            if (lastMessagePosition != null && this.isNotEmpty() && this[lastIndex] is MessageItem.Message) {
+                this[lastIndex] =
+                    (this[lastIndex] as MessageItem.Message).copyMessageItem(messagePosition = lastMessagePosition)
+            }
+            this.addAll(newMessages)
+        }
+    }
+
+
+//    fun appendNewMessage(message: Message) {
+//        val lastMessageItem: MessageItem.Message = _messageItems.value.last() as MessageItem.Message
+//        val lastSenderId: String = lastMessageItem.senderId
+//        var lastMessagePosition: MessagePosition? = null
+//        var newMessagePosition: MessagePosition = MessagePosition.SINGLE
+//        val isSameDay = message.createdAt?.let { lastMessageItem.createdAt?.isSameDay(it) } ?: false
+//        var headerTimeMessage: MessageItem.DateHeader? = null
+//        if (!isSameDay) {
+//            headerTimeMessage = MessageItem.DateHeader(message.createdAt?.toLocalDate()?: LocalDate.now())
+//        }
+//
+//        if (lastSenderId == message.senderId && isSameDay) {
+//            when (lastMessageItem.messagePosition) {
+//                MessagePosition.SINGLE -> {
+//                    lastMessagePosition = MessagePosition.TOP
+//                    newMessagePosition = MessagePosition.BOTTOM
+//                }
+//
+//                MessagePosition.BOTTOM -> {
+//                    lastMessagePosition = MessagePosition.MIDDLE
+//                    newMessagePosition = MessagePosition.BOTTOM
+//                }
+//
+//                else -> Unit
 //            }
 //        }
+//        val mapperItem: MessageItem = MessageToMessageItemMapper.mapMessageToMessageItem(
+//            message = message,
+//            currentUserId = currentUserId,
+//            friendAvatar = conversation.value?.friend?.avatar ?: "",
+//            position = newMessagePosition
+//        )
+//        val newMessages: List<MessageItem> =
+//            if (headerTimeMessage == null) listOf(mapperItem) else listOf(
+//                headerTimeMessage,
+//                mapperItem
+//            )
+//        Timber.tag("Chat Message").d("observerLastMessage $newMessages")
+//
+//        _messageItems.value = _messageItems.value.toMutableList().apply {
+//            if (lastMessagePosition != null && this[lastIndex] is MessageItem.Message) {
+//                this[lastIndex] =
+//                    (this[lastIndex] as MessageItem.Message).copyMessageItem(messagePosition = lastMessagePosition)
+//            }
+//            this.addAll(newMessages)
+//        }
 //    }
-
-
 }

@@ -8,10 +8,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.base.fragment.BaseFragment
-import com.project.core.utils.loadImage
-import com.project.core.utils.prefetcher.bindToLifecycle
-import com.project.core.utils.prefetcher.setupWithPrefetchViewPool
-import com.project.core.utils.setOnSafeClickListener
+import com.project.core.utils.loadImage2
+import com.project.core.utils.prefetcher.bindToLifecyclexoa123
+import com.project.core.utils.prefetcher.setupWithPrefetchViewPoolxoa123
+import com.project.core.utils.setOnSafeClickListenerxoa123
 import com.rikkeisoft.awesome.ConversationNavigation
 import com.rikkeisoft.awesome.adapter.message.MessageAdapter
 import com.rikkeisoft.awesome.conversation.R
@@ -20,10 +20,12 @@ import com.rikkeisoft.awesome.custom.ChatItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.fragment_chat) {
+    val PRELOAG_MESSAGE = 5
     private val viewModel: ChatViewModel by viewModels()
     override fun getVM() = viewModel
 
@@ -35,7 +37,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
         binding.apply {
-            btnBack.setOnSafeClickListener {
+            btnBack.setOnSafeClickListenerxoa123 {
                 appNavigator.back()
             }
         }
@@ -50,15 +52,15 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
             }
             adapter = adapterMessage
             addItemDecoration(ChatItemDecoration())
-            setupWithPrefetchViewPool {
-                setPrefetchBound(viewType = R.layout.item_received_text_message, count = 10)
-                setPrefetchBound(viewType = R.layout.item_received_image_message, count = 3)
-                setPrefetchBound(viewType = R.layout.item_received_sticker_message, count = 2)
-                setPrefetchBound(viewType = R.layout.item_sent_text_message, count = 10)
-                setPrefetchBound(viewType = R.layout.item_sent_image_message, count = 3)
-                setPrefetchBound(viewType = R.layout.item_sent_sticker_message, count = 2)
-                setPrefetchBound(viewType = R.layout.item_header_time_message, count = 3)
-            }.bindToLifecycle(viewLifecycleOwner)
+            setupWithPrefetchViewPoolxoa123 {
+                setPrefetchBoundxoa123(viewType = R.layout.item_received_text_message, count = 10)
+                setPrefetchBoundxoa123(viewType = R.layout.item_received_image_message, count = 3)
+                setPrefetchBoundxoa123(viewType = R.layout.item_received_sticker_message, count = 2)
+                setPrefetchBoundxoa123(viewType = R.layout.item_sent_text_message, count = 10)
+                setPrefetchBoundxoa123(viewType = R.layout.item_sent_image_message, count = 3)
+                setPrefetchBoundxoa123(viewType = R.layout.item_sent_sticker_message, count = 2)
+                setPrefetchBoundxoa123(viewType = R.layout.item_header_time_message, count = 3)
+            }.bindToLifecyclexoa123(viewLifecycleOwner)
 
             addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
                 if (bottom < oldBottom) {
@@ -72,17 +74,11 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
             }
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                    val totalItemCount = layoutManager.itemCount
-                    val firstVisible = layoutManager.findFirstVisibleItemPosition()
-                    val firstView = layoutManager.findViewByPosition(firstVisible)
-                    val offset = firstView?.top ?: 0
-
-//                    layoutManager.scrollToPositionWithOffset(
-//                        firstVisible + numberOfNewItems, offset
-//                    )
-
-                    if (!viewModel.isLoadingNextPage.value && viewModel.hasMoreData && totalItemCount > 0) {
+                    val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+                    Timber.tag("ChatMessage").d("scroll: $firstVisiblePosition")
+                    if (dy < 0 && firstVisiblePosition <= PRELOAG_MESSAGE && !viewModel.isLoadingNextPage.value && viewModel.hasMoreData) {
                         viewModel.loadNextPage()
                     }
                 }
@@ -95,16 +91,24 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.conversation.collectLatest { conversationUI ->
+                    viewModel.conversation.collect { conversationUI ->
                         binding.apply {
-                            ivAvatarFriend.loadImage(conversationUI?.friend?.avatar, true)
+                            ivAvatarFriend.loadImage2(conversationUI?.friend?.avatar, true)
                             tvFriendName.text = conversationUI?.friend?.username
                         }
                     }
                 }
                 launch {
                     viewModel.messageItems.collectLatest { messages ->
-                        adapterMessage?.submitList(messages)
+                        val isBottom = !binding.rvMessages.canScrollVertically(1)
+                        adapterMessage?.submitList(messages) {
+                            adapterMessage?.itemCount?.let {
+                                val last = it - 1
+                                if (last >= 0 && isBottom) {
+                                    binding.rvMessages.smoothScrollToPosition(last)
+                                }
+                            }
+                        }
                     }
                 }
             }

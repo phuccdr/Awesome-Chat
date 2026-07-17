@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.base.fragment.BaseFragment
 import com.project.core.navigationComponent.BundleKeys.CONVERSATION_ID
-import com.project.core.utils.prefetcher.bindToLifecycle
-import com.project.core.utils.prefetcher.setupWithPrefetchViewPool
+import com.project.core.utils.prefetcher.bindToLifecyclexoa123
+import com.project.core.utils.prefetcher.setupWithPrefetchViewPoolxoa123
 import com.project.core.utils.resource.ResourceUtils
 import com.rikkeisoft.awesome.ConversationNavigation
 import com.rikkeisoft.awesome.adapter.conversation.ConversationAdapter
@@ -96,10 +96,10 @@ class ConversationsFragment : BaseFragment<FragmentListConversationBinding, Conv
             layoutManager = LinearLayoutManager(requireContext())
             adapter = adapterConversation
 
-            setupWithPrefetchViewPool {
-                setPrefetchBound(viewType = R.layout.item_conversation, count = 10)
-                setPrefetchBound(viewType = R.layout.item_loading_footer, count = 2)
-            }.bindToLifecycle(viewLifecycleOwner)
+            setupWithPrefetchViewPoolxoa123 {
+                setPrefetchBoundxoa123(viewType = R.layout.item_conversation, count = 10)
+                setPrefetchBoundxoa123(viewType = R.layout.item_loading_footer, count = 2)
+            }.bindToLifecyclexoa123(viewLifecycleOwner)
 
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

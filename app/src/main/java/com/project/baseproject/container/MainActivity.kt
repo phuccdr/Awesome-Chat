@@ -10,7 +10,7 @@ import com.project.core.base.activity.BaseActivityNotRequireViewModel
 import com.project.core.base.dialog.ConfirmDialogListener
 import com.project.core.network.connectivity.NetworkConnectionManager
 import com.project.core.pref.RxPreferences
-import com.project.core.utils.setLanguage
+import com.project.core.utils.setLanguagexoa123
 import com.project.core.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
@@ -40,7 +40,7 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
 
         lifecycleScope.launch {
             val language = rxPreferences.getLanguage().first()
-            language?.let { setLanguage(it) }
+            language?.let { setLanguagexoa123(it) }
         }
 
         networkConnectionManager.isNetworkConnectedFlow.onEach {

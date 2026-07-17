@@ -25,7 +25,7 @@ class CustomTypefaceSpan(
     }
 }
 
-fun SpannableString.setClickableSpan(
+fun SpannableString.setClickableSpanxoa123(
     start: Int, end: Int, color: Int, onClick: () -> Unit
 ) {
     setSpan(object : ClickableSpan() {

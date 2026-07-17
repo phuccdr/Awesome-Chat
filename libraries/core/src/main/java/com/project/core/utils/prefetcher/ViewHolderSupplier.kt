@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.setItemViewType
 import java.util.concurrent.ConcurrentHashMap
 
-typealias ViewHolderProducer = (parent: ViewGroup, viewType: Int) -> RecyclerView.ViewHolder
+typealias ViewHolderProducerxoa123 = (parent: ViewGroup, viewType: Int) -> RecyclerView.ViewHolder
 typealias ViewHolderConsumer = (viewHolder: RecyclerView.ViewHolder, creationTimeNanos: Long) -> Unit
 
 /**
@@ -20,7 +20,7 @@ typealias ViewHolderConsumer = (viewHolder: RecyclerView.ViewHolder, creationTim
  * (e.g. [androidx.recyclerview.widget.RecyclerView.Adapter]'s onCreateViewHolder() method)
  */
 abstract class ViewHolderSupplier(
-    context: Context, private val viewHolderProducer: ViewHolderProducer
+    context: Context, private val viewHolderProducer: ViewHolderProducerxoa123
 ) {
     /**
      * Invoked once item is created in [createItem]

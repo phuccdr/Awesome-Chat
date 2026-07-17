@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import java.util.Locale
 
-fun Context.setLanguage(language: String) {
+fun Context.setLanguagexoa123(language: String) {
     val locale = Locale(language)
     Locale.setDefault(locale)
     val configuration: Configuration = resources.configuration

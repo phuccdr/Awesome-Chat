@@ -137,10 +137,10 @@ class MessageAdapter(
             }
 
             item is MessageItem.DateHeader && holder is HeaderTimeViewHolder -> {
-                holder.bind(item.time)
+                holder.bind(item.date)
             }
         }
     }
 
-    fun getItemAt(position: Int) = getItem(position)
+    fun getItemAt(position: Int): MessageItem? = getItem(position)
 }

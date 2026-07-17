@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.project.core.base.BaseViewModel
 import com.project.core.model.firebase.User
-import com.project.core.utils.TimeUtils
 import com.rikkeisoft.awesome.model.ConversationItem
 import com.rikkeisoft.awesome.model.SearchMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -97,7 +96,7 @@ class ConversationsViewModel @Inject constructor(
                                 friendName = user.username,
                                 avatarFriend = user.avatar,
                                 lastMessage = conversation.lastMessage,
-                                lastUpdate = TimeUtils.format(conversation.lastUpdate),
+                                lastUpdate = conversation.lastUpdate,
                                 isLastMessageSender = conversation.lastSenderId == currentUserUid,
                                 unreadMessageCount = conversation.unreadMessage[currentUserUid] ?: 0
                             )

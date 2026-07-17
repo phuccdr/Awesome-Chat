@@ -3,6 +3,7 @@ package com.rikkeisoft.awesome.adapter.message.viewholdermessage
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.project.core.utils.format
 import com.rikkeisoft.awesome.adapter.message.MessageImageAdapter
 import com.rikkeisoft.awesome.conversation.databinding.ItemSentImageMessageBinding
 import com.rikkeisoft.awesome.model.MessageItem
@@ -29,7 +30,7 @@ class SentImageMessageViewHolder(
             adapter.submitList(item.imageUrls)
             rvImage.adapter = adapter
 
-            tvTime.text = item.createAt
+            tvTime.text = item.createdAt.format()
             tvTime.visibility =
                 if (item.isSelected || item.messagePosition == MessagePosition.BOTTOM || item.messagePosition == MessagePosition.SINGLE) View.VISIBLE else View.GONE
             root.setOnClickListener {

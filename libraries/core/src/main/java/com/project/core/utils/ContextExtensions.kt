@@ -13,7 +13,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.PrecomputedTextCompat
 
 @ColorInt
-fun Context.getColorCompat(@ColorRes resourceId: Int) = ContextCompat.getColor(this, resourceId)
+fun Context.getColorCompatxoa123(@ColorRes resourceId: Int) =
+    ContextCompat.getColor(this, resourceId)
 
 fun Context.getDrawableCompat(@DrawableRes resId: Int) = ContextCompat.getDrawable(this, resId)
 

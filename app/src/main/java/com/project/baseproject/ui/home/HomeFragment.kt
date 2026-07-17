@@ -23,7 +23,7 @@ import com.project.baseproject.databinding.FragmentHomeBinding
 import com.project.baseproject.navigation.AppNavigation
 import com.project.baseproject.navigation.HomeNavigation
 import com.project.core.base.fragment.BaseFragment
-import com.project.core.utils.setOnSafeClickListener
+import com.project.core.utils.setOnSafeClickListenerxoa123
 import com.project.core.utils.tint
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -52,13 +52,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         navController = navHostFragment.navController
         homeNavigation.bind(navController)
         binding.apply {
-            bottomNav.btnConversation.setOnSafeClickListener {
+            bottomNav.btnConversation.setOnSafeClickListenerxoa123 {
                 viewModel.onItemSelected(1)
             }
-            bottomNav.btnFriends.setOnSafeClickListener {
+            bottomNav.btnFriends.setOnSafeClickListenerxoa123 {
                 viewModel.onItemSelected(2)
             }
-            bottomNav.btnProfile.setOnSafeClickListener {
+            bottomNav.btnProfile.setOnSafeClickListenerxoa123 {
                 viewModel.onItemSelected(3)
             }
         }
