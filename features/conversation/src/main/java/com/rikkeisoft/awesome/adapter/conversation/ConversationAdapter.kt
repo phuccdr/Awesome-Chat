@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.format
 import com.project.core.utils.loadImage2
 import com.project.core.utils.resource.ResourceUtils
-import com.project.core.utils.setOnSafeClickListenerxoa123
+import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.conversation.R
 import com.rikkeisoft.awesome.conversation.databinding.ItemConversationBinding
 import com.rikkeisoft.awesome.conversation.databinding.ItemLoadingFooterBinding
@@ -53,7 +53,7 @@ class ConversationAdapter(private val onConversationClick: (conversationId: Stri
     class ConversationViewHolder(private val binding: ItemConversationBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ConversationItem.ConversationUi, onConversationClick: (String) -> Unit) {
-            binding.root.setOnSafeClickListenerxoa123 {
+            binding.root.setOnSafeClickListener {
                 onConversationClick(item.id)
             }
             if (item.unreadMessageCount > 0) {

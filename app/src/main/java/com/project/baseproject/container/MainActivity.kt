@@ -1,6 +1,8 @@
 package com.project.baseproject.container
 
 import android.os.Bundle
+import android.view.MotionEvent
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.project.baseproject.R
@@ -10,7 +12,8 @@ import com.project.core.base.activity.BaseActivityNotRequireViewModel
 import com.project.core.base.dialog.ConfirmDialogListener
 import com.project.core.network.connectivity.NetworkConnectionManager
 import com.project.core.pref.RxPreferences
-import com.project.core.utils.setLanguagexoa123
+import com.project.core.utils.isTouched
+import com.project.core.utils.setLanguage
 import com.project.core.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
@@ -40,7 +43,7 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
 
         lifecycleScope.launch {
             val language = rxPreferences.getLanguage().first()
-            language?.let { setLanguagexoa123(it) }
+            language?.let { setLanguage(it) }
         }
 
         networkConnectionManager.isNetworkConnectedFlow.onEach {
@@ -51,6 +54,16 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
             }
         }.launchIn(lifecycleScope)
 
+    }
+
+    override fun shouldHideKeyboard(event: MotionEvent): Boolean {
+        val inputMessageLayout =
+            findViewById<ConstraintLayout>(com.rikkeisoft.awesome.conversation.R.id.layout_input)
+
+        if (inputMessageLayout.isTouched(event)) {
+            return false
+        }
+        return super.shouldHideKeyboard(event)
     }
 
     override fun onStart() {
@@ -76,5 +89,6 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
         Timber.tag("ahihi").d("onDestroy")
         super.onDestroy()
     }
+
 
 }

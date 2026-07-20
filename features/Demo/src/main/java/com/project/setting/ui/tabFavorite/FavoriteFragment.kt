@@ -2,8 +2,8 @@ package com.project.setting.ui.tabFavorite
 
 import androidx.fragment.app.viewModels
 import com.project.core.base.fragment.BaseFragment
-import com.project.core.utils.setLanguagexoa123
-import com.project.core.utils.setOnSafeClickListenerxoa123
+import com.project.core.utils.setLanguage
+import com.project.core.utils.setOnSafeClickListener
 import com.project.setting.R
 import com.project.setting.databinding.FragmentFavoriteBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,17 +18,17 @@ class FavoriteFragment :
     override fun setOnClick() {
         super.setOnClick()
 
-        binding.btnVietNam.setOnSafeClickListenerxoa123 {
+        binding.btnVietNam.setOnSafeClickListener {
             changeLanguage("vi")
         }
 
-        binding.btnEnglish.setOnSafeClickListenerxoa123 {
+        binding.btnEnglish.setOnSafeClickListener {
             changeLanguage("en")
         }
     }
 
     private fun changeLanguage(language: String) {
-        requireContext().setLanguagexoa123(language)
+        requireContext().setLanguage(language)
         viewModel.setLanguage(language)
 
         binding.btnVietNam.text = getString(com.project.core.R.string.viet_nam)

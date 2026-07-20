@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 class CoroutinesViewHolderSupplier(
-    context: Context, viewHolderProducer: ViewHolderProducerxoa123
+    context: Context, viewHolderProducer: ViewHolderProducer
 ) : ViewHolderSupplier(context, viewHolderProducer), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = SupervisorJob() + Dispatchers.Default

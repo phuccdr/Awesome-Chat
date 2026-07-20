@@ -1,6 +1,7 @@
 package com.rikkeisoft.awesome.ui.chat
 
 import android.os.Bundle
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -9,9 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.base.fragment.BaseFragment
 import com.project.core.utils.loadImage2
-import com.project.core.utils.prefetcher.bindToLifecyclexoa123
-import com.project.core.utils.prefetcher.setupWithPrefetchViewPoolxoa123
-import com.project.core.utils.setOnSafeClickListenerxoa123
+import com.project.core.utils.prefetcher.bindToLifecycle
+import com.project.core.utils.prefetcher.setupWithPrefetchViewPool
+import com.project.core.utils.resource.ResourceUtils
+import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.ConversationNavigation
 import com.rikkeisoft.awesome.adapter.message.MessageAdapter
 import com.rikkeisoft.awesome.conversation.R
@@ -37,48 +39,55 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
         binding.apply {
-            btnBack.setOnSafeClickListenerxoa123 {
+            btnBack.setOnSafeClickListener {
                 appNavigator.back()
+            }
+            layoutInput.edtInputMessage.doAfterTextChanged {
+                viewModel.onInputTextChanged(it?.toString() ?: "")
+            }
+            layoutInput.btnSendMessage.setOnSafeClickListener {
+                viewModel.sendMessage()
             }
         }
         setupChatRecyclerView()
+        binding.root.viewTreeObserver.addOnGlobalFocusChangeListener { oldFocus, newFocus ->
+            Timber.d(
+                "old=${oldFocus?.javaClass?.simpleName} new=${newFocus?.javaClass?.simpleName}"
+            )
+        }
+        binding.layoutInput.edtInputMessage.setOnFocusChangeListener { _, hasFocus ->
+            Timber.d("EditText focus = $hasFocus")
+        }
     }
 
     private fun setupChatRecyclerView() {
-        adapterMessage = MessageAdapter(onMessageClick = {}, onImageClick = { imageUrl -> })
+        adapterMessage = MessageAdapter(onMessageClick = { itemId ->
+            Timber.tag("ChatMessage").d("onMessageClick $itemId")
+            viewModel.onClickItemMessage(itemId)
+        }, onImageClick = { imageUrl -> })
         binding.rvMessages.apply {
             layoutManager = LinearLayoutManager(requireContext()).apply {
                 stackFromEnd = true
             }
             adapter = adapterMessage
             addItemDecoration(ChatItemDecoration())
-            setupWithPrefetchViewPoolxoa123 {
-                setPrefetchBoundxoa123(viewType = R.layout.item_received_text_message, count = 10)
-                setPrefetchBoundxoa123(viewType = R.layout.item_received_image_message, count = 3)
-                setPrefetchBoundxoa123(viewType = R.layout.item_received_sticker_message, count = 2)
-                setPrefetchBoundxoa123(viewType = R.layout.item_sent_text_message, count = 10)
-                setPrefetchBoundxoa123(viewType = R.layout.item_sent_image_message, count = 3)
-                setPrefetchBoundxoa123(viewType = R.layout.item_sent_sticker_message, count = 2)
-                setPrefetchBoundxoa123(viewType = R.layout.item_header_time_message, count = 3)
-            }.bindToLifecyclexoa123(viewLifecycleOwner)
-
-            addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
-                if (bottom < oldBottom) {
-                    binding.rvMessages.postDelayed({
-                        val count = binding.rvMessages.adapter?.itemCount ?: 0
-                        if (count > 0) {
-                            binding.rvMessages.smoothScrollToPosition(count - 1)
-                        }
-                    }, 100)
-                }
-            }
+            setupWithPrefetchViewPool {
+                setPrefetchBound(viewType = R.layout.item_received_text_message, count = 10)
+                setPrefetchBound(viewType = R.layout.item_received_image_message, count = 3)
+                setPrefetchBound(viewType = R.layout.item_received_sticker_message, count = 2)
+                setPrefetchBound(viewType = R.layout.item_sent_text_message, count = 10)
+                setPrefetchBound(viewType = R.layout.item_sent_image_message, count = 3)
+                setPrefetchBound(viewType = R.layout.item_sent_sticker_message, count = 2)
+                setPrefetchBound(viewType = R.layout.item_header_time_message, count = 3)
+            }.bindToLifecycle(viewLifecycleOwner)
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
-                    Timber.tag("ChatMessage").d("scroll: $firstVisiblePosition")
-                    if (dy < 0 && firstVisiblePosition <= PRELOAG_MESSAGE && !viewModel.isLoadingNextPage.value && viewModel.hasMoreData) {
+                    Timber.tag("ChatMessage")
+                        .d("scrolled firstVisiblePosition: $firstVisiblePosition dy: $dy")
+                    if (dy <= 0 && firstVisiblePosition <= PRELOAG_MESSAGE && !viewModel.isLoadingNextPage.value && viewModel.hasMoreData) {
                         viewModel.loadNextPage()
                     }
                 }
@@ -105,9 +114,31 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
                             adapterMessage?.itemCount?.let {
                                 val last = it - 1
                                 if (last >= 0 && isBottom) {
-                                    binding.rvMessages.smoothScrollToPosition(last)
+                                    binding.rvMessages.scrollToPosition(last)
                                 }
                             }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.inputText.collect { text ->
+                        binding.layoutInput.apply {
+                            if (edtInputMessage.text.toString() != text) {
+                                edtInputMessage.setText(text)
+                                edtInputMessage.setSelection(text.length)
+                                Timber.d(
+                                    "focus=${binding.layoutInput.edtInputMessage.hasFocus()}"
+                                )
+                            }
+                            val isNotBlank = text.isNotBlank()
+                            btnSendMessage.isEnabled = isNotBlank
+                            val tintColor = if (isNotBlank) {
+                                ResourceUtils.getColor(com.project.core.R.color.primary_color)
+                            } else {
+                                ResourceUtils.getColor(com.project.core.R.color.color_button_disable)
+                            }
+                            btnSendMessage.imageTintList =
+                                android.content.res.ColorStateList.valueOf(tintColor)
                         }
                     }
                 }

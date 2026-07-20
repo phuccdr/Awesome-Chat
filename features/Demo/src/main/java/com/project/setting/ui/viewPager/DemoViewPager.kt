@@ -9,7 +9,7 @@ import androidx.fragment.app.activityViewModels
 import com.project.core.base.fragment.BaseFragmentNotRequireViewModel
 import com.project.core.utils.getCurrentFragment
 import com.project.core.utils.getFragmentAt
-import com.project.core.utils.setOnSafeClickListenerxoa123
+import com.project.core.utils.setOnSafeClickListener
 import com.project.setting.R
 import com.project.setting.databinding.FragmentDemoViewpagerBinding
 import timber.log.Timber
@@ -91,7 +91,7 @@ class DemoViewPager :
 
     override fun setOnClick() {
         super.setOnClick()
-        binding.btn.setOnSafeClickListenerxoa123 {
+        binding.btn.setOnSafeClickListener {
             val fragment = binding.viewPager1.getCurrentFragment(childFragmentManager)
             if (fragment is DemoFragment) {
                 fragment.updateText()

@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.format
 import com.project.core.utils.loadImage2
+import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.adapter.message.MessageImageAdapter
 import com.rikkeisoft.awesome.conversation.databinding.ItemReceivedImageMessageBinding
 import com.rikkeisoft.awesome.model.MessageItem
@@ -13,7 +14,7 @@ import com.rikkeisoft.awesome.model.MessagePosition
 class ReceivedImageMessageViewHolder(
     private val binding: ItemReceivedImageMessageBinding,
     private val onImageClick: (imageUrl: String) -> Unit,
-    private val onMessageClick: () -> Unit
+    private val onMessageClick: (itemId: String) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(item: MessageItem.ImageMessage) {
         binding.apply {
@@ -41,8 +42,8 @@ class ReceivedImageMessageViewHolder(
             tvTime.visibility =
                 if (item.isSelected || item.messagePosition == MessagePosition.BOTTOM || item.messagePosition == MessagePosition.SINGLE) View.VISIBLE else View.GONE
 
-            root.setOnClickListener {
-                item.isSelected = !item.isSelected
+            root.setOnSafeClickListener {
+                onMessageClick(item.id)
             }
         }
     }

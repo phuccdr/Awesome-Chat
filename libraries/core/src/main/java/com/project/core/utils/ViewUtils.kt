@@ -2,11 +2,13 @@ package com.project.core.utils
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Rect
 import android.os.SystemClock
 import android.text.Editable
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.EditText
@@ -66,16 +68,16 @@ fun TextView.disableCopyPaste() {
 
 fun ImageView.enableView(isEnable: Boolean) {
     isEnabled = if (isEnable) {
-        setColorFilter(context.getColorCompatxoa123(R.color.color_button_common_blue))
+        setColorFilter(context.getColorCompat(R.color.color_button_common_blue))
         true
     } else {
-        setColorFilter(context.getColorCompatxoa123(R.color.background_color_gray))
+        setColorFilter(context.getColorCompat(R.color.background_color_gray))
         false
     }
 }
 
 fun ImageView.tint(@ColorRes colorId: Int) {
-    setColorFilter(context.getColorCompatxoa123(colorId))
+    setColorFilter(context.getColorCompat(colorId))
 }
 
 fun EditText.onTextChange(content: (Editable?) -> Unit) {
@@ -130,7 +132,7 @@ fun Fragment.toastMessage(message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
-fun View.setOnSafeClickListenerxoa123(duration: Long = DURATION_TIME_CLICKABLE, onClick: () -> Unit) {
+fun View.setOnSafeClickListener(duration: Long = DURATION_TIME_CLICKABLE, onClick: () -> Unit) {
     setOnClickListener {
         if (SystemClock.elapsedRealtime() - lastClick >= duration) {
             onClick()
@@ -154,4 +156,9 @@ fun ViewPager2.getCurrentFragment(fragmentManager: FragmentManager): Fragment? {
 
 fun ViewPager2.getFragmentAt(fragmentManager: FragmentManager, index: Int): Fragment? {
     return fragmentManager.findFragmentByTag("f$index")
+}
+fun View.isTouched(event: MotionEvent): Boolean {
+    val rect = Rect()
+    this.getGlobalVisibleRect(rect)
+    return rect.contains(event.rawX.toInt(), event.rawY.toInt())
 }

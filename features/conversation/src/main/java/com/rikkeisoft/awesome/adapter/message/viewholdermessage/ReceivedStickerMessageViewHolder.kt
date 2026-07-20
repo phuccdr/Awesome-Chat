@@ -4,13 +4,14 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.format
 import com.project.core.utils.loadImage2
+import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.conversation.databinding.ItemReceivedStickerMessageBinding
 import com.rikkeisoft.awesome.model.MessageItem
 import com.rikkeisoft.awesome.model.MessagePosition
 
 class ReceivedStickerMessageViewHolder(
     private val binding: ItemReceivedStickerMessageBinding,
-    private val onMessageClick: () -> Unit
+    private val onMessageClick: (itemId: String) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: MessageItem.StickerMessage) {
@@ -32,8 +33,8 @@ class ReceivedStickerMessageViewHolder(
                 View.GONE
             }
 
-            root.setOnClickListener {
-                onMessageClick()
+            root.setOnSafeClickListener {
+                onMessageClick(item.id)
             }
         }
     }

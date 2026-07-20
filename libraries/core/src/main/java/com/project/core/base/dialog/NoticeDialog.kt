@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import com.project.core.R
 
-const val NOTICE_DIALOG_FRAGMENTxoa123 = "NOTICE_DIALOG_FRAGMENT"
+const val NOTICE_DIALOG_FRAGMENT = "NOTICE_DIALOG_FRAGMENT"
 
 class NoticeDialog : BaseDialogFragment() {
     var dialogListener: NoticeDialogListener? = null

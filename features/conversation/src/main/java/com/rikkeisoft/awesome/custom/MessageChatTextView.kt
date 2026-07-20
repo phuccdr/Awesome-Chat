@@ -5,15 +5,15 @@ import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
-import com.project.core.utils.dpxoa123
+import com.project.core.utils.dp
 import com.project.core.utils.resource.ResourceUtils
 import com.rikkeisoft.awesome.model.MessagePosition
 
 class MessageChatTextView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
-    private val LARGE_RADIUS: Float = 30F.dpxoa123()
-    private val SMALL_RADIUS: Float = 2F.dpxoa123()
+    private val LARGE_RADIUS: Float = 30F.dp()
+    private val SMALL_RADIUS: Float = 2F.dp()
     private val backgroundReceiveMessageColor: Int =
         ResourceUtils.getColor(com.project.core.R.color.background_color_message)
     private val backgroundSentMessageColor: Int =

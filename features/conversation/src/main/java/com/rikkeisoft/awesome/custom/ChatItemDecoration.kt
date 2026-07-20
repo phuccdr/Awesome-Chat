@@ -3,7 +3,7 @@ package com.rikkeisoft.awesome.custom
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.project.core.utils.dpxoa123
+import com.project.core.utils.dp
 import com.rikkeisoft.awesome.adapter.message.MessageAdapter
 import com.rikkeisoft.awesome.model.MessageItem
 import com.rikkeisoft.awesome.model.MessagePosition
@@ -19,14 +19,14 @@ class ChatItemDecoration : RecyclerView.ItemDecoration() {
         when (item) {
             is MessageItem.Message -> {
                 if (item.messagePosition == MessagePosition.SINGLE || item.messagePosition == MessagePosition.BOTTOM) {
-                    outRect.bottom = 16.dpxoa123()
+                    outRect.bottom = 16.dp()
                 } else if (item.messagePosition == MessagePosition.MIDDLE || item.messagePosition == MessagePosition.TOP) {
-                    outRect.bottom = 4.dpxoa123()
+                    outRect.bottom = 4.dp()
                 }
             }
 
             is MessageItem.DateHeader -> {
-                outRect.bottom = 28.dpxoa123()
+                outRect.bottom = 28.dp()
             }
 
             null -> Unit

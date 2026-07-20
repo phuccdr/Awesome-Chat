@@ -15,7 +15,7 @@ abstract class BaseActivityNotRequireViewModel<BD : ViewDataBinding> : AppCompat
     private var _binding: BD? = null
     protected val binding: BD get() = _binding!!
 
-    @get: LayoutRes
+    @get:LayoutRes
     abstract val layoutId: Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,13 +40,15 @@ abstract class BaseActivityNotRequireViewModel<BD : ViewDataBinding> : AppCompat
         LoadingDialog.getInstance(this)?.hidden()
     }
 
+    protected open fun shouldHideKeyboard(event: MotionEvent): Boolean = true
+
     /**
      * Close SoftKeyboard when user click out of EditText
      */
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) {
             val v = currentFocus
-            if (v is EditText) {
+            if (v is EditText && shouldHideKeyboard(event)) {
                 val outRect = Rect()
                 v.getGlobalVisibleRect(outRect)
                 if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {

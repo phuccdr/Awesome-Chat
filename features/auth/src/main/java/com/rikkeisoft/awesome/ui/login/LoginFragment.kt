@@ -12,14 +12,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.project.core.base.dialog.CONFIRM_DIALOG_FRAGMENTxoa123
+import com.project.core.base.dialog.CONFIRM_DIALOG_FRAGMENT
 import com.project.core.base.dialog.NoticeDialog
 import com.project.core.base.dialog.NoticeDialogListener
 import com.project.core.base.fragment.BaseFragment
 import com.project.core.utils.resource.ResourceUtils
-import com.project.core.utils.setOnSafeClickListenerxoa123
+import com.project.core.utils.setOnSafeClickListener
 import com.project.core.utils.textspan.CustomTypefaceSpan
-import com.project.core.utils.textspan.setClickableSpanxoa123
+import com.project.core.utils.textspan.setClickableSpan
 import com.rikkeisoft.awesome.AuthNavigation
 import com.rikkeisoft.awesome.auth.R
 import com.rikkeisoft.awesome.auth.databinding.FragmentLoginBinding
@@ -82,7 +82,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
             18,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
-        spannable.setClickableSpanxoa123(
+        spannable.setClickableSpan(
             18, spannable.length, ResourceUtils.getColor(com.project.core.R.color.primary_color)
         ) {
             viewModel.onRegister()
@@ -113,10 +113,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
     }
 
     private fun showUpNoticeDialog(title: String) {
-        if (childFragmentManager.findFragmentByTag(CONFIRM_DIALOG_FRAGMENTxoa123) == null) {
+        if (childFragmentManager.findFragmentByTag(CONFIRM_DIALOG_FRAGMENT) == null) {
             val demoDialog = NoticeDialog.getInstance(title)
             demoDialog.dialogListener = this@LoginFragment
-            demoDialog.show(childFragmentManager, CONFIRM_DIALOG_FRAGMENTxoa123)
+            demoDialog.show(childFragmentManager, CONFIRM_DIALOG_FRAGMENT)
         }
     }
 
@@ -137,7 +137,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
 
     override fun setOnClick() {
         super.setOnClick()
-        binding.btnLogin.setOnSafeClickListenerxoa123 {
+        binding.btnLogin.setOnSafeClickListener {
             viewModel.onLogin()
         }
 

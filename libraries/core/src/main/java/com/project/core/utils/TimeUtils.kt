@@ -12,7 +12,8 @@ import java.util.Calendar
 import java.util.Locale
 
 private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+private val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+private val SYSTEM_ZONE = ZoneId.systemDefault()
 
 fun Timestamp.toMillis(): Long {
     return seconds * 1000 + nanoseconds / 1_000_000
@@ -66,8 +67,7 @@ private fun isYesterday(now: Calendar, message: Calendar): Boolean {
 }
 
 fun Timestamp.toLocalDate(): LocalDate {
-    return Instant.ofEpochSecond(seconds, nanoseconds.toLong()).atZone(ZoneId.systemDefault())
-        .toLocalDate()
+    return Instant.ofEpochSecond(seconds, nanoseconds.toLong()).atZone(SYSTEM_ZONE).toLocalDate()
 }
 
 private val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")

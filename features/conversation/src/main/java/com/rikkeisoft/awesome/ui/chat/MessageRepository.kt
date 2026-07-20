@@ -61,7 +61,7 @@ class MessageRepository @Inject constructor(
                         .get().await()
                 lastMessage = snapshot.documents.lastOrNull()
                 firstMessage = snapshot.documents.firstOrNull()
-                Timber.tag("Chat Message").d("MessageRepository firstLoadMessages $snapshot")
+                Timber.tag("ChatMessage").d("MessageRepository firstLoadMessages $snapshot")
                 snapshot.toObjects(Message::class.java)
             } catch (e: Exception) {
                 Timber.e(e)
@@ -74,10 +74,10 @@ class MessageRepository @Inject constructor(
         conversationId: String
     ): Flow<Message> = callbackFlow {
         Timber.tag("ChatMessage").d("MessageRepository: observerLastestMessage $lastMessage")
-        val query = db.collection("conversations").document(conversationId).collection("messages")
+        var query = db.collection("conversations").document(conversationId).collection("messages")
             .orderBy("createdAt", Query.Direction.ASCENDING)
         if (lastMessage != null) {
-            query.startAfter(lastMessage)
+            query = query.startAfter(lastMessage!!)
         }
         val observer = query.addSnapshotListener { snapshot, error ->
             Timber.d("snapshot = ${snapshot?.size()} error = $error")
@@ -87,14 +87,15 @@ class MessageRepository @Inject constructor(
             }
             snapshot?.documentChanges?.forEach { change ->
                 if (change.type == DocumentChange.Type.ADDED) {
-                    val message = change.document.toObject(Message::class.java)
-                    Timber.tag("Chat Message")
+                    val message = change.document.toObject(Message::class.java).copy(
+                        conversationId = conversationId
+                    )
+                    Timber.tag("ChatMessage")
                         .d("MessageRepository observeLatestMessages add: $message")
                     trySend(message)
                 }
             }
         }
-
         awaitClose {
             observer.remove()
         }
@@ -124,6 +125,13 @@ class MessageRepository @Inject constructor(
                 Timber.e(e)
                 emptyList()
             }
+        }
+    }
+
+    suspend fun sendMessage(conversationId: String, message: Message) {
+        withContext(Dispatchers.IO) {
+            db.collection("conversations").document(conversationId).collection("messages")
+                .add(message).await()
         }
     }
 }

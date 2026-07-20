@@ -34,7 +34,7 @@ abstract class BaseFragment<BD : ViewDataBinding, VM : BaseViewModel>(@LayoutRes
                 }
             }
             if (TextUtils.isEmpty(message)) return@observe
-            //                showMessageError(message)
+//                            showMessageError(message)
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) {

@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.loadImage2
-import com.project.core.utils.setOnSafeClickListenerxoa123
+import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.conversation.databinding.ItemImageMessageBinding
 
 class MessageImageAdapter(
@@ -46,7 +46,7 @@ class MessageImageAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(imageUrl: String) {
             binding.imvImage.loadImage2(imageUrl)
-            binding.imvImage.setOnSafeClickListenerxoa123 { onClick(imageUrl) }
+            binding.imvImage.setOnSafeClickListener { onClick(imageUrl) }
         }
     }
 }

@@ -3,12 +3,14 @@ package com.rikkeisoft.awesome.adapter.message.viewholdermessage
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.format
+import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.conversation.databinding.ItemSentTextMessageBinding
 import com.rikkeisoft.awesome.model.MessageItem
 import com.rikkeisoft.awesome.model.MessagePosition
 
 class SentTextMessageViewHolder(
-    private val binding: ItemSentTextMessageBinding
+    private val binding: ItemSentTextMessageBinding,
+    private val onMessageClick: (itemId: String) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(item: MessageItem.TextMessage) {
         binding.apply {
@@ -22,6 +24,9 @@ class SentTextMessageViewHolder(
 
             } else {
                 tvTime.visibility = View.GONE
+            }
+            root.setOnSafeClickListener {
+                onMessageClick(item.id)
             }
         }
     }

@@ -6,11 +6,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.RecyclerView
 
-fun RecyclerView.RecycledViewPool.bindToLifecyclexoa123(lifecycleOwner: LifecycleOwner) {
+fun RecyclerView.RecycledViewPool.bindToLifecycle(lifecycleOwner: LifecycleOwner) {
     val observer = object : LifecycleObserver {
         @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         fun onDestroy() {
-            this@bindToLifecyclexoa123.clear()
+            this@bindToLifecycle.clear()
         }
     }
     lifecycleOwner.lifecycle.addObserver(observer)

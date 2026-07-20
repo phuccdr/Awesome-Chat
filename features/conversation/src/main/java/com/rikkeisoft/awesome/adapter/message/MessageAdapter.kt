@@ -22,7 +22,7 @@ import com.rikkeisoft.awesome.conversation.databinding.ItemSentTextMessageBindin
 import com.rikkeisoft.awesome.model.MessageItem
 
 class MessageAdapter(
-    private val onMessageClick: () -> Unit,
+    private val onMessageClick: (itemId: String) -> Unit,
     private val onImageClick: (imageUrl: String) -> Unit = {}
 ) : ListAdapter<MessageItem, RecyclerView.ViewHolder>(MessageDiffUtil()) {
     override fun getItemViewType(position: Int): Int {
@@ -66,12 +66,16 @@ class MessageAdapter(
         return when (viewType) {
             R.layout.item_received_text_message -> {
                 val binding = ItemReceivedTextMessageBinding.inflate(inflater, parent, false)
-                ReceivedTextMessageViewHolder(binding)
+                ReceivedTextMessageViewHolder(binding) { itemId ->
+                    onMessageClick(itemId)
+                }
             }
 
             R.layout.item_sent_text_message -> {
                 val binding = ItemSentTextMessageBinding.inflate(inflater, parent, false)
-                SentTextMessageViewHolder(binding)
+                SentTextMessageViewHolder(binding) { itemId ->
+                    onMessageClick(itemId)
+                }
             }
 
             R.layout.item_received_image_message -> {
@@ -100,7 +104,9 @@ class MessageAdapter(
 
             R.layout.item_sent_sticker_message -> {
                 val binding = ItemSentStickerMessageBinding.inflate(inflater, parent, false)
-                SentStickerMessageViewHolder(binding)
+                SentStickerMessageViewHolder(binding) { itemId ->
+                    onMessageClick(itemId)
+                }
             }
 
             else -> throw IllegalArgumentException("Invalid view type")
