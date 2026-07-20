@@ -13,10 +13,34 @@ import java.util.Locale
 
 private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 private val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+private val dateFormatConversation = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 private val SYSTEM_ZONE = ZoneId.systemDefault()
 
 fun Timestamp.toMillis(): Long {
     return seconds * 1000 + nanoseconds / 1_000_000
+}
+
+fun Timestamp?.formatForConversation(): String {
+    if (this == null) return ""
+    val messageTime = this.toDate()
+    val now = Calendar.getInstance()
+    val messageCal = Calendar.getInstance().apply {
+        time = messageTime
+    }
+
+    return when {
+        now.isSameDay(messageCal) -> {
+            timeFormat.format(messageTime)
+        }
+
+        isYesterday(now, messageCal) -> {
+            "${ResourceUtils.getString(R.string.yesterday)}: ${timeFormat.format(messageTime)}"
+        }
+
+        else -> {
+            dateFormatConversation.format(messageTime)
+        }
+    }
 }
 
 fun Timestamp?.format(): String {

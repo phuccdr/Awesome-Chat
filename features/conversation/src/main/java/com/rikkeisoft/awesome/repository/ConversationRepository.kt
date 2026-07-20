@@ -1,7 +1,6 @@
-package com.rikkeisoft.awesome.ui.conversation
+package com.rikkeisoft.awesome.repository
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.project.core.model.firebase.Conversation
@@ -25,7 +24,6 @@ const val PAGE_SIZE = 20L
 class ConversationRepository @Inject constructor(
     auth: FirebaseAuth, private val db: FirebaseFirestore
 ) {
-    private var lastDocument: DocumentSnapshot? = null
     private val currentUserUid: String = auth.currentUser?.uid ?: ""
 
     suspend fun handleGetFriendByMembers(members: List<String>?): User? {

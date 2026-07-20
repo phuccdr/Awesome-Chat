@@ -128,7 +128,11 @@ class ConversationsFragment : BaseFragment<FragmentListConversationBinding, Conv
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.items.collect {
-                        adapterConversation?.submitList(it)
+                        adapterConversation?.submitList(it) {
+                            if ((binding.rvConversations.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition() <= 1) {
+                                binding.rvConversations.scrollToPosition(0)
+                            }
+                        }
                     }
                 }
                 launch {

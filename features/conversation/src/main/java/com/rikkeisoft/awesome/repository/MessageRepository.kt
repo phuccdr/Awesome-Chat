@@ -1,8 +1,10 @@
-package com.rikkeisoft.awesome.ui.chat
+package com.rikkeisoft.awesome.repository
 
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.project.core.model.firebase.Conversation
@@ -128,10 +130,31 @@ class MessageRepository @Inject constructor(
         }
     }
 
+    suspend fun updateUnread(conversationId: String) {
+        withContext(Dispatchers.IO) {
+            db.collection("conversations").document(conversationId)
+                .update("unreadMessage.${auth.uid}", 0).await()
+        }
+    }
+
     suspend fun sendMessage(conversationId: String, message: Message) {
         withContext(Dispatchers.IO) {
-            db.collection("conversations").document(conversationId).collection("messages")
-                .add(message).await()
+            val conversationRef = db.collection("conversations").document(conversationId)
+            val messageRef = conversationRef.collection("messages").document()
+            val updates = hashMapOf<String, Any>(
+                "lastMessage" to message.content,
+                "lastSenderId" to message.senderId,
+                "lastUpdate" to (message.createdAt ?: Timestamp.now())
+            )
+
+            message.receiverId?.let {
+                updates["unreadMessage.$it"] = FieldValue.increment(1)
+            }
+
+            db.batch().apply {
+                set(messageRef, message.copy(id = messageRef.id))
+                update(conversationRef, updates)
+            }.commit().await()
         }
     }
 }

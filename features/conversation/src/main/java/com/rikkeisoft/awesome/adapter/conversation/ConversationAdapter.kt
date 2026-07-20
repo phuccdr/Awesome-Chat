@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.project.core.utils.format
+import com.project.core.utils.formatForConversation
 import com.project.core.utils.loadImage2
 import com.project.core.utils.resource.ResourceUtils
 import com.project.core.utils.setOnSafeClickListener
@@ -86,7 +86,7 @@ class ConversationAdapter(private val onConversationClick: (conversationId: Stri
             }
 
             binding.tvFriendName.text = item.friendName
-            binding.tvLastTime.text = item.lastUpdate.format()
+            binding.tvLastTime.text = item.lastUpdate.formatForConversation()
         }
     }
 }

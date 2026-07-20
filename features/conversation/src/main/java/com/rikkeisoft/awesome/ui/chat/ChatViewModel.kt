@@ -16,6 +16,7 @@ import com.rikkeisoft.awesome.ext.copyMessageItem
 import com.rikkeisoft.awesome.model.ConversationChat
 import com.rikkeisoft.awesome.model.MessageItem
 import com.rikkeisoft.awesome.model.MessagePosition
+import com.rikkeisoft.awesome.repository.MessageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,6 +58,7 @@ class ChatViewModel @Inject constructor(
                 conversation.value = repo.getConversation(it)
                 firstLoadMessages(it)
                 observerLastMessage()
+                repo.updateUnread(it)
             } ?: run {
                 messageError.value = ResourceUtils.getString(R.string.conversation_not_found)
             }

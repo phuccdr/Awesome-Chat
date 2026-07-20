@@ -6,21 +6,23 @@ import com.project.core.base.BaseViewModel
 import com.project.core.model.firebase.User
 import com.rikkeisoft.awesome.model.ConversationItem
 import com.rikkeisoft.awesome.model.SearchMessage
+import com.rikkeisoft.awesome.repository.ConversationRepository
+import com.rikkeisoft.awesome.repository.PAGE_SIZE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
@@ -28,6 +30,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 data class SearchUIState(
     val results: List<SearchMessage> = emptyList(),
@@ -39,7 +42,6 @@ data class SearchUIState(
 class ConversationsViewModel @Inject constructor(
     firebaseAuth: FirebaseAuth, val repo: ConversationRepository
 ) : BaseViewModel() {
-    private val CONCURRENCY_COROUTINE: Int = 5
     private val _isLoadingNextConversation: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var hasMoreData = true
     val isLoadingNextConversation: StateFlow<Boolean> = _isLoadingNextConversation.asStateFlow()
@@ -56,7 +58,7 @@ class ConversationsViewModel @Inject constructor(
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val resultSearch = isSearching.flatMapLatest { searchMode ->
         if (searchMode) {
-            querySearch.debounce(300).mapLatest { keyword ->
+            querySearch.debounce(300.milliseconds).mapLatest { keyword ->
                 if (keyword.isBlank()) {
                     SearchUIState(results = emptyList(), isSearching = true)
                 } else {
@@ -83,15 +85,14 @@ class ConversationsViewModel @Inject constructor(
         viewModelScope.launch {
             limitFlow.flatMapLatest { limit ->
                 repo.observeConversations(limit)
-            }.flowOn(Dispatchers.IO).collectLatest { conversations ->
+            }.collectLatest { conversations ->
                 _isLoadingNextConversation.value = true
-                val fetchedUiItems = mutableListOf<ConversationItem.ConversationUi>()
-
-                conversations.asFlow()
-                    .flatMapMerge(concurrency = CONCURRENCY_COROUTINE) { conversation ->
-                        flow {
+                val fetchedUiItems = coroutineScope {
+                    conversations.map { conversation ->
+                        async(Dispatchers.IO) {
                             val user = repo.handleGetFriendByMembers(conversation.members) ?: User()
-                            val conversationUI = ConversationItem.ConversationUi(
+
+                            ConversationItem.ConversationUi(
                                 id = conversation.id,
                                 friendName = user.username,
                                 avatarFriend = user.avatar,
@@ -100,13 +101,11 @@ class ConversationsViewModel @Inject constructor(
                                 isLastMessageSender = conversation.lastSenderId == currentUserUid,
                                 unreadMessageCount = conversation.unreadMessage[currentUserUid] ?: 0
                             )
-                            emit(conversationUI)
                         }
-                    }.flowOn(Dispatchers.IO).collect { uiItem ->
-                        fetchedUiItems.add(uiItem)
-                    }
+                    }.awaitAll()
+                }
                 _items.value = fetchedUiItems
-                hasMoreData = conversations.size.toLong() >= limitFlow.value
+                hasMoreData = conversations.size >= limitFlow.value
                 _isLoadingNextConversation.value = false
             }
         }

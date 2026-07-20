@@ -1,6 +1,9 @@
 package com.rikkeisoft.awesome.ui.chat
 
+import android.app.Activity
 import android.os.Bundle
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -31,7 +34,24 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
     private val viewModel: ChatViewModel by viewModels()
     override fun getVM() = viewModel
 
-    private var adapterMessage: MessageAdapter? = null
+    private val adapterMessage by lazy {
+      MessageAdapter(onMessageClick = { itemId ->
+            Timber.tag("ChatMessage").d("onMessageClick $itemId")
+            viewModel.onClickItemMessage(itemId)
+        }, onImageClick = { imageUrl -> })
+    }
+
+    private val pickMultipleMedia =
+        registerForActivityResult(
+            ActivityResultContracts.PickMultipleVisualMedia(10)
+        ) { uris ->
+
+            if (uris.isNotEmpty()) {
+                uris.forEach {
+                    // handle upload
+                }
+            }
+        }
 
     @Inject
     lateinit var appNavigator: ConversationNavigation
@@ -41,6 +61,9 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
         binding.apply {
             btnBack.setOnSafeClickListener {
                 appNavigator.back()
+            }
+            layoutInput.btnAddImage.setOnSafeClickListener {
+                handleOpenSelectImage()
             }
             layoutInput.edtInputMessage.doAfterTextChanged {
                 viewModel.onInputTextChanged(it?.toString() ?: "")
@@ -61,10 +84,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
     }
 
     private fun setupChatRecyclerView() {
-        adapterMessage = MessageAdapter(onMessageClick = { itemId ->
-            Timber.tag("ChatMessage").d("onMessageClick $itemId")
-            viewModel.onClickItemMessage(itemId)
-        }, onImageClick = { imageUrl -> })
+
         binding.rvMessages.apply {
             layoutManager = LinearLayoutManager(requireContext()).apply {
                 stackFromEnd = true
@@ -83,8 +103,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
-                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                    val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+                    val firstVisiblePosition =
+                        (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
                     Timber.tag("ChatMessage")
                         .d("scrolled firstVisiblePosition: $firstVisiblePosition dy: $dy")
                     if (dy <= 0 && firstVisiblePosition <= PRELOAG_MESSAGE && !viewModel.isLoadingNextPage.value && viewModel.hasMoreData) {
@@ -144,5 +164,30 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
                 }
             }
         }
+    }
+
+    private val launcher =
+    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri = result.data?.data
+            // Xử lý ảnh
+        }
+    }
+
+
+    private fun  handleOpenSelectImage(){
+        openPhotoPicker()
+
+//        val intent = Intent(Intent.ACTION_PICK).apply {
+//            type = "image/*"
+//        }
+//
+//        launcher.launch(intent)
+    }
+
+    private fun openPhotoPicker(){
+        pickMultipleMedia.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
     }
 }
