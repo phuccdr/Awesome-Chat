@@ -98,8 +98,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
                 appNavigator.back()
             }
             layoutInput.btnAddImage.setOnSafeClickListener {
-                if(viewModel.isPanelVisible?.value==true){
-                    viewModel.togglePanel(false)
+                if(viewModel?.isPanelVisible?.value==true){
+                    viewModel?.togglePanel(false)
                 }else{
                     handleOpenSelectImage()
                 }

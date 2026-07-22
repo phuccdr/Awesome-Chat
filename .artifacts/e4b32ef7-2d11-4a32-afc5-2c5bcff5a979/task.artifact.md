@@ -1,8 +1,0 @@
-- [x] Fix `libs.versions.toml` to use `paging-runtime`
-- [x] Create `GalleryPagingSource` for Paging 3
-- [x] Update `GalleryRepository` to provide `Pager` flow
-- [x] Refactor `GalleryAdapter` to extend `PagingDataAdapter`
-- [x] Update `ChatViewModel` to expose `PagingData` flow
-- [x] Update `ChatFragment` to collect paging flow and remove manual scroll listener
-- [x] Update `fragment_chat.xml` to clean up UI bindings
-- [x] Verify Paging 3 implementation

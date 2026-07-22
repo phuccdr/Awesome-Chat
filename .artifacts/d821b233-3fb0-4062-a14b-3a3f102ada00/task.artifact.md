@@ -1,3 +1,0 @@
-- [x] Thêm xử lý ẩn panel gallery khi bàn phím hiển thị trong `ChatFragment.kt`
-- [x] Thêm xử lý ẩn panel gallery khi focus vào `edtInputMessage` trong `ChatFragment.kt`
-- [x] Kiểm tra lại logic đồng bộ trong `ChatFragment.kt`
