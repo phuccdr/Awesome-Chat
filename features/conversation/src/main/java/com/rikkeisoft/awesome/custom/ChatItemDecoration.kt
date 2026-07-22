@@ -15,8 +15,7 @@ class ChatItemDecoration : RecyclerView.ItemDecoration() {
         val position = parent.getChildAdapterPosition(view)
         if (position == RecyclerView.NO_POSITION) return
         val adapter = parent.adapter as? MessageAdapter ?: return
-        val item = adapter.getItemAt(position)
-        when (item) {
+        when (val item = adapter.getItemAt(position)) {
             is MessageItem.Message -> {
                 if (item.messagePosition == MessagePosition.SINGLE || item.messagePosition == MessagePosition.BOTTOM) {
                     outRect.bottom = 16.dp()

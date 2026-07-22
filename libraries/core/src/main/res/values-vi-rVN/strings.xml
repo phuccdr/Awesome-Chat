@@ -8,4 +8,6 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="not_connected_internet">Not connected internet</string>
+    <string name="gallery_permission_needed">Cần cấp quyền truy cập ảnh để chọn ảnh.</string>
+    <string name="send">Gửi</string>
 </resources>

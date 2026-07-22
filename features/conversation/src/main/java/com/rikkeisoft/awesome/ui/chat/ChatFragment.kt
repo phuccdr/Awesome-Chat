@@ -1,23 +1,31 @@
 package com.rikkeisoft.awesome.ui.chat
 
-import android.app.Activity
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.base.fragment.BaseFragment
-import com.project.core.utils.loadImage2
+import com.project.core.utils.DeviceUtil
+import com.project.core.utils.loadImage
 import com.project.core.utils.prefetcher.bindToLifecycle
 import com.project.core.utils.prefetcher.setupWithPrefetchViewPool
 import com.project.core.utils.resource.ResourceUtils
 import com.project.core.utils.setOnSafeClickListener
+import com.project.core.utils.toastMessage
+import com.project.permission.isPermissionGranted
 import com.rikkeisoft.awesome.ConversationNavigation
+import com.rikkeisoft.awesome.adapter.gallery.GalleryAdapter
 import com.rikkeisoft.awesome.adapter.message.MessageAdapter
 import com.rikkeisoft.awesome.conversation.R
 import com.rikkeisoft.awesome.conversation.databinding.FragmentChatBinding
@@ -42,44 +50,88 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
     }
 
     private val pickMultipleMedia =
-        registerForActivityResult(
-            ActivityResultContracts.PickMultipleVisualMedia(10)
-        ) { uris ->
+    registerForActivityResult(
+        ActivityResultContracts.PickMultipleVisualMedia(10)
+    ) { uris ->
+        if (uris.isNotEmpty()) {
+            // Danh sách ảnh đã chọn
+        }
+    }
 
-            if (uris.isNotEmpty()) {
-                uris.forEach {
-                    // handle upload
-                }
+    private val galleryAdapter by lazy {
+        GalleryAdapter(onClick = { viewModel.toggleSelection(it.uri) })
+    }
+
+    private val requestPermissions = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val isGranted = permissions.entries.any { it.value }
+        if (isGranted) {
+            viewModel.togglePanel(true)
+            galleryAdapter.refresh()
+        } else {
+
+            val requiredPermissions = getRequiredPermissions()
+            val isPermanentlyDenied = requiredPermissions.all {
+                !shouldShowRequestPermissionRationale(it)
+            }
+
+            if (isPermanentlyDenied) {
+                pickMultipleMedia.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            } else {
+                toastMessage(ResourceUtils.getString(R.string.gallery_permission_needed))
             }
         }
+    }
 
     @Inject
     lateinit var appNavigator: ConversationNavigation
 
+
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
+        binding.viewModel = viewModel
         binding.apply {
             btnBack.setOnSafeClickListener {
                 appNavigator.back()
             }
             layoutInput.btnAddImage.setOnSafeClickListener {
-                handleOpenSelectImage()
+                if(viewModel.isPanelVisible?.value==true){
+                    viewModel.togglePanel(false)
+                }else{
+                    handleOpenSelectImage()
+                }
+
             }
             layoutInput.edtInputMessage.doAfterTextChanged {
-                viewModel.onInputTextChanged(it?.toString() ?: "")
+                this@ChatFragment.viewModel.onInputTextChanged(it?.toString() ?: "")
             }
             layoutInput.btnSendMessage.setOnSafeClickListener {
-                viewModel.sendMessage()
+                this@ChatFragment.viewModel.sendMessage()
             }
+            layoutInput.edtInputMessage.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    viewModel?.togglePanel(false)
+                }
+            }
+//            btnSendMes.setOnSafeClickListener {
+//                val uris = this@ChatFragment.viewModel.confirmSelection()
+//                // OUT OF SCOPE: hand `uris` to the upload/send flow.
+//            }
         }
         setupChatRecyclerView()
-        binding.root.viewTreeObserver.addOnGlobalFocusChangeListener { oldFocus, newFocus ->
-            Timber.d(
-                "old=${oldFocus?.javaClass?.simpleName} new=${newFocus?.javaClass?.simpleName}"
-            )
+        setupGalleryRecyclerView()
+    }
+
+    private fun setupGalleryRecyclerView() {
+        binding.rvGallery.apply {
+            layoutManager = GridLayoutManager(requireContext(), 3)
+            adapter = galleryAdapter
         }
-        binding.layoutInput.edtInputMessage.setOnFocusChangeListener { _, hasFocus ->
-            Timber.d("EditText focus = $hasFocus")
+        galleryAdapter.addLoadStateListener { loadState ->
+            binding.pbGallery.isVisible = loadState.source.append is LoadState.Loading
         }
     }
 
@@ -122,7 +174,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
                 launch {
                     viewModel.conversation.collect { conversationUI ->
                         binding.apply {
-                            ivAvatarFriend.loadImage2(conversationUI?.friend?.avatar, true)
+                            ivAvatarFriend.loadImage(conversationUI?.friend?.avatar, true)
                             tvFriendName.text = conversationUI?.friend?.username
                         }
                     }
@@ -130,8 +182,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
                 launch {
                     viewModel.messageItems.collectLatest { messages ->
                         val isBottom = !binding.rvMessages.canScrollVertically(1)
-                        adapterMessage?.submitList(messages) {
-                            adapterMessage?.itemCount?.let {
+                        adapterMessage.submitList(messages) {
+                            adapterMessage.itemCount.let {
                                 val last = it - 1
                                 if (last >= 0 && isBottom) {
                                     binding.rvMessages.scrollToPosition(last)
@@ -150,44 +202,67 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
                                     "focus=${binding.layoutInput.edtInputMessage.hasFocus()}"
                                 )
                             }
-                            val isNotBlank = text.isNotBlank()
-                            btnSendMessage.isEnabled = isNotBlank
-                            val tintColor = if (isNotBlank) {
-                                ResourceUtils.getColor(com.project.core.R.color.primary_color)
-                            } else {
-                                ResourceUtils.getColor(com.project.core.R.color.color_button_disable)
-                            }
-                            btnSendMessage.imageTintList =
-                                android.content.res.ColorStateList.valueOf(tintColor)
+
                         }
+                    }
+                }
+                launch {
+                    viewModel.galleryImages.collectLatest {
+                        galleryAdapter.submitData(it)
+                    }
+                }
+                launch {
+                    viewModel.selectedUris.collectLatest {
+                        galleryAdapter.submitSelection(it)
+                    }
+                }
+                launch {
+                    viewModel.isPanelVisible.collectLatest { isVisible ->
+                        if (isVisible) {
+                            binding.layoutInput.edtInputMessage.clearFocus()
+                            DeviceUtil.hideSoftKeyboard(requireActivity())
+                            binding.galleryPanel.isVisible = true
+                        }else{
+                            binding.galleryPanel.isVisible = false
+                        }
+                    }
+                }
+                launch {
+                    viewModel.isSendMessageEnable.collectLatest { isEnable->
+
+                        binding.layoutInput.btnSendMessage.isEnabled = isEnable
+                        val tintColor = if (isEnable) {
+                            ResourceUtils.getColor(com.project.core.R.color.primary_color)
+                        } else {
+                            ResourceUtils.getColor(com.project.core.R.color.color_button_disable)
+                        }
+                        binding.layoutInput.btnSendMessage.imageTintList =
+                            android.content.res.ColorStateList.valueOf(tintColor)
                     }
                 }
             }
         }
     }
 
-    private val launcher =
-    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val uri = result.data?.data
-            // Xử lý ảnh
+    private fun handleOpenSelectImage() {
+        val permissions = getRequiredPermissions()
+        val isGranted = permissions.any { requireContext().isPermissionGranted(it) }
+
+        if (isGranted) {
+            viewModel.togglePanel(true)
+        } else {
+            requestPermissions.launch(permissions)
         }
     }
 
-
-    private fun  handleOpenSelectImage(){
-        openPhotoPicker()
-
-//        val intent = Intent(Intent.ACTION_PICK).apply {
-//            type = "image/*"
-//        }
-//
-//        launcher.launch(intent)
+    private fun getRequiredPermissions(): Array<String> {
+        return when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE ->
+                arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
+                arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+            else -> arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
     }
 
-    private fun openPhotoPicker(){
-        pickMultipleMedia.launch(
-            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-        )
-    }
 }

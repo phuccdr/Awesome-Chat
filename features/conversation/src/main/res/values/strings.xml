@@ -7,4 +7,6 @@
     <string name="Cancel">Hủy</string>
     <string name="message_match">%1$s tin nhắn phù hợp</string>
     <string name="conversation_not_found">Cuộc hội thoại không tồn tại</string>
+    <string name="gallery_permission_needed">Cần cấp quyền truy cập ảnh để chọn ảnh.</string>
+    <string name="send">Gửi</string>
 </resources>

@@ -60,7 +60,7 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
         val inputMessageLayout =
             findViewById<ConstraintLayout>(com.rikkeisoft.awesome.conversation.R.id.layout_input)
 
-        if (inputMessageLayout.isTouched(event)) {
+        if (inputMessageLayout != null && inputMessageLayout.isTouched(event)) {
             return false
         }
         return super.shouldHideKeyboard(event)

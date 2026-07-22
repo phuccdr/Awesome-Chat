@@ -61,4 +61,6 @@ dependencies {
 
     implementation(libs.shimmer)
 
+    implementation(libs.paging)
+
 }

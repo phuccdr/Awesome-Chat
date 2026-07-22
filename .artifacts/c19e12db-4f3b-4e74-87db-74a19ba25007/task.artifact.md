@@ -1,0 +1,5 @@
+- [x] Update `ChatFragment.kt` to use `RequestMultiplePermissions`
+- [x] Implement `getRequiredPermissions` helper for different Android versions
+- [x] Refactor `handleOpenSelectImage` logic to correctly prioritize custom gallery and handle partial access (Android 14)
+- [x] Clean up redundant code and improve permission result handling
+- [x] Verify changes with `analyze_file`

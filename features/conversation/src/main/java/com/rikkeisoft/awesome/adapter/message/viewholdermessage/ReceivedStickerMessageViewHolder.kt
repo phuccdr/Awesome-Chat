@@ -3,7 +3,7 @@ package com.rikkeisoft.awesome.adapter.message.viewholdermessage
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.format
-import com.project.core.utils.loadImage2
+import com.project.core.utils.loadImage
 import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.conversation.databinding.ItemReceivedStickerMessageBinding
 import com.rikkeisoft.awesome.model.MessageItem
@@ -19,12 +19,12 @@ class ReceivedStickerMessageViewHolder(
             // Xử lý hiển thị Avatar: chỉ hiển thị ở tin nhắn đầu tiên hoặc tin nhắn đơn lẻ trong nhóm
             if (item.messagePosition == MessagePosition.SINGLE || item.messagePosition == MessagePosition.TOP) {
                 imvAvatar.visibility = View.VISIBLE
-                imvAvatar.loadImage2(urlImage = item.avatarFriend, isCircle = true)
+                imvAvatar.loadImage(urlImage = item.avatarFriend, isCircle = true)
             } else {
                 imvAvatar.visibility = View.INVISIBLE
             }
 
-            ivSticker.loadImage2(urlImage = item.stickerId)
+            ivSticker.loadImage(urlImage = item.stickerId)
 
             tvTime.text = item.createdAt.format()
             tvTime.visibility = if (item.isSelected || item.messagePosition == MessagePosition.BOTTOM || item.messagePosition == MessagePosition.SINGLE) {

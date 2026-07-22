@@ -12,4 +12,6 @@
     <string name="message">Tin nhắn</string>
     <string name="yesterday">Hôm qua</string>
     <string name="today">Hôm nay</string>
+    <string name="gallery_permission_needed">Cần cấp quyền truy cập ảnh để chọn ảnh.</string>
+    <string name="send">Gửi</string>
 </resources>

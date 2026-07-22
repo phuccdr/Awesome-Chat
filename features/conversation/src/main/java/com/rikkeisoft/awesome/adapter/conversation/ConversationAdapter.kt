@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.formatForConversation
-import com.project.core.utils.loadImage2
+import com.project.core.utils.loadImage
 import com.project.core.utils.resource.ResourceUtils
 import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.conversation.R
@@ -48,7 +48,7 @@ class ConversationAdapter(private val onConversationClick: (conversationId: Stri
     }
 
     class ConversationLoadingFooterViewHolder(private val binding: ItemLoadingFooterBinding) :
-        RecyclerView.ViewHolder(binding.root) {}
+        RecyclerView.ViewHolder(binding.root)
 
     class ConversationViewHolder(private val binding: ItemConversationBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -60,7 +60,7 @@ class ConversationAdapter(private val onConversationClick: (conversationId: Stri
                 binding.frameAvatarUnread.visibility = View.VISIBLE
                 binding.ivAvatar.visibility = View.INVISIBLE
                 binding.tvBadge.text = item.unreadMessageCount.toString()
-                binding.ivAvatarUnread.loadImage2(item.avatarFriend, isCircle = true)
+                binding.ivAvatarUnread.loadImage(item.avatarFriend, isCircle = true)
                 binding.tvLastMessage.setTextColor(
                     ResourceUtils.getColor(com.project.core.R.color.text_primary)
                 )
@@ -70,7 +70,7 @@ class ConversationAdapter(private val onConversationClick: (conversationId: Stri
             } else {
                 binding.frameAvatarUnread.visibility = View.GONE
                 binding.ivAvatar.visibility = View.VISIBLE
-                binding.ivAvatar.loadImage2(item.avatarFriend, isCircle = true)
+                binding.ivAvatar.loadImage(item.avatarFriend, isCircle = true)
                 binding.tvLastMessage.setTextColor(
                     ResourceUtils.getColor(com.project.core.R.color.text_gray_secondary)
                 )

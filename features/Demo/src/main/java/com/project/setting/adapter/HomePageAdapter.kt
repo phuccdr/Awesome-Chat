@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.project.core.adapter.OnItemClickListener
-import com.project.core.utils.loadImage2
+import com.project.core.utils.loadImage
 import com.project.setting.R
 import com.project.setting.databinding.ItemAlbumLayoutBinding
 import com.project.setting.databinding.ItemHomeSlideLayoutBinding
@@ -129,7 +129,7 @@ class HomeSongHolder(val binding: View) : RecyclerView.ViewHolder(binding) {
         val imageView = binding.findViewById<ImageView>(R.id.iv)
         textView.text = data.song.title
 //        binding.tv.text = data.song.title
-        imageView.loadImage2(data.song.image, false)
+        imageView.loadImage(data.song.image, false)
     }
 }
 

@@ -13,13 +13,13 @@ import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 
-fun ImageView.loadImage2(resDrawable: Int) {
+fun ImageView.loadImage(resDrawable: Int) {
     Glide.with(this)
         .load(resDrawable)
         .into(this)
 }
 
-fun ImageView.loadImage2(urlImage: String?, placeHolder: Int, isCircle: Boolean = false) {
+fun ImageView.loadImage(urlImage: String?, placeHolder: Int, isCircle: Boolean = false) {
     if (isCircle) {
         Glide.with(this)
             .load(urlImage)
@@ -35,7 +35,7 @@ fun ImageView.loadImage2(urlImage: String?, placeHolder: Int, isCircle: Boolean 
 
 }
 
-fun ImageView.loadImage2(urlImage: String?, isCircle: Boolean = false) {
+fun ImageView.loadImage(urlImage: String?, isCircle: Boolean = false) {
     if (isCircle) {
         Glide.with(this)
             .load(urlImage)
@@ -48,7 +48,7 @@ fun ImageView.loadImage2(urlImage: String?, isCircle: Boolean = false) {
     }
 }
 
-fun ImageView.loadImage2(urlImage: File, placeHolder: Int, isCircle: Boolean = false) {
+fun ImageView.loadImage(urlImage: File, placeHolder: Int, isCircle: Boolean = false) {
     if (isCircle) {
         Glide.with(this)
             .load(urlImage)
@@ -64,7 +64,7 @@ fun ImageView.loadImage2(urlImage: File, placeHolder: Int, isCircle: Boolean = f
 
 }
 
-fun ImageView.loadImage2(urlImage: Uri?, placeHolder: Int, isCircle: Boolean = false) {
+fun ImageView.loadImage(urlImage: Uri?, placeHolder: Int, isCircle: Boolean = false) {
     if (isCircle) {
         Glide.with(this)
             .load(urlImage)

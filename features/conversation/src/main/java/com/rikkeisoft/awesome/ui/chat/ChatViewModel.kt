@@ -1,7 +1,10 @@
 package com.rikkeisoft.awesome.ui.chat
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.project.core.base.BaseViewModel
@@ -14,16 +17,22 @@ import com.project.core.utils.toLocalDate
 import com.rikkeisoft.awesome.conversation.R
 import com.rikkeisoft.awesome.ext.copyMessageItem
 import com.rikkeisoft.awesome.model.ConversationChat
+import com.rikkeisoft.awesome.model.GalleryImage
 import com.rikkeisoft.awesome.model.MessageItem
 import com.rikkeisoft.awesome.model.MessagePosition
+import com.rikkeisoft.awesome.repository.GalleryRepository
 import com.rikkeisoft.awesome.repository.MessageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -32,7 +41,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val repo: MessageRepository,
+    private val messageRepo: MessageRepository,
+    private val galleryRepo: GalleryRepository,
     private val auth: FirebaseAuth,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel() {
@@ -45,6 +55,24 @@ class ChatViewModel @Inject constructor(
     private val _inputMessage = MutableStateFlow("")
     val inputText: StateFlow<String> = _inputMessage.asStateFlow()
 
+    val galleryImages: Flow<PagingData<GalleryImage>> = galleryRepo.getGalleryImages()
+        .cachedIn(viewModelScope)
+
+    private val _selectedUris = MutableStateFlow<List<Uri>>(emptyList())
+    val selectedUris: StateFlow<List<Uri>> = _selectedUris.asStateFlow()
+
+    private val _isPanelVisible = MutableStateFlow(false)
+    val isPanelVisible: StateFlow<Boolean> = _isPanelVisible.asStateFlow()
+
+    private val maxSelection = 10
+
+    val isSendMessageEnable = combine(_selectedUris,_inputMessage){imagesSelected,textMessage ->
+        imagesSelected.isNotEmpty()|| textMessage.isNotBlank()
+    }.stateIn(scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = false
+        )
+
     var hasMoreData = true
     private var conversationId: String? = null
     private val currentUserId: String
@@ -55,10 +83,10 @@ class ChatViewModel @Inject constructor(
         Timber.d(conversationId)
         viewModelScope.launch {
             conversationId?.let {
-                conversation.value = repo.getConversation(it)
+                conversation.value = messageRepo.getConversation(it)
                 firstLoadMessages(it)
                 observerLastMessage()
-                repo.updateUnread(it)
+                messageRepo.updateUnread(it)
             } ?: run {
                 messageError.value = ResourceUtils.getString(R.string.conversation_not_found)
             }
@@ -67,7 +95,7 @@ class ChatViewModel @Inject constructor(
 
     suspend fun firstLoadMessages(conversationId: String) {
             _isLoadingNextPage.value = true
-            val fetchedMessages = repo.firstLoadMessages(conversationId)
+            val fetchedMessages = messageRepo.firstLoadMessages(conversationId)
             Timber.tag("Chat Message").d("firstLoadMessages $fetchedMessages")
             val mappedItems = withContext(Dispatchers.Default){ MessageToMessageItemMapper.mapMessagesToMessageItems(
                 messages = fetchedMessages,
@@ -81,7 +109,7 @@ class ChatViewModel @Inject constructor(
     private fun observerLastMessage(){
         conversationId?.let {
             viewModelScope.launch {
-                repo.observeLatestMessages(it).flowOn(Dispatchers.IO).buffer(5).collect{ message->
+                messageRepo.observeLatestMessages(it).flowOn(Dispatchers.IO).buffer(5).collect{ message->
                     appendNewMessage(message)
                 }
             }
@@ -100,6 +128,29 @@ class ChatViewModel @Inject constructor(
         }
         _messageItems.value = currentMessages
     }
+
+    fun togglePanel(open: Boolean) {
+        _isPanelVisible.value = open
+        _selectedUris.value = emptyList()
+    }
+
+    fun toggleSelection(uri: Uri) {
+        val current = _selectedUris.value.toMutableList()
+        if (current.remove(uri)) {
+            _selectedUris.value = current
+        } else if (current.size < maxSelection) {
+            current.add(uri)
+            _selectedUris.value = current
+        }
+    }
+
+    fun confirmSelection(): List<Uri> {
+        val result = _selectedUris.value
+        _selectedUris.value = emptyList()
+        _isPanelVisible.value = false
+        return result
+    }
+
     fun onInputTextChanged(text: String) {
         _inputMessage.value = text
     }
@@ -119,7 +170,7 @@ class ChatViewModel @Inject constructor(
                     type = MessageType.TEXT,
                     conversationId = cid
                 )
-                repo.sendMessage(cid, message)
+                messageRepo.sendMessage(cid, message)
                 _inputMessage.value = ""
             } catch (e: Exception) {
                 Timber.e(e)
@@ -135,7 +186,7 @@ class ChatViewModel @Inject constructor(
             viewModelScope.launch {
                 _isLoadingNextPage.value = true
                 try {
-                    val oldMessages = repo.loadNextPage(it)
+                    val oldMessages = messageRepo.loadNextPage(it)
                     if (oldMessages.isEmpty()) {
                         hasMoreData = false
                     } else {

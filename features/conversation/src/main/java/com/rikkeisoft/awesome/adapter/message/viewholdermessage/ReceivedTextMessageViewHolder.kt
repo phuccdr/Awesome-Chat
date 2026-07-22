@@ -3,7 +3,7 @@ package com.rikkeisoft.awesome.adapter.message.viewholdermessage
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.format
-import com.project.core.utils.loadImage2
+import com.project.core.utils.loadImage
 import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.conversation.databinding.ItemReceivedTextMessageBinding
 import com.rikkeisoft.awesome.model.MessageItem
@@ -23,7 +23,7 @@ class ReceivedTextMessageViewHolder(
             )
             if (item.messagePosition == MessagePosition.SINGLE || item.messagePosition == MessagePosition.TOP) {
                 imvAvatar.visibility = View.VISIBLE
-                imvAvatar.loadImage2(urlImage = item.avatarFriend, isCircle = true)
+                imvAvatar.loadImage(urlImage = item.avatarFriend, isCircle = true)
             } else {
                 imvAvatar.visibility = View.INVISIBLE
             }

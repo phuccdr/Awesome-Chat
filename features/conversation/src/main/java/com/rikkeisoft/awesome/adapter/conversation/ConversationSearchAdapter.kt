@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.project.core.utils.loadImage2
+import com.project.core.utils.loadImage
 import com.project.core.utils.resource.ResourceUtils
 import com.rikkeisoft.awesome.conversation.R
 import com.rikkeisoft.awesome.conversation.databinding.ItemSearchConversationBinding
@@ -31,7 +31,7 @@ class ConversationSearchAdapter :
                 tvFriendName.text = item.user?.username
                 tvCountMessage.text =
                     ResourceUtils.getString(R.string.message_match, item.messages.size)
-                ivAvatar.loadImage2(item.user?.avatar, true)
+                ivAvatar.loadImage(item.user?.avatar, true)
             }
         }
     }
