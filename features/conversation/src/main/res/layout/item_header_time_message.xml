@@ -12,7 +12,7 @@
             style="@style/AppText.Lato.Medium.14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_corner30_white"
+            android:background="@drawable/bg_corner30"
             android:backgroundTint="@color/background_color_message"
             android:paddingHorizontal="13dp"
             android:paddingVertical="6dp"

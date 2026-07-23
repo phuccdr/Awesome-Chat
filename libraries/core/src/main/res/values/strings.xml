@@ -14,4 +14,6 @@
     <string name="today">Hôm nay</string>
     <string name="gallery_permission_needed">Cần cấp quyền truy cập ảnh để chọn ảnh.</string>
     <string name="send">Gửi</string>
+    <string name="Cancel">Hủy</string>
+    <string name="no_result">Không tìm thấy kết quả phù hợp</string>
 </resources>

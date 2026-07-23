@@ -103,7 +103,6 @@
             app:layout_constraintStart_toEndOf="@+id/btn_conversation"
             app:layout_constraintTop_toTopOf="@id/bg_bottom_nav">
 
-
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_friends"
                 android:layout_width="28dp"

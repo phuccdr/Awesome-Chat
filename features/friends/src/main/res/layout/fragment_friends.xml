@@ -1,20 +1,214 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:text="Friends Fragment"
+        <View
+            android:id="@+id/viewTop"
+            android:layout_width="0dp"
+            android:layout_height="228dp"
+            android:background="@drawable/gradient_splash"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/titleFriend"
+            style="@style/AppText.Lato.Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="54dp"
+            android:text="@string/friend"
+            android:textColor="@color/text_white"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/bg_new_message"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="54dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/bg_oval"
+            app:layout_constraintEnd_toEndOf="@+id/viewTop"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_new_friend"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:elevation="2dp"
+            android:src="@drawable/ic_add_new_friend"
+            app:layout_constraintBottom_toBottomOf="@+id/bg_new_message"
+            app:layout_constraintEnd_toEndOf="@+id/bg_new_message"
+            app:layout_constraintStart_toStartOf="@+id/bg_new_message"
+            app:layout_constraintTop_toTopOf="@+id/bg_new_message" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edtSearch"
+            style="@style/AppText.Lato.Medium.16"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/bg_corner30"
+            android:backgroundTint="@color/white"
+            android:drawableStart="@drawable/ic_search"
+            android:drawablePadding="12dp"
+            android:hint="@string/searching_friend"
+            android:padding="12dp"
+            android:paddingVertical="12dp"
+            android:paddingStart="16dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toStartOf="@id/btnCancelSearch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleFriend" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btnCancelSearch"
+            style="@style/AppText.Lato.Medium.16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:text="@string/Cancel"
+            android:textColor="@color/text_white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/edtSearch"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/edtSearch" />
+
+        <View
+            android:id="@+id/bg_bottom"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_top_corner30"
+            android:backgroundTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edtSearch" />
+
+        <include
+            android:id="@+id/item_friend_tab_layout"
+            layout="@layout/friends_tab_layout_item"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            app:layout_constraintEnd_toStartOf="@+id/item_all_friend_tab_layout"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/bg_bottom" />
+
+        <include
+            android:id="@+id/item_all_friend_tab_layout"
+            layout="@layout/friends_tab_layout_item"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/item_friend_request_tab_layout"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/item_friend_tab_layout"
+            app:layout_constraintTop_toTopOf="@+id/item_friend_tab_layout" />
+
+        <include
+            android:id="@+id/item_friend_request_tab_layout"
+            layout="@layout/friends_tab_layout_item"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/item_all_friend_tab_layout"
+            app:layout_constraintTop_toTopOf="@+id/item_all_friend_tab_layout" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/color_divide"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/item_friend_tab_layout" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/rvFriends"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:paddingHorizontal="12dp"
+            android:paddingTop="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/item_friend_tab_layout" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSearchFriend"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:paddingHorizontal="12dp"
+            android:paddingTop="62dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/bg_bottom" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTitleSearchFriend"
+            style="@style/AppText.Lato.Bold.14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="26dp"
+            android:text="@string/friend"
+            android:textColor="@color/text_gray_secondary"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/rvSearchFriend"
+            app:layout_constraintTop_toTopOf="@+id/rvSearchFriend" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ic_no_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="112dp"
+            android:src="@drawable/ic_no_result"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/rvSearchFriend"
+            app:layout_constraintStart_toStartOf="@id/rvSearchFriend"
+            app:layout_constraintTop_toTopOf="@id/rvSearchFriend" />
+
+        <TextView
+            android:id="@+id/tvNoResult"
+            style="@style/AppText.Lato.Bold.16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/no_result"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/rvSearchFriend"
+            app:layout_constraintStart_toStartOf="@id/rvSearchFriend"
+            app:layout_constraintTop_toBottomOf="@+id/ic_no_result" />
+
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupSearchFriend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:constraint_referenced_ids="tvTitleSearchFriend,rvSearchFriend,btnCancelSearch" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

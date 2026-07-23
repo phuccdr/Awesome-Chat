@@ -44,6 +44,7 @@ junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 activity = "1.13.0"
 paging = "3.4.2"
+viewpager2 = "1.1.0"
 
 [libraries]
 androidGradle = { module = "com.android.tools.build:gradle", version.ref = "androidGradle" }
@@ -116,6 +117,9 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 
 #paging
 paging = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
+
+#viewpager 2
+viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }

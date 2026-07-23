@@ -34,7 +34,6 @@ android {
 }
 
 dependencies {
-
     implementation(project(":libraries:core"))
     implementation(project(":libraries:permission"))
 
@@ -58,5 +57,8 @@ dependencies {
 
     //fireauth
     implementation(libs.firebaseAuth)
+
+    // viewpagger2
+    implementation(libs.viewpager2)
 
 }
