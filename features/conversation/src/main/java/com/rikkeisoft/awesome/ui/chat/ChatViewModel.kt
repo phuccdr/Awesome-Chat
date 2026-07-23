@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.Gson
 import com.project.core.base.BaseViewModel
 import com.project.core.model.firebase.Message
 import com.project.core.model.firebase.MessageType
@@ -20,6 +21,7 @@ import com.rikkeisoft.awesome.model.ConversationChat
 import com.rikkeisoft.awesome.model.GalleryImage
 import com.rikkeisoft.awesome.model.MessageItem
 import com.rikkeisoft.awesome.model.MessagePosition
+import com.rikkeisoft.awesome.model.Sticker
 import com.rikkeisoft.awesome.repository.GalleryRepository
 import com.rikkeisoft.awesome.repository.MessageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,10 +41,14 @@ import timber.log.Timber
 import java.time.LocalDate
 import javax.inject.Inject
 
+enum class ChatInputMode {
+    NONE, KEYBOARD, GALLERY, STICKER
+}
+
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val messageRepo: MessageRepository,
-    private val galleryRepo: GalleryRepository,
+    galleryRepo: GalleryRepository,
     private val auth: FirebaseAuth,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel() {
@@ -60,9 +66,10 @@ class ChatViewModel @Inject constructor(
 
     private val _selectedUris = MutableStateFlow<List<Uri>>(emptyList())
     val selectedUris: StateFlow<List<Uri>> = _selectedUris.asStateFlow()
-
-    private val _isPanelVisible = MutableStateFlow(false)
-    val isPanelVisible: StateFlow<Boolean> = _isPanelVisible.asStateFlow()
+    private val _stickers = MutableStateFlow<List<Sticker>>(emptyList())
+    val stickers: StateFlow<List<Sticker>> = _stickers.asStateFlow()
+    private val _inputMode = MutableStateFlow(ChatInputMode.NONE)
+    val inputMode: StateFlow<ChatInputMode> = _inputMode.asStateFlow()
 
     private val maxSelection = 10
 
@@ -89,6 +96,20 @@ class ChatViewModel @Inject constructor(
                 messageRepo.updateUnread(it)
             } ?: run {
                 messageError.value = ResourceUtils.getString(R.string.conversation_not_found)
+            }
+        }
+        loadStickers()
+    }
+
+    private fun loadStickers() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val jsonString = ResourceUtils.context.assets.open("stickers.json").bufferedReader()
+                    .use { it.readText() }
+                val response = Gson().fromJson(jsonString, StickersResponse::class.java)
+                _stickers.value = response.stickers
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to load stickers")
             }
         }
     }
@@ -129,9 +150,11 @@ class ChatViewModel @Inject constructor(
         _messageItems.value = currentMessages
     }
 
-    fun togglePanel(open: Boolean) {
-        _isPanelVisible.value = open
-        _selectedUris.value = emptyList()
+    fun setInputMode(mode: ChatInputMode) {
+        _inputMode.value = mode
+        if (mode != ChatInputMode.GALLERY) {
+            _selectedUris.value = emptyList()
+        }
     }
 
     fun toggleSelection(uri: Uri) {
@@ -144,18 +167,18 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun confirmSelection(): List<Uri> {
+    fun sendImageMessage() {
         val result = _selectedUris.value
         _selectedUris.value = emptyList()
-        _isPanelVisible.value = false
-        return result
+        _inputMode.value = ChatInputMode.NONE
+
     }
 
     fun onInputTextChanged(text: String) {
         _inputMessage.value = text
     }
 
-    fun sendMessage() {
+    fun sendTextMessage() {
         val content = _inputMessage.value.trim()
         val cid = conversationId ?: return
         if (content.isEmpty()) return
@@ -167,11 +190,33 @@ class ChatViewModel @Inject constructor(
                     createdAt = Timestamp.now(),
                     senderId = currentUserId,
                     receiverId = conversation.value?.friend?.uid ?: "",
-                    type = MessageType.TEXT,
-                    conversationId = cid
+                    type = MessageType.TEXT, conversationId = cid, seen = false
                 )
                 messageRepo.sendMessage(cid, message)
                 _inputMessage.value = ""
+            } catch (e: Exception) {
+                Timber.e(e)
+                messageError.value = e.message
+            }
+        }
+    }
+
+    fun sendStickerMessage(sticker: Sticker) {
+        val cid = conversationId ?: return
+        if (sticker.id.isEmpty() || sticker.url.isEmpty()) return
+        viewModelScope.launch {
+            try {
+                val message = Message(
+                    createdAt = Timestamp.now(),
+                    senderId = currentUserId,
+                    receiverId = conversation.value?.friend?.uid ?: "",
+                    type = MessageType.STICKER,
+                    conversationId = cid,
+                    stickerId = sticker.id,
+                    stickerUrl = sticker.url,
+                    seen = false
+                )
+                messageRepo.sendMessage(cid, message)
             } catch (e: Exception) {
                 Timber.e(e)
                 messageError.value = e.message
@@ -261,4 +306,6 @@ class ChatViewModel @Inject constructor(
             this.addAll(newMessages)
         }
     }
+
+    private data class StickersResponse(val stickers: List<Sticker>)
 }

@@ -1,7 +1,10 @@
 package com.project.core.base.fragment
 
+import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -10,6 +13,7 @@ import com.project.core.base.activity.BaseActivityNotRequireViewModel
 import com.project.core.utils.toast
 import com.project.permission.PermissionListener
 import com.project.permission.PermissionStatus
+import timber.log.Timber
 
 abstract class BaseFragmentNotRequireViewModel<BD : ViewDataBinding>(@LayoutRes id: Int) :
     Fragment(id), PermissionListener {
@@ -21,6 +25,7 @@ abstract class BaseFragmentNotRequireViewModel<BD : ViewDataBinding>(@LayoutRes 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        logLifecycle("onViewCreated")
         _binding = DataBindingUtil.bind(view)
         _binding?.lifecycleOwner = viewLifecycleOwner
 
@@ -65,6 +70,7 @@ abstract class BaseFragmentNotRequireViewModel<BD : ViewDataBinding>(@LayoutRes 
     }
 
     override fun onDestroyView() {
+        logLifecycle("onDestroyView")
         _binding?.unbind()
         _binding = null
         super.onDestroyView()
@@ -92,4 +98,58 @@ abstract class BaseFragmentNotRequireViewModel<BD : ViewDataBinding>(@LayoutRes 
             }
         }
     }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        logLifecycle("onAttach")
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        logLifecycle("onCreate")
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        logLifecycle("onCreateView")
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        logLifecycle("onStart")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        logLifecycle("onResume")
+    }
+
+    override fun onPause() {
+        logLifecycle("onPause")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        logLifecycle("onStop")
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        logLifecycle("onDestroy")
+        super.onDestroy()
+    }
+
+    override fun onDetach() {
+        logLifecycle("onDetach")
+        super.onDetach()
+    }
+
+    private fun logLifecycle(callback: String) {
+        Timber.tag("FragmentLifecycle").d("${this::class.java.simpleName}: $callback")
+    }
 }
+
+
+

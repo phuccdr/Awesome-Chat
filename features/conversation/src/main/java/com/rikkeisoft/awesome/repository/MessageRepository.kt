@@ -9,7 +9,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.project.core.model.firebase.Conversation
 import com.project.core.model.firebase.Message
+import com.project.core.model.firebase.MessageType
 import com.project.core.model.firebase.User
+import com.project.core.utils.resource.ResourceUtils
+import com.rikkeisoft.awesome.conversation.R
 import com.rikkeisoft.awesome.model.ConversationChat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -141,8 +144,25 @@ class MessageRepository @Inject constructor(
         withContext(Dispatchers.IO) {
             val conversationRef = db.collection("conversations").document(conversationId)
             val messageRef = conversationRef.collection("messages").document()
+            val lastMessage = when (message.type) {
+                MessageType.TEXT -> {
+                    message.content
+                }
+
+                MessageType.IMAGE -> {
+                    ResourceUtils.getString(R.string.sent_image)
+                }
+
+                MessageType.STICKER -> {
+                    ResourceUtils.getString(R.string.sent_sticker)
+                }
+
+                else -> {
+                    ResourceUtils.getString(R.string.sent_message)
+                }
+            }
             val updates = hashMapOf<String, Any>(
-                "lastMessage" to message.content,
+                "lastMessage" to lastMessage,
                 "lastSenderId" to message.senderId,
                 "lastUpdate" to (message.createdAt ?: Timestamp.now())
             )

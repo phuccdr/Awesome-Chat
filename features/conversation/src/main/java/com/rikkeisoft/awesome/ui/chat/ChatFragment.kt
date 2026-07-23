@@ -1,6 +1,7 @@
 package com.rikkeisoft.awesome.ui.chat
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.PickVisualMediaRequest
@@ -16,7 +17,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.base.fragment.BaseFragment
-import com.project.core.utils.DeviceUtil
 import com.project.core.utils.loadImage
 import com.project.core.utils.prefetcher.bindToLifecycle
 import com.project.core.utils.prefetcher.setupWithPrefetchViewPool
@@ -27,6 +27,7 @@ import com.project.permission.isPermissionGranted
 import com.rikkeisoft.awesome.ConversationNavigation
 import com.rikkeisoft.awesome.adapter.gallery.GalleryAdapter
 import com.rikkeisoft.awesome.adapter.message.MessageAdapter
+import com.rikkeisoft.awesome.adapter.sticker.StickerAdapter
 import com.rikkeisoft.awesome.conversation.R
 import com.rikkeisoft.awesome.conversation.databinding.FragmentChatBinding
 import com.rikkeisoft.awesome.custom.ChatItemDecoration
@@ -38,39 +39,39 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.fragment_chat) {
-    val PRELOAG_MESSAGE = 5
+    val PRELOAD_MESSAGE = 5
     private val viewModel: ChatViewModel by viewModels()
     override fun getVM() = viewModel
 
     private val adapterMessage by lazy {
-      MessageAdapter(onMessageClick = { itemId ->
+        MessageAdapter(onMessageClick = { itemId ->
             Timber.tag("ChatMessage").d("onMessageClick $itemId")
             viewModel.onClickItemMessage(itemId)
         }, onImageClick = { imageUrl -> })
     }
-
-    private val pickMultipleMedia =
-    registerForActivityResult(
+    private val pickMultipleMedia = registerForActivityResult(
         ActivityResultContracts.PickMultipleVisualMedia(10)
     ) { uris ->
         if (uris.isNotEmpty()) {
-            // Danh sách ảnh đã chọn
+            viewModel.sendImageMessage()
         }
     }
-
     private val galleryAdapter by lazy {
         GalleryAdapter(onClick = { viewModel.toggleSelection(it.uri) })
     }
-
+    private val stickerAdapter by lazy {
+        StickerAdapter(onClick = { sticker ->
+            viewModel.sendStickerMessage(sticker)
+        })
+    }
     private val requestPermissions = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         val isGranted = permissions.entries.any { it.value }
         if (isGranted) {
-            viewModel.togglePanel(true)
+            viewModel.setInputMode(ChatInputMode.GALLERY)
             galleryAdapter.refresh()
         } else {
-
             val requiredPermissions = getRequiredPermissions()
             val isPermanentlyDenied = requiredPermissions.all {
                 !shouldShowRequestPermissionRationale(it)
@@ -89,7 +90,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
     @Inject
     lateinit var appNavigator: ConversationNavigation
 
-
+    @SuppressLint("ClickableViewAccessibility")
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
         binding.viewModel = viewModel
@@ -98,31 +99,42 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
                 appNavigator.back()
             }
             layoutInput.btnAddImage.setOnSafeClickListener {
-                if(viewModel?.isPanelVisible?.value==true){
-                    viewModel?.togglePanel(false)
-                }else{
+                if (viewModel?.inputMode?.value == ChatInputMode.GALLERY) {
+                    viewModel?.setInputMode(ChatInputMode.NONE)
+                } else {
                     handleOpenSelectImage()
                 }
-
             }
             layoutInput.edtInputMessage.doAfterTextChanged {
                 this@ChatFragment.viewModel.onInputTextChanged(it?.toString() ?: "")
             }
             layoutInput.btnSendMessage.setOnSafeClickListener {
-                this@ChatFragment.viewModel.sendMessage()
+                this@ChatFragment.viewModel.sendTextMessage()
             }
             layoutInput.edtInputMessage.setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
-                    viewModel?.togglePanel(false)
+                    viewModel?.setInputMode(ChatInputMode.KEYBOARD)
                 }
             }
-//            btnSendMes.setOnSafeClickListener {
-//                val uris = this@ChatFragment.viewModel.confirmSelection()
-//                // OUT OF SCOPE: hand `uris` to the upload/send flow.
-//            }
+            layoutInput.btnAddSticker.setOnSafeClickListener {
+                val currentMode = viewModel?.inputMode?.value
+                if (currentMode == ChatInputMode.STICKER) {
+                    viewModel?.setInputMode(ChatInputMode.NONE)
+                } else {
+                    viewModel?.setInputMode(ChatInputMode.STICKER)
+                }
+            }
         }
         setupChatRecyclerView()
         setupGalleryRecyclerView()
+        setupStickerRecyclerView()
+    }
+
+    private fun setupStickerRecyclerView() {
+        binding.rvStickers.apply {
+            layoutManager = GridLayoutManager(requireContext(), 3)
+            adapter = stickerAdapter
+        }
     }
 
     private fun setupGalleryRecyclerView() {
@@ -131,12 +143,11 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
             adapter = galleryAdapter
         }
         galleryAdapter.addLoadStateListener { loadState ->
-            binding.pbGallery.isVisible = loadState.source.append is LoadState.Loading
+            binding.pbPanel.isVisible = loadState.source.append is LoadState.Loading
         }
     }
 
     private fun setupChatRecyclerView() {
-
         binding.rvMessages.apply {
             layoutManager = LinearLayoutManager(requireContext()).apply {
                 stackFromEnd = true
@@ -159,7 +170,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
                         (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
                     Timber.tag("ChatMessage")
                         .d("scrolled firstVisiblePosition: $firstVisiblePosition dy: $dy")
-                    if (dy <= 0 && firstVisiblePosition <= PRELOAG_MESSAGE && !viewModel.isLoadingNextPage.value && viewModel.hasMoreData) {
+                    if (dy <= 0 && firstVisiblePosition <= PRELOAD_MESSAGE && !viewModel.isLoadingNextPage.value && viewModel.hasMoreData) {
                         viewModel.loadNextPage()
                     }
                 }
@@ -169,7 +180,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
 
     override fun bindingStateView() {
         super.bindingStateView()
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.conversation.collect { conversationUI ->
@@ -193,16 +204,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
                     }
                 }
                 launch {
-                    viewModel.inputText.collect { text ->
+                    viewModel.inputText.collectLatest { text ->
                         binding.layoutInput.apply {
                             if (edtInputMessage.text.toString() != text) {
                                 edtInputMessage.setText(text)
                                 edtInputMessage.setSelection(text.length)
-                                Timber.d(
-                                    "focus=${binding.layoutInput.edtInputMessage.hasFocus()}"
-                                )
                             }
-
                         }
                     }
                 }
@@ -217,19 +224,17 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
                     }
                 }
                 launch {
-                    viewModel.isPanelVisible.collectLatest { isVisible ->
-                        if (isVisible) {
-                            binding.layoutInput.edtInputMessage.clearFocus()
-                            DeviceUtil.hideSoftKeyboard(requireActivity())
-                            binding.galleryPanel.isVisible = true
-                        }else{
-                            binding.galleryPanel.isVisible = false
-                        }
+                    viewModel.inputMode.collectLatest { mode ->
+                        handleInputModeChange(mode)
                     }
                 }
                 launch {
-                    viewModel.isSendMessageEnable.collectLatest { isEnable->
-
+                    viewModel.stickers.collectLatest {
+                        stickerAdapter.submitList(it)
+                    }
+                }
+                launch {
+                    viewModel.isSendMessageEnable.collectLatest { isEnable ->
                         binding.layoutInput.btnSendMessage.isEnabled = isEnable
                         val tintColor = if (isEnable) {
                             ResourceUtils.getColor(com.project.core.R.color.primary_color)
@@ -244,12 +249,36 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
         }
     }
 
+    private fun handleInputModeChange(mode: ChatInputMode) {
+        when (mode) {
+            ChatInputMode.KEYBOARD -> {
+                binding.panelLayout.isVisible = false
+            }
+
+            ChatInputMode.GALLERY -> {
+                binding.panelLayout.isVisible = true
+                binding.rvGallery.isVisible = true
+                binding.rvStickers.isVisible = false
+            }
+
+            ChatInputMode.STICKER -> {
+                binding.panelLayout.isVisible = true
+                binding.rvStickers.isVisible = true
+                binding.rvGallery.isVisible = false
+            }
+
+            ChatInputMode.NONE -> {
+                binding.pbPanel.isVisible = false
+            }
+        }
+    }
+
     private fun handleOpenSelectImage() {
         val permissions = getRequiredPermissions()
         val isGranted = permissions.any { requireContext().isPermissionGranted(it) }
 
         if (isGranted) {
-            viewModel.togglePanel(true)
+            viewModel.setInputMode(ChatInputMode.GALLERY)
         } else {
             requestPermissions.launch(permissions)
         }
@@ -257,10 +286,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
 
     private fun getRequiredPermissions(): Array<String> {
         return when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE ->
-                arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
-                arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> arrayOf(
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+            )
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
             else -> arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
     }

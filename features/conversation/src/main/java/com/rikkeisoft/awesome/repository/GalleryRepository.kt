@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GalleryRepository @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
     val PAGE_SIZE = 30
     fun getGalleryImages(pageSize: Int = PAGE_SIZE): Flow<PagingData<GalleryImage>> {

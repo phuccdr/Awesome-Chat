@@ -125,32 +125,28 @@ object MessageToMessageItemMapper {
     ): MessageItem.Message {
         val isMine = message.senderId == currentUserId
         val senderId = message.senderId
-
         return when (message.type) {
             MessageType.IMAGE -> {
-                val imageUrls = message.imageUrl?.let { listOf(it) } ?: emptyList()
                 MessageItem.ImageMessage(
                     id = message.id,
                     isMine = isMine,
                     avatarFriend = if (isMine) "" else friendAvatar,
                     createdAt = message.createdAt,
-                    messagePosition = position,
-                    imageUrls = imageUrls,
+                    messagePosition = position, imageUrls = message.imageUrls ?: emptyList(),
                     senderId = senderId
                 )
             }
 
-            MessageType.VIDEO, MessageType.FILE -> {
-                // Treat video and file as text message for now
-                MessageItem.TextMessage(
+            MessageType.STICKER -> {
+                MessageItem.StickerMessage(
                     id = message.id,
                     isMine = isMine,
                     avatarFriend = if (isMine) "" else friendAvatar,
                     createdAt = message.createdAt,
-                    content = message.content,
-                    isSeen = message.seen,
+                    messagePosition = position,
                     senderId = senderId,
-                    messagePosition = position
+                    stickerId = message.stickerId ?: "",
+                    stickerUrl = message.stickerUrl ?: ""
                 )
             }
 

@@ -2,7 +2,7 @@ package com.project.baseproject.container
 
 import android.os.Bundle
 import android.view.MotionEvent
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.widget.ImageView
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.project.baseproject.R
@@ -58,7 +58,7 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
 
     override fun shouldHideKeyboard(event: MotionEvent): Boolean {
         val inputMessageLayout =
-            findViewById<ConstraintLayout>(com.rikkeisoft.awesome.conversation.R.id.layout_input)
+            findViewById<ImageView>(com.rikkeisoft.awesome.conversation.R.id.btn_send_message)
 
         if (inputMessageLayout != null && inputMessageLayout.isTouched(event)) {
             return false
@@ -72,7 +72,7 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
     }
 
     override fun onStop() {
-        Timber.tag("ahihi").d("onStop")
+        Timber.tag("Activity Lifecycle").d("onStop")
         super.onStop()
         networkConnectionManager.stopListenNetworkState()
     }
@@ -86,8 +86,13 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
     }
 
     override fun onDestroy() {
-        Timber.tag("ahihi").d("onDestroy")
+        Timber.tag("Activity Lifecycle").d("onDestroy")
         super.onDestroy()
+    }
+
+    override fun onRestart() {
+        Timber.tag("Activity Lifecycle").d("onRestart")
+        super.onRestart()
     }
 
 

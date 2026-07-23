@@ -9,13 +9,12 @@ import android.provider.MediaStore
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.rikkeisoft.awesome.model.GalleryImage
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class GalleryPagingSource(
-    @ApplicationContext private val context: Context,
+    private val context: Context,
 ) : PagingSource<Int, GalleryImage>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, GalleryImage> {
         return try {

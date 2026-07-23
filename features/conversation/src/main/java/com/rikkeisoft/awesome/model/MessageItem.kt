@@ -67,8 +67,9 @@ sealed class MessageItem {
         override val createdAt: Timestamp? = null,
         override var isSelected: Boolean = false,
         override val messagePosition: MessagePosition,
-        val stickerId: String = "",
         override val senderId: String = "",
+        val stickerId: String = "",
+        val stickerUrl: String = ""
     ) : Message(
         id = id,
         isMine = isMine,

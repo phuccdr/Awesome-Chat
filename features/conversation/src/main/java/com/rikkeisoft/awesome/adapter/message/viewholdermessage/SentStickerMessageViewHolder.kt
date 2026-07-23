@@ -15,7 +15,7 @@ class SentStickerMessageViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(item: MessageItem.StickerMessage) {
         binding.apply {
-            ivSticker.loadImage(urlImage = item.stickerId)
+            ivSticker.loadImage(urlImage = item.stickerUrl)
             tvTime.text = item.createdAt.format()
             tvTime.visibility =
                 if (item.isSelected || item.messagePosition == MessagePosition.BOTTOM || item.messagePosition == MessagePosition.SINGLE) {
