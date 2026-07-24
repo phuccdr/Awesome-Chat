@@ -7,6 +7,7 @@ import com.project.core.model.firebase.Conversation
 import com.project.core.model.firebase.Message
 import com.project.core.model.firebase.User
 import com.rikkeisoft.awesome.model.SearchMessage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -32,10 +34,10 @@ class ConversationRepository @Inject constructor(
         return getUserByUid(friendId)
     }
 
-    suspend fun getUserByUid(uid: String): User? {
+    suspend fun getUserByUid(uid: String): User? = withContext(Dispatchers.IO) {
         val query = db.collection("users").document(uid)
         val snapshot = query.get().await()
-        return snapshot.toObject(User::class.java)
+        return@withContext snapshot.toObject(User::class.java)
     }
 
     fun observeConversations(limit: Long = PAGE_SIZE): Flow<List<Conversation>> = callbackFlow {

@@ -106,14 +106,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="26dp"
-            app:layout_constraintEnd_toStartOf="@+id/item_all_friend_tab_layout"
+            app:layout_constraintEnd_toStartOf="@+id/item_all_users_tab_layout"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/bg_bottom" />
 
         <include
-            android:id="@+id/item_all_friend_tab_layout"
+            android:id="@+id/item_all_users_tab_layout"
             layout="@layout/friends_tab_layout_item"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -129,10 +129,11 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/item_all_friend_tab_layout"
-            app:layout_constraintTop_toTopOf="@+id/item_all_friend_tab_layout" />
+            app:layout_constraintStart_toEndOf="@+id/item_all_users_tab_layout"
+            app:layout_constraintTop_toTopOf="@+id/item_all_users_tab_layout" />
 
         <View
+            android:id="@+id/divide_tab_layout"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:background="@color/color_divide"
@@ -141,28 +142,16 @@
             app:layout_constraintTop_toBottomOf="@id/item_friend_tab_layout" />
 
         <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/rvFriends"
+            android:id="@+id/view_pager_friends"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="12dp"
-            android:paddingHorizontal="12dp"
             android:paddingTop="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/item_friend_tab_layout" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSearchFriend"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:paddingHorizontal="12dp"
-            android:paddingTop="62dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/bg_bottom" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTitleSearchFriend"
@@ -175,7 +164,19 @@
             android:textColor="@color/text_gray_secondary"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="@id/rvSearchFriend"
-            app:layout_constraintTop_toTopOf="@+id/rvSearchFriend" />
+            app:layout_constraintTop_toTopOf="@+id/bg_bottom" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSearchFriend"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="12dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitleSearchFriend" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ic_no_result"

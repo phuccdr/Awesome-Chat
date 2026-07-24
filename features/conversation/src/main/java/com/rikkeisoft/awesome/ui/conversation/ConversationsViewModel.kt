@@ -89,7 +89,7 @@ class ConversationsViewModel @Inject constructor(
                 _isLoadingNextConversation.value = true
                 val fetchedUiItems = coroutineScope {
                     conversations.map { conversation ->
-                        async(Dispatchers.IO) {
+                        async {
                             val user = repo.handleGetFriendByMembers(conversation.members) ?: User()
 
                             ConversationItem.ConversationUi(

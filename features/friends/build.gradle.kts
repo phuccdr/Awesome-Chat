@@ -61,4 +61,7 @@ dependencies {
     // viewpagger2
     implementation(libs.viewpager2)
 
+    //paging
+    implementation(libs.paging)
+
 }

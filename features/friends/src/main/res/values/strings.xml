@@ -2,5 +2,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="friend">Bạn Bè</string>
+    <string name="all_user">Tất cả</string>
+    <string name="request_friend">Yêu cầu</string>
     <string name="searching_friend">Tìm kiếm bạn bè</string>
 </resources>
