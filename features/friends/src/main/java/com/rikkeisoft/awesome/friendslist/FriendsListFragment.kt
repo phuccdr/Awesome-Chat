@@ -8,6 +8,7 @@ import com.project.core.utils.collectLatestFlowOnView
 import com.rikkeisoft.awesome.FriendsViewModel
 import com.rikkeisoft.awesome.friends.R
 import com.rikkeisoft.awesome.friends.databinding.FragmentFriendsListBinding
+import timber.log.Timber
 
 class FriendsListFragment :
     BaseFragmentNotRequireViewModel<FragmentFriendsListBinding>(R.layout.fragment_friends_list) {
@@ -25,8 +26,9 @@ class FriendsListFragment :
 
     override fun bindingStateView() {
         super.bindingStateView()
-        viewModel.friendShips.collectLatestFlowOnView(viewLifecycleOwner) {
-            friendAdapter.submitList(it)
+        viewModel.friendShipsPaging.collectLatestFlowOnView(viewLifecycleOwner) {
+            friendAdapter.submitData(it)
+            Timber.d(it.toString())
         }
     }
 }

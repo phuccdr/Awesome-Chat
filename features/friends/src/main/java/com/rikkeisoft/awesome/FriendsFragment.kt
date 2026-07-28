@@ -13,6 +13,7 @@ import com.project.core.utils.resource.ResourceUtils
 import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.friends.R
 import com.rikkeisoft.awesome.friends.databinding.FragmentFriendsBinding
+import androidx.paging.PagingData
 import com.rikkeisoft.awesome.friendslist.FriendListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,7 +34,7 @@ class FriendsFragment :
     override fun bindingStateView() {
         super.bindingStateView()
         viewModel.searchResult.collectLatestFlowOnView(viewLifecycleOwner) {
-            searchAdapter.submitList(it)
+            searchAdapter.submitData(PagingData.from(it))
             binding.tvNoResult.isVisible =
                 it.isEmpty() && viewModel.searchQuery.value.isNotEmpty()
             binding.icNoResult.isVisible =

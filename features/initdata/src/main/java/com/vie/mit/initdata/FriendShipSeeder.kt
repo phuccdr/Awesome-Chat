@@ -5,35 +5,48 @@ import com.google.firebase.cloud.FirestoreClient
 
 object FriendShipSeeder {
     private val db = FirestoreClient.getFirestore()
-    private const val MY_UID = "9XMtQAMCW1YZkN3gKVnCgYbBh7n2"
 
     fun seed() {
-        println("Seeding friend_ships...")
+        println("Seeding friends subcollections...")
         val users = db.collection("users").get().get().documents
-        val conversations = db.collection("conversations").get().get().documents
 
         users.forEach { userDoc ->
-            val otherUid = userDoc.id
-            if (otherUid == MY_UID) return@forEach
-
-            // Tìm conversation giữa MY_UID và otherUid
-            val conversation = conversations.find { doc ->
-                val members = doc.get("members") as? List<*>
-                members?.contains(MY_UID) == true && members.contains(otherUid)
+            val userId = userDoc.id
+            val username = userDoc.getString("username") ?: "Unknown"
+            
+            val friendsSubcollection = db.collection("users").document(userId).collection("friends")
+            val currentFriends = friendsSubcollection.get().get().documents
+            
+            println("User $username ($userId) has ${currentFriends.size} friends. Target: 8")
+            
+            if (currentFriends.size < 8) {
+                val currentFriendIds = currentFriends.mapNotNull { it.getString("friendId") }.toSet()
+                
+                // Potential friends: all users except self and already friends
+                val potentialFriends = users.filter { it.id != userId && !currentFriendIds.contains(it.id) }
+                    .shuffled()
+                
+                val needed = 8 - currentFriends.size
+                val toAdd = potentialFriends.take(needed)
+                
+                toAdd.forEach { friendDoc ->
+                    val friendId = friendDoc.id
+                    val friendName = friendDoc.getString("username") ?: "Unknown"
+                    
+                    val friendshipRef = friendsSubcollection.document()
+                    val friendshipData: Map<String, Any?> = hashMapOf(
+                        "id" to friendshipRef.id,
+                        "friendId" to friendId,
+                        "friendFirstName" to friendName,
+                        "createdAt" to Timestamp.now(),
+                        "status" to "ACTIVE",
+                        "conversationId" to null
+                    )
+                    
+                    friendshipRef.set(friendshipData).get()
+                    println("  Added $friendName as friend for $username")
+                }
             }
-
-            val friendShipRef = db.collection("friend_ships").document()
-            val friendShip = hashMapOf<String, Any?>(
-                "id" to friendShipRef.id,
-                "userId1" to MY_UID,
-                "userId2" to otherUid,
-                "conversationId" to conversation?.id,
-                "createdAt" to Timestamp.now(),
-                "status" to "ACTIVE"
-            )
-
-            friendShipRef.set(friendShip).get()
-            println("FriendShip created between $MY_UID and $otherUid (Conversation: ${conversation?.id ?: "None"})")
         }
 
         println("FriendShip seeding DONE")

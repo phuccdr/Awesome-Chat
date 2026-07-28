@@ -8,10 +8,10 @@ sealed class FriendShipUI {
     data class FriendUI(
         val id: String? = null,
         val createdAt: Timestamp? = null,
-        val userId1: String? = null,
-        val userId2: String? = null,
-        val status: FriendShipStatus = FriendShipStatus.ACTIVE,
+        val friendId: String? = null,
+        val friendFirstName: String? = null,
         val friend: User? = null,
+        val status: FriendShipStatus = FriendShipStatus.ACTIVE,
         val conversationId: String? = null
     ) : FriendShipUI()
 

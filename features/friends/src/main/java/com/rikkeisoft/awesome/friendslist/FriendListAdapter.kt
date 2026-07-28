@@ -2,21 +2,22 @@ package com.rikkeisoft.awesome.friendslist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.project.core.utils.resource.ResourceUtils
-import com.rikkeisoft.awesome.friends.R
+import com.project.core.utils.loadImage
 import com.rikkeisoft.awesome.friends.databinding.ItemAlphabetHeaderBinding
 import com.rikkeisoft.awesome.friends.databinding.ItemFriendBinding
 import com.rikkeisoft.awesome.model.FriendShipUI
 
-class FriendListAdapter : ListAdapter<FriendShipUI, RecyclerView.ViewHolder>(DiffCallback()) {
-
+class FriendListAdapter : PagingDataAdapter<FriendShipUI, RecyclerView.ViewHolder>(DiffCallback()) {
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
             is FriendShipUI.FriendUI -> TYPE_FRIEND
             is FriendShipUI.AlphabetHeader -> TYPE_HEADER
+            else -> {
+                0
+            }
         }
     }
 
@@ -27,10 +28,12 @@ class FriendListAdapter : ListAdapter<FriendShipUI, RecyclerView.ViewHolder>(Dif
                 val binding = ItemFriendBinding.inflate(inflater, parent, false)
                 FriendViewHolder(binding)
             }
+
             TYPE_HEADER -> {
                 val binding = ItemAlphabetHeaderBinding.inflate(inflater, parent, false)
                 HeaderViewHolder(binding)
             }
+
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
@@ -48,8 +51,7 @@ class FriendListAdapter : ListAdapter<FriendShipUI, RecyclerView.ViewHolder>(Dif
         fun bind(item: FriendShipUI.FriendUI) {
             binding.apply {
                 tvUserName.text = item.friend?.username
-                // Set default avatar for now
-                ivAvatar.setImageResource(com.project.core.R.drawable.ic_avatar_default)
+                ivAvatar.loadImage(item.friend?.avatar, isCircle = true)
             }
         }
     }

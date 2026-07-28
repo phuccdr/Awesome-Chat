@@ -15,7 +15,7 @@ object FirestoreSeeder {
 
     fun seedUsers() {
 
-        ('A'..'H').forEach { c ->
+        ('A'..'L').forEach { c ->
 
             val username = "User $c"
             val email = "nguyenvan${c.lowercaseChar()}@gmail.com"

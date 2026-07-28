@@ -6,4 +6,6 @@
     <string name="request_friend">Yêu cầu</string>
     <string name="searching_friend">Tìm kiếm bạn bè</string>
     <string name="add_friend">Kết bạn</string>
+    <string name="friend_request">Lời mời kết bạn</string>
+    <string name="sent_friend_request">Đã gửi kết bạn</string>
 </resources>
