@@ -2,7 +2,7 @@ package com.rikkeisoft.awesome
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.rikkeisoft.awesome.allfriend.AllUsersFragment
+import com.rikkeisoft.awesome.alluser.AllUsersFragment
 import com.rikkeisoft.awesome.friendrequest.FriendRequestFragment
 import com.rikkeisoft.awesome.friendslist.FriendsListFragment
 

@@ -17,16 +17,16 @@
         <com.rikkeisoft.awesome.custom.MessageChatTextView
             android:id="@+id/tvMessage"
             style="@style/AppText.Lato.Medium.16"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:padding="16dp"
             android:text="Ld sdsd chưa??"
             android:textColor="@color/text_primary"
+            app:layout_constrainedWidth="true"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/imvAvatar"
-            app:layout_constraintTop_toTopOf="@id/imvAvatar"
-            app:layout_constraintWidth_default="wrap" />
+            app:layout_constraintTop_toTopOf="@id/imvAvatar" />
 
         <!--        <androidx.constraintlayout.widget.Guideline-->
         <!--            android:id="@+id/guideline75"-->

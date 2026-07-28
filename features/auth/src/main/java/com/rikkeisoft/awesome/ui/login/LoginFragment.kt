@@ -9,13 +9,11 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.project.core.base.dialog.CONFIRM_DIALOG_FRAGMENT
 import com.project.core.base.dialog.NoticeDialog
 import com.project.core.base.dialog.NoticeDialogListener
 import com.project.core.base.fragment.BaseFragment
+import com.project.core.utils.collectFlowOnView
 import com.project.core.utils.resource.ResourceUtils
 import com.project.core.utils.setOnSafeClickListener
 import com.project.core.utils.textspan.CustomTypefaceSpan
@@ -26,7 +24,6 @@ import com.rikkeisoft.awesome.auth.databinding.FragmentLoginBinding
 import com.rikkeisoft.awesome.ui.AsteriskPasswordTransformationMethod
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -96,19 +93,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
 
     override fun bindingStateView() {
         super.bindingStateView()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.enableLogin.collect { enable ->
-                        binding.btnLogin.isEnabled = enable
-                    }
-                }
-                launch {
-                    viewModel.isShowNoticeDialog.filter { it.first }.collect {
-                        showUpNoticeDialog(it.second)
-                    }
-                }
-            }
+        viewModel.enableLogin.collectFlowOnView(viewLifecycleOwner) { enable ->
+            binding.btnLogin.isEnabled = enable
+        }
+        viewModel.isShowNoticeDialog.filter { it.first }.collectFlowOnView(viewLifecycleOwner) {
+            showUpNoticeDialog(it.second)
         }
     }
 

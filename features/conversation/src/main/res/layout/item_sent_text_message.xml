@@ -15,8 +15,6 @@
             android:padding="16dp"
             android:text="Ld ggg ggHoàng giaosdsds đs    djdjjd hhdhdhhdhdhdhhd chưa??"
             android:textColor="@color/text_primary"
-            app:layout_constrainedWidth="true"
-
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

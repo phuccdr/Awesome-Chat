@@ -9,9 +9,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -23,10 +20,10 @@ import com.project.baseproject.databinding.FragmentHomeBinding
 import com.project.baseproject.navigation.AppNavigation
 import com.project.baseproject.navigation.HomeNavigation
 import com.project.core.base.fragment.BaseFragment
+import com.project.core.utils.collectFlowOnView
 import com.project.core.utils.setOnSafeClickListener
 import com.project.core.utils.tint
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -71,22 +68,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true).setPopUpTo(
                 navController.graph.findStartDestination().id, inclusive = false, saveState = true
             ).build()
-        viewLifecycleOwner.lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.bottomNavSelected.collect { idSelected ->
-                    when (idSelected) {
-                        1 -> {
-                            navController.navigate(R.id.conversations_graph, null, options)
-                        }
+        viewModel.bottomNavSelected.collectFlowOnView(viewLifecycleOwner) { idSelected ->
+            when (idSelected) {
+                1 -> {
+                    navController.navigate(R.id.conversations_graph, null, options)
+                }
 
-                        2 -> {
-                            navController.navigate(R.id.friends_graph, null, options)
-                        }
+                2 -> {
+                    navController.navigate(R.id.friends_graph, null, options)
+                }
 
-                        3 -> {
-                            navController.navigate(R.id.profile_graph, null, options)
-                        }
-                    }
+                3 -> {
+                    navController.navigate(R.id.profile_graph, null, options)
                 }
             }
         }

@@ -1,23 +1,20 @@
 package com.rikkeisoft.awesome
 
 import android.os.Bundle
+import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.project.core.base.fragment.BaseFragment
+import com.project.core.utils.collectLatestFlowOnView
 import com.project.core.utils.resource.ResourceUtils
 import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.friends.R
 import com.rikkeisoft.awesome.friends.databinding.FragmentFriendsBinding
 import com.rikkeisoft.awesome.friendslist.FriendListAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FriendsFragment :
@@ -35,23 +32,15 @@ class FriendsFragment :
 
     override fun bindingStateView() {
         super.bindingStateView()
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.searchResult.collectLatest {
-                        searchAdapter.submitList(it)
-                        binding.tvNoResult.isVisible =
-                            it.isEmpty() && viewModel.searchQuery.value.isNotEmpty()
-                        binding.icNoResult.isVisible =
-                            it.isEmpty() && viewModel.searchQuery.value.isNotEmpty()
-                    }
-                }
-                launch {
-                    viewModel.isSearchMode.collectLatest { isSearchMode ->
-                        handleSearchVisibility(isSearchMode)
-                    }
-                }
-            }
+        viewModel.searchResult.collectLatestFlowOnView(viewLifecycleOwner) {
+            searchAdapter.submitList(it)
+            binding.tvNoResult.isVisible =
+                it.isEmpty() && viewModel.searchQuery.value.isNotEmpty()
+            binding.icNoResult.isVisible =
+                it.isEmpty() && viewModel.searchQuery.value.isNotEmpty()
+        }
+        viewModel.isSearchMode.collectLatestFlowOnView(viewLifecycleOwner) { isSearchMode ->
+            handleSearchVisibility(isSearchMode)
         }
     }
 
@@ -108,7 +97,7 @@ class FriendsFragment :
                     tabs.forEachIndexed { index, tab ->
                         val selected = index == position
                         tab.tvTitle.isSelected = selected
-                        tab.underscore.isVisible = selected
+                        tab.underscore.visibility = if (selected) View.VISIBLE else View.INVISIBLE
                     }
                 }
             })

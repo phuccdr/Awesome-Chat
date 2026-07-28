@@ -9,14 +9,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.base.fragment.BaseFragment
+import com.project.core.utils.collectFlowOnView
+import com.project.core.utils.collectLatestFlowOnView
 import com.project.core.utils.loadImage
 import com.project.core.utils.prefetcher.bindToLifecycle
 import com.project.core.utils.prefetcher.setupWithPrefetchViewPool
@@ -32,8 +31,6 @@ import com.rikkeisoft.awesome.conversation.R
 import com.rikkeisoft.awesome.conversation.databinding.FragmentChatBinding
 import com.rikkeisoft.awesome.custom.ChatItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -180,72 +177,52 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
 
     override fun bindingStateView() {
         super.bindingStateView()
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.conversation.collect { conversationUI ->
-                        binding.apply {
-                            ivAvatarFriend.loadImage(conversationUI?.friend?.avatar, true)
-                            tvFriendName.text = conversationUI?.friend?.username
-                        }
-                    }
-                }
-                launch {
-                    viewModel.messageItems.collectLatest { messages ->
-                        val isBottom = !binding.rvMessages.canScrollVertically(1)
-                        adapterMessage.submitList(messages) {
-                            adapterMessage.itemCount.let {
-                                val last = it - 1
-                                if (last >= 0 && isBottom) {
-                                    binding.rvMessages.scrollToPosition(last)
-                                }
-                            }
-                        }
-                    }
-                }
-                launch {
-                    viewModel.inputText.collectLatest { text ->
-                        binding.layoutInput.apply {
-                            if (edtInputMessage.text.toString() != text) {
-                                edtInputMessage.setText(text)
-                                edtInputMessage.setSelection(text.length)
-                            }
-                        }
-                    }
-                }
-                launch {
-                    viewModel.galleryImages.collectLatest {
-                        galleryAdapter.submitData(it)
-                    }
-                }
-                launch {
-                    viewModel.selectedUris.collectLatest {
-                        galleryAdapter.submitSelection(it)
-                    }
-                }
-                launch {
-                    viewModel.inputMode.collectLatest { mode ->
-                        handleInputModeChange(mode)
-                    }
-                }
-                launch {
-                    viewModel.stickers.collectLatest {
-                        stickerAdapter.submitList(it)
-                    }
-                }
-                launch {
-                    viewModel.isSendMessageEnable.collectLatest { isEnable ->
-                        binding.layoutInput.btnSendMessage.isEnabled = isEnable
-                        val tintColor = if (isEnable) {
-                            ResourceUtils.getColor(com.project.core.R.color.primary_color)
-                        } else {
-                            ResourceUtils.getColor(com.project.core.R.color.color_button_disable)
-                        }
-                        binding.layoutInput.btnSendMessage.imageTintList =
-                            android.content.res.ColorStateList.valueOf(tintColor)
+        viewModel.conversation.collectFlowOnView(viewLifecycleOwner) { conversationUI ->
+            binding.apply {
+                ivAvatarFriend.loadImage(conversationUI?.friend?.avatar, true)
+                tvFriendName.text = conversationUI?.friend?.username
+            }
+        }
+        viewModel.messageItems.collectLatestFlowOnView(viewLifecycleOwner) { messages ->
+            val isBottom = !binding.rvMessages.canScrollVertically(1)
+            adapterMessage.submitList(messages) {
+                adapterMessage.itemCount.let {
+                    val last = it - 1
+                    if (last >= 0 && isBottom) {
+                        binding.rvMessages.scrollToPosition(last)
                     }
                 }
             }
+        }
+        viewModel.inputText.collectLatestFlowOnView(viewLifecycleOwner) { text ->
+            binding.layoutInput.apply {
+                if (edtInputMessage.text.toString() != text) {
+                    edtInputMessage.setText(text)
+                    edtInputMessage.setSelection(text.length)
+                }
+            }
+        }
+        viewModel.galleryImages.collectLatestFlowOnView(viewLifecycleOwner) {
+            galleryAdapter.submitData(it)
+        }
+        viewModel.selectedUris.collectLatestFlowOnView(viewLifecycleOwner) {
+            galleryAdapter.submitSelection(it)
+        }
+        viewModel.inputMode.collectLatestFlowOnView(viewLifecycleOwner) { mode ->
+            handleInputModeChange(mode)
+        }
+        viewModel.stickers.collectLatestFlowOnView(viewLifecycleOwner) {
+            stickerAdapter.submitList(it)
+        }
+        viewModel.isSendMessageEnable.collectLatestFlowOnView(viewLifecycleOwner) { isEnable ->
+            binding.layoutInput.btnSendMessage.isEnabled = isEnable
+            val tintColor = if (isEnable) {
+                ResourceUtils.getColor(com.project.core.R.color.primary_color)
+            } else {
+                ResourceUtils.getColor(com.project.core.R.color.color_button_disable)
+            }
+            binding.layoutInput.btnSendMessage.imageTintList =
+                android.content.res.ColorStateList.valueOf(tintColor)
         }
     }
 

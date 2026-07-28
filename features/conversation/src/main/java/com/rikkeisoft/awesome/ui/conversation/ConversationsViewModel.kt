@@ -74,7 +74,7 @@ class ConversationsViewModel @Inject constructor(
     val items: StateFlow<List<ConversationItem>> =
         combine(_items, _isLoadingNextConversation) { data, isLoading ->
             if (isLoading) {
-                data + ConversationItem.LoadingFooter
+                data + List(8) { ConversationItem.LoadingFooter }
             } else data
         }.stateIn(
             viewModelScope, SharingStarted.WhileSubscribed(500), listOf()

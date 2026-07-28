@@ -4,20 +4,16 @@ import com.project.core.model.firebase.User
 
 sealed class UserUI {
     data class UserItem(
-        val id: String = "", val avatar: String = "", val username: String = ""
+        val id: String = "",
+        val avatar: String = "",
+        val username: String = "",
+        val isFriend: Boolean = false
     ) : UserUI() {
-        constructor(user: User) : this(
-            id = user.uid, username = user.username, avatar = user.avatar
+        constructor(user: User, isFriend: Boolean = false) : this(
+            id = user.uid, username = user.username, avatar = user.avatar, isFriend = isFriend
         )
     }
 
     data class AlphabetHeader(val title: String) : UserUI()
-
-    fun toUserItem(user: User): UserItem {
-        return UserItem(
-            id = user.uid, avatar = user.avatar, username = user.username
-        )
-    }
-
 }
 

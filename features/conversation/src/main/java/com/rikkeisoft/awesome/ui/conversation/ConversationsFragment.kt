@@ -10,13 +10,11 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.base.fragment.BaseFragment
 import com.project.core.navigationComponent.BundleKeys.CONVERSATION_ID
+import com.project.core.utils.collectFlowOnView
 import com.project.core.utils.prefetcher.bindToLifecycle
 import com.project.core.utils.prefetcher.setupWithPrefetchViewPool
 import com.project.core.utils.resource.ResourceUtils
@@ -26,7 +24,6 @@ import com.rikkeisoft.awesome.adapter.conversation.ConversationSearchAdapter
 import com.rikkeisoft.awesome.conversation.R
 import com.rikkeisoft.awesome.conversation.databinding.FragmentListConversationBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -124,43 +121,33 @@ class ConversationsFragment : BaseFragment<FragmentListConversationBinding, Conv
 
     override fun bindingStateView() {
         super.bindingStateView()
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.items.collect {
-                        adapterConversation?.submitList(it) {
-                            if ((binding.rvConversations.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition() <= 1) {
-                                binding.rvConversations.scrollToPosition(0)
-                            }
-                        }
-                    }
+        viewModel.items.collectFlowOnView(viewLifecycleOwner) {
+            adapterConversation?.submitList(it) {
+                if ((binding.rvConversations.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition() <= 1) {
+                    binding.rvConversations.scrollToPosition(0)
                 }
-                launch {
-                    viewModel.resultSearch.collect { state ->
-                        adapterSearch?.submitList(state.results)
-                        val currentText = binding.edtSearch.text.toString()
-                        val shouldShowNoResult = currentText.isNotBlank() && state.results.isEmpty()
+            }
+        }
+        viewModel.resultSearch.collectFlowOnView(viewLifecycleOwner) { state ->
+            adapterSearch?.submitList(state.results)
+            val currentText = binding.edtSearch.text.toString()
+            val shouldShowNoResult = currentText.isNotBlank() && state.results.isEmpty()
 
-                        binding.icNoResult.isVisible = shouldShowNoResult
-                        binding.tvNoResult.isVisible = shouldShowNoResult
-                    }
+            binding.icNoResult.isVisible = shouldShowNoResult
+            binding.tvNoResult.isVisible = shouldShowNoResult
+        }
+        viewModel.isSearching.collectFlowOnView(viewLifecycleOwner) { isSearching ->
+            if (isSearching) {
+                binding.apply {
+                    rvConversations.visibility = View.GONE
+                    groupSearchMessage.isVisible = true
                 }
-                launch {
-                    viewModel.isSearching.collect { isSearching ->
-                        if (isSearching) {
-                            binding.apply {
-                                rvConversations.visibility = View.GONE
-                                groupSearchMessage.isVisible = true
-                            }
-                        } else {
-                            binding.apply {
-                                rvConversations.visibility = View.VISIBLE
-                                groupSearchMessage.isVisible = false
-                                edtSearch.text?.clear()
-                                edtSearch.clearFocus()
-                            }
-                        }
-                    }
+            } else {
+                binding.apply {
+                    rvConversations.visibility = View.VISIBLE
+                    groupSearchMessage.isVisible = false
+                    edtSearch.text?.clear()
+                    edtSearch.clearFocus()
                 }
             }
         }
