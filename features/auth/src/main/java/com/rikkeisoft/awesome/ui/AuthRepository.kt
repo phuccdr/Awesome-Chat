@@ -21,8 +21,13 @@ class AuthRepository @Inject constructor(
             val result = auth.createUserWithEmailAndPassword(email, password).await()
 
             user = result.user
+            val firstName = username.split(Regex("\\s+")).last()
             val data = hashMapOf(
-                "avatar" to "", "username" to username, "email" to email, "language" to "vi"
+                "avatar" to "",
+                "username" to username,
+                "email" to email,
+                "language" to "vi",
+                "firstName" to firstName
             )
             db.collection("users").document(user!!.uid).set(data).await()
         } catch (e: Exception) {

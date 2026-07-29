@@ -7,10 +7,15 @@ sealed class UserUI {
         val id: String = "",
         val avatar: String = "",
         val username: String = "",
-        val isFriend: Boolean = false
+        val isFriend: Boolean = false,
+        val firstName: String = ""
     ) : UserUI() {
         constructor(user: User, isFriend: Boolean = false) : this(
-            id = user.uid, username = user.username, avatar = user.avatar, isFriend = isFriend
+            id = user.uid,
+            username = user.username,
+            avatar = user.avatar,
+            firstName = user.firstName,
+            isFriend = isFriend
         )
     }
 

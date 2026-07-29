@@ -46,7 +46,7 @@ class FriendListAdapter : PagingDataAdapter<FriendShipUI, RecyclerView.ViewHolde
         }
     }
 
-    inner class FriendViewHolder(private val binding: ItemFriendBinding) :
+    class FriendViewHolder(private val binding: ItemFriendBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FriendShipUI.FriendUI) {
             binding.apply {
@@ -56,7 +56,7 @@ class FriendListAdapter : PagingDataAdapter<FriendShipUI, RecyclerView.ViewHolde
         }
     }
 
-    inner class HeaderViewHolder(private val binding: ItemAlphabetHeaderBinding) :
+    class HeaderViewHolder(private val binding: ItemAlphabetHeaderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FriendShipUI.AlphabetHeader) {
             binding.tvAlphabet.text = item.title

@@ -1,4 +1,4 @@
-package com.rikkeisoft.awesome
+package com.rikkeisoft.awesome.alluser
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
@@ -16,12 +16,12 @@ class UserPagingSource(
     private val db: FirebaseFirestore, private val currentUserId: String?
 ) : PagingSource<DocumentSnapshot, UserUI.UserItem>() {
     companion object {
-        const val PAGE_SIZE = 32
+        const val PAGE_SIZE = 16
     }
 
     override suspend fun load(params: LoadParams<DocumentSnapshot>): LoadResult<DocumentSnapshot, UserUI.UserItem> {
         return try {
-            var query = db.collection("users").orderBy("username").limit(PAGE_SIZE.toLong())
+            var query = db.collection("users").orderBy("firstName").limit(PAGE_SIZE.toLong())
             params.key?.let {
                 query = query.startAfter(it)
             }

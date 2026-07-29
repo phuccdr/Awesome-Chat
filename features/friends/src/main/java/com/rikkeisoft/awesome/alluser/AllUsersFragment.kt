@@ -15,10 +15,9 @@ class AllUsersFragment :
         ownerProducer = {
             requireParentFragment()
         })
-
     private val userAdapter by lazy {
         UserAdapter { userId ->
-
+            viewModel.sendFriendRequest(userId)
         }
     }
 

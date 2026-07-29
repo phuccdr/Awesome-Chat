@@ -1,4 +1,4 @@
-package com.rikkeisoft.awesome
+package com.rikkeisoft.awesome.friendslist
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState

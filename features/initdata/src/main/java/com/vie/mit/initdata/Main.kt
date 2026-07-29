@@ -4,5 +4,9 @@ fun main() {
     FirebaseInitializer.init()
 //    FirestoreSeeder.seedUsers()
     // ConversationSeeder.seed()
-    FriendShipSeeder.seed()
+//    FriendShipSeeder.seed()
+//    FriendRequestSeeder.seed()
+//    FriendRequestSeeder.createMockUsersAndRequests("9XMtQAMCW1YZkN3gKVnCgYbBh7n2", count = 1)
+
+//    UserUidMigration.migrateUserUids()
 }

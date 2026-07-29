@@ -7,15 +7,17 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.project.core.utils.loadImage
+import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.friends.databinding.ItemAlphabetHeaderBinding
 import com.rikkeisoft.awesome.friends.databinding.ItemUserBinding
 import com.rikkeisoft.awesome.model.UserUI
 import com.rikkeisoft.awesome.model.UserUI.AlphabetHeader
 import com.rikkeisoft.awesome.model.UserUI.UserItem
 
-class UserAdapter(private val onClick: (userId: String) -> Unit) : PagingDataAdapter<UserUI, ViewHolder>(
-    DiffCallback()
-) {
+class UserAdapter(private val onClick: (userId: String) -> Unit) :
+    PagingDataAdapter<UserUI, ViewHolder>(
+        DiffCallback()
+    ) {
     override fun getItemViewType(position: Int): Int {
         return if (getItem(position) is UserUI.UserItem) USER_TYPE
         else HEADER_TYPE
@@ -58,11 +60,14 @@ class UserAdapter(private val onClick: (userId: String) -> Unit) : PagingDataAda
         }
     }
 
-    class UserViewHolder(val binding: ItemUserBinding) : ViewHolder(binding.root) {
+    inner class UserViewHolder(val binding: ItemUserBinding) : ViewHolder(binding.root) {
         fun bind(item: UserItem) {
             binding.tvUserName.text = item.username
             binding.ivAvatar.loadImage(item.avatar, true)
             binding.btnAddFriend.isVisible = !item.isFriend
+            binding.btnAddFriend.setOnSafeClickListener {
+                onClick(item.id)
+            }
         }
     }
 

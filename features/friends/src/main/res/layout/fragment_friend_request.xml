@@ -24,7 +24,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_friend_request"
+                android:id="@+id/rv_received_friend_request"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -42,7 +42,7 @@
                 android:background="@color/color_divide"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/rv_friend_request" />
+                app:layout_constraintTop_toBottomOf="@id/rv_received_friend_request" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_title_sent_friend_request"

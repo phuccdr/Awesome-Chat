@@ -7,6 +7,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.project.core.model.firebase.FriendShip
 import com.project.core.model.firebase.User
+import com.rikkeisoft.awesome.alluser.UserPagingSource
+import com.rikkeisoft.awesome.friendslist.FriendShipPagingSource
 import com.rikkeisoft.awesome.model.FriendShipUI
 import com.rikkeisoft.awesome.model.UserUI
 import kotlinx.coroutines.async
@@ -84,5 +86,9 @@ class FriendsRepository @Inject constructor(
         } catch (_: Exception) {
             emit(emptyList())
         }
+    }
+
+    fun sendFriendRequest(receiverUserId: String) {
+
     }
 }
