@@ -5,6 +5,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.project.core.base.fragment.BaseFragment
@@ -13,9 +14,9 @@ import com.project.core.utils.resource.ResourceUtils
 import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.friends.R
 import com.rikkeisoft.awesome.friends.databinding.FragmentFriendsBinding
-import androidx.paging.PagingData
 import com.rikkeisoft.awesome.friendslist.FriendListAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class FriendsFragment :
@@ -35,13 +36,13 @@ class FriendsFragment :
         super.bindingStateView()
         viewModel.searchResult.collectLatestFlowOnView(viewLifecycleOwner) {
             searchAdapter.submitData(PagingData.from(it))
-            binding.tvNoResult.isVisible =
-                it.isEmpty() && viewModel.searchQuery.value.isNotEmpty()
-            binding.icNoResult.isVisible =
-                it.isEmpty() && viewModel.searchQuery.value.isNotEmpty()
+            binding.tvNoResult.isVisible = it.isEmpty() && viewModel.isSearchMode.value
+            binding.icNoResult.isVisible = it.isEmpty() && viewModel.isSearchMode.value
+            Timber.tag("SearchMode").d("searchResult: $it+ ${binding.tvNoResult.visibility}")
         }
         viewModel.isSearchMode.collectLatestFlowOnView(viewLifecycleOwner) { isSearchMode ->
             handleSearchVisibility(isSearchMode)
+            Timber.tag("SearchMode").d("isSearchMode: $isSearchMode")
         }
     }
 
@@ -58,6 +59,7 @@ class FriendsFragment :
             edtSearch.doAfterTextChanged {
                 val query = it?.toString().orEmpty()
                 viewModel.searchQuery.value = query
+                Timber.tag("SearchMode").d("query: $query")
             }
 
             btnCancelSearch.setOnSafeClickListener {

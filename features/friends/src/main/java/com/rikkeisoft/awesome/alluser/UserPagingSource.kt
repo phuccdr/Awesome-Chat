@@ -4,8 +4,10 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.project.core.model.firebase.FriendRequestStatus
 import com.project.core.model.firebase.FriendShipStatus
 import com.project.core.model.firebase.User
+import com.rikkeisoft.awesome.model.UserStatus
 import com.rikkeisoft.awesome.model.UserUI
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -32,19 +34,38 @@ class UserPagingSource(
             val userItems = coroutineScope {
                 users.map { user ->
                     async {
-                        val isFriend = if (currentUserId != null) {
-                            val snapshot =
+                        val status = if (currentUserId != null) {
+                            val friendSnapshot =
                                 db.collection("users").document(currentUserId).collection("friends")
                                     .whereEqualTo("friendId", user.uid)
                                     .whereEqualTo("status", FriendShipStatus.ACTIVE).limit(1).get()
                                     .await()
 
-                            !snapshot.isEmpty
+                            if (!friendSnapshot.isEmpty) {
+                                val conversationId =
+                                    friendSnapshot.documents.first().getString("conversationId")
+                                        ?: ""
+                                UserStatus.Friend(conversationId)
+                            } else {
+                                val requestSnapshot = db.collection("friends_request")
+                                    .whereEqualTo("senderId", currentUserId)
+                                    .whereEqualTo("receiverId", user.uid).whereEqualTo(
+                                        "status", FriendRequestStatus.PENDING
+                                    ).limit(1).get().await()
+
+                                if (!requestSnapshot.isEmpty) {
+                                    UserStatus.RequestSent(
+                                        requestSnapshot.documents.first().id, user.uid
+                                    )
+                                } else {
+                                    UserStatus.NotFriend(user.uid)
+                                }
+                            }
                         } else {
-                            false
+                            UserStatus.NotFriend(user.uid)
                         }
 
-                        UserUI.UserItem(user = user, isFriend = isFriend)
+                        UserUI.UserItem(user = user, userStatus = status)
                     }
                 }.awaitAll()
             }

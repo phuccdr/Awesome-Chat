@@ -16,8 +16,8 @@ class AllUsersFragment :
             requireParentFragment()
         })
     private val userAdapter by lazy {
-        UserAdapter { userId ->
-            viewModel.sendFriendRequest(userId)
+        UserAdapter { userStatus ->
+            viewModel.handleClickItem(userStatus)
         }
     }
 

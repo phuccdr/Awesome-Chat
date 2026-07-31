@@ -121,4 +121,52 @@ object FriendRequestSeeder {
 
         println("FriendRequest seeding DONE")
     }
+
+    fun seedRequestsFromSender(senderId: String) {
+        println("Seeding friend requests from sender: $senderId...")
+        
+        val senderDoc = db.collection("users").document(senderId).get().get()
+        if (!senderDoc.exists()) {
+            println("Error: Sender $senderId not found in users collection.")
+            return
+        }
+        val senderName = senderDoc.getString("username") ?: "Unknown"
+
+        val users = db.collection("users").get().get().documents
+        
+        // Get sender's existing friends
+        val friendsSubcollection = db.collection("users").document(senderId).collection("friends")
+        val currentFriends = friendsSubcollection.get().get().documents
+        val currentFriendIds = currentFriends.mapNotNull { it.getString("friendId") }.toSet()
+
+        val potentialReceivers = users.filter { receiverDoc ->
+            val receiverId = receiverDoc.id
+            receiverId != senderId && !currentFriendIds.contains(receiverId)
+        }
+
+        println("Found ${potentialReceivers.size} potential receivers.")
+
+        potentialReceivers.forEach { receiverDoc ->
+            val receiverId = receiverDoc.id
+            val receiverName = receiverDoc.getString("username") ?: "Unknown"
+
+            // Use a deterministic ID to avoid duplicates
+            val requestId = "${senderId}_${receiverId}"
+            val requestRef = db.collection("friends_request").document(requestId)
+            
+            val requestData: Map<String, Any?> = hashMapOf(
+                "id" to requestId,
+                "senderId" to senderId,
+                "receiverId" to receiverId,
+                "status" to "PENDING",
+                "createdAt" to Timestamp.now(),
+                "acceptedAt" to null
+            )
+
+            requestRef.set(requestData).get()
+            println("  Friend request sent from $senderName to $receiverName ($receiverId)")
+        }
+
+        println("Seeding from $senderId DONE")
+    }
 }

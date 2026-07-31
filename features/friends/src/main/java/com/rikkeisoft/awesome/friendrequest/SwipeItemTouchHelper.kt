@@ -3,9 +3,9 @@ package com.rikkeisoft.awesome.friendrequest
 import android.graphics.Canvas
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import timber.log.Timber
 
-class SwipeItemTouchHelper(
-) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+class SwipeItemTouchHelper : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -13,17 +13,25 @@ class SwipeItemTouchHelper(
         target: RecyclerView.ViewHolder
     ): Boolean = false
 
+    override fun getMovementFlags(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
+        // Only allow swiping for ViewHolders that implement SwipeRevealHolder
+        return if (viewHolder is SwipeRevealHolder) {
+            makeMovementFlags(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+        } else {
+            makeMovementFlags(0, 0)
+        }
+    }
+
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        // We don't want to actually swipe the item away, just reveal the button
+        // No-op: We handle the reveal in onChildDraw
     }
 
-    override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
-        return Float.MAX_VALUE
-    }
+    override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float = 2.0f
 
-    override fun getSwipeEscapeVelocity(defaultValue: Float): Float {
-        return Float.MAX_VALUE
-    }
+    override fun getSwipeEscapeVelocity(defaultValue: Float): Float = Float.MAX_VALUE
 
     override fun onChildDraw(
         c: Canvas,
@@ -34,25 +42,40 @@ class SwipeItemTouchHelper(
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-            val binding = (viewHolder as? ReceivedFriendRequestAdapter.FriendRequestViewHolder)?.binding
-            binding?.let {
-                val actionWidth = it.layoutAction.width.toFloat()
-                val currentTranslationX = it.layoutContent.translationX
 
-                val translationX = if (isCurrentlyActive) {
-                    // Limit swipe distance to the width of the action layout
-                    if (dX < -actionWidth) -actionWidth else dX
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && viewHolder is SwipeRevealHolder) {
+            Timber.tag("Swipe123").d("dX: $dX")
+            val holder = viewHolder as SwipeRevealHolder
+            val actionWidth = holder.actionWidth
+            val contentView = holder.contentView
+
+            val adapter = recyclerView.adapter as? ReceivedFriendRequestAdapter
+            val isExpanded = adapter?.openedViewHolder == viewHolder
+
+            val translationX = if (isCurrentlyActive) {
+                if (!isExpanded) {
+                    dX.coerceIn(-actionWidth, 0f)
                 } else {
-                    // When user releases finger, ItemTouchHelper animates dX back to 0.
-                    // If it was swiped past 80%, we keep it open at -actionWidth.
-                    if (currentTranslationX <= -actionWidth * 0.8f) {
-                        -actionWidth
-                    } else {
-                        dX
-                    }
+                    (dX - actionWidth).coerceIn(-actionWidth, 0f)
                 }
-                it.layoutContent.translationX = translationX
+            } else {
+                val currentTx = contentView.translationX
+                if (!isExpanded) {
+                    if (currentTx < -actionWidth * 0.6f) -actionWidth else 0f
+                } else {
+                    if (currentTx > -actionWidth * 0.6f) 0f else -actionWidth
+                }
+            }
+
+            contentView.translationX = translationX
+
+            // Update adapter state
+            if (translationX == -actionWidth) {
+                adapter?.openedViewHolder = viewHolder
+            } else if (translationX == 0f) {
+                if (adapter?.openedViewHolder == viewHolder) {
+                    adapter.openedViewHolder = null
+                }
             }
         } else {
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
@@ -60,14 +83,22 @@ class SwipeItemTouchHelper(
     }
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-        val binding = (viewHolder as? ReceivedFriendRequestAdapter.FriendRequestViewHolder)?.binding
-        binding?.let {
-            val actionWidth = it.layoutAction.width.toFloat()
-            // Snap behavior with 80% threshold
-            if (it.layoutContent.translationX <= -actionWidth * 0.8f) {
-                it.layoutContent.translationX = -actionWidth
+        super.clearView(recyclerView, viewHolder)
+        if (viewHolder is SwipeRevealHolder) {
+            val holder = viewHolder as SwipeRevealHolder
+            val actionWidth = holder.actionWidth
+            val contentView = holder.contentView
+            
+            // Final snap to ensure precision
+            if (contentView.translationX <= -actionWidth * 0.5f) {
+                contentView.translationX = -actionWidth
+                (recyclerView.adapter as? ReceivedFriendRequestAdapter)?.openedViewHolder = viewHolder
             } else {
-                it.layoutContent.translationX = 0f
+                contentView.translationX = 0f
+                val adapter = recyclerView.adapter as? ReceivedFriendRequestAdapter
+                if (adapter?.openedViewHolder == viewHolder) {
+                    adapter.openedViewHolder = null
+                }
             }
         }
     }

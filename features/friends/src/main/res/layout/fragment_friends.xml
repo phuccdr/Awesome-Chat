@@ -208,7 +208,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="invisible"
-            app:constraint_referenced_ids="tvTitleSearchFriend,rvSearchFriend,btnCancelSearch" />
+            app:constraint_referenced_ids="tvTitleSearchFriend,rvSearchFriend,btnCancelSearch,ic_no_result,tvNoResult" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

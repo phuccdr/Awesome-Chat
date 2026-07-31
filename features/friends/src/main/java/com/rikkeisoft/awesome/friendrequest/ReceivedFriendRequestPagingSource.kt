@@ -15,7 +15,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class FriendRequestPagingSource(
+class ReceivedFriendRequestPagingSource(
     private val db: FirebaseFirestore, private val currentUserId: String?
 ) : PagingSource<DocumentSnapshot, FriendRequestUI>() {
     override suspend fun load(params: LoadParams<DocumentSnapshot>): LoadResult<DocumentSnapshot, FriendRequestUI> =
@@ -27,9 +27,10 @@ class FriendRequestPagingSource(
                         .whereEqualTo("status", "PENDING")
                         .orderBy("createdAt", Query.Direction.DESCENDING)
                         .limit(params.loadSize.toLong())
-
+                var preKey: DocumentSnapshot? = null
                 params.key?.let {
                     query = query.startAfter(it)
+                    preKey = it
                 }
                 val snapshot = query.get().await()
                 val friendRequests =
@@ -51,7 +52,7 @@ class FriendRequestPagingSource(
 
                 LoadResult.Page(
                     data = friendRequestUIs,
-                    prevKey = null,
+                    prevKey = preKey,
                     nextKey = snapshot.documents.lastOrNull()
                 )
             } catch (e: Exception) {
@@ -62,7 +63,6 @@ class FriendRequestPagingSource(
     override fun getRefreshKey(state: PagingState<DocumentSnapshot, FriendRequestUI>): DocumentSnapshot? {
         val anchor = state.anchorPosition ?: return null
         val page = state.closestPageToPosition(anchor)
-
         return page?.prevKey ?: page?.nextKey
     }
 

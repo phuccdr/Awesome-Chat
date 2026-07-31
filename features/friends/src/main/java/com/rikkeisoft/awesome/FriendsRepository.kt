@@ -87,8 +87,4 @@ class FriendsRepository @Inject constructor(
             emit(emptyList())
         }
     }
-
-    fun sendFriendRequest(receiverUserId: String) {
-
-    }
 }

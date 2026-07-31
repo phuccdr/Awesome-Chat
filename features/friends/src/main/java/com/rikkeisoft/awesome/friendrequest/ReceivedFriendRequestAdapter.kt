@@ -1,6 +1,7 @@
 package com.rikkeisoft.awesome.friendrequest
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -13,10 +14,11 @@ import com.rikkeisoft.awesome.model.FriendRequestUI
 class ReceivedFriendRequestAdapter(
     private val onAcceptFriendRequest: (friendRequestId: String?) -> Unit,
     private val onRejectFriendRequest: (friendRequestId: String?) -> Unit
-) :
-    PagingDataAdapter<FriendRequestUI, ReceivedFriendRequestAdapter.FriendRequestViewHolder>(
-        DiffCallback()
-    ) {
+) : PagingDataAdapter<FriendRequestUI, ReceivedFriendRequestAdapter.FriendRequestViewHolder>(
+    DiffCallback()
+) {
+    var openedViewHolder: RecyclerView.ViewHolder? = null
+
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
     ): FriendRequestViewHolder {
@@ -34,7 +36,10 @@ class ReceivedFriendRequestAdapter(
     }
 
     inner class FriendRequestViewHolder(internal val binding: ItemReceivedFriendRequestBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root), SwipeRevealHolder {
+        override val contentView: View get() = binding.layoutContent
+        override val actionWidth: Float get() = binding.layoutAction.width.toFloat()
+
         fun bind(item: FriendRequestUI) {
             with(binding) {
                 layoutContent.translationX = 0f

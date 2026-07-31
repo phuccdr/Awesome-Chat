@@ -10,16 +10,17 @@ import com.project.core.utils.loadImage
 import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.friends.databinding.ItemAlphabetHeaderBinding
 import com.rikkeisoft.awesome.friends.databinding.ItemUserBinding
+import com.rikkeisoft.awesome.model.UserStatus
 import com.rikkeisoft.awesome.model.UserUI
 import com.rikkeisoft.awesome.model.UserUI.AlphabetHeader
 import com.rikkeisoft.awesome.model.UserUI.UserItem
 
-class UserAdapter(private val onClick: (userId: String) -> Unit) :
+class UserAdapter(private val onClick: (UserStatus) -> Unit) :
     PagingDataAdapter<UserUI, ViewHolder>(
         DiffCallback()
     ) {
     override fun getItemViewType(position: Int): Int {
-        return if (getItem(position) is UserUI.UserItem) USER_TYPE
+        return if (getItem(position) is UserItem) USER_TYPE
         else HEADER_TYPE
 
     }
@@ -53,7 +54,7 @@ class UserAdapter(private val onClick: (userId: String) -> Unit) :
         }
     }
 
-    inner class HeaderViewHolder(private val binding: ItemAlphabetHeaderBinding) :
+    class HeaderViewHolder(private val binding: ItemAlphabetHeaderBinding) :
         ViewHolder(binding.root) {
         fun bind(item: AlphabetHeader) {
             binding.tvAlphabet.text = item.title
@@ -62,11 +63,32 @@ class UserAdapter(private val onClick: (userId: String) -> Unit) :
 
     inner class UserViewHolder(val binding: ItemUserBinding) : ViewHolder(binding.root) {
         fun bind(item: UserItem) {
-            binding.tvUserName.text = item.username
-            binding.ivAvatar.loadImage(item.avatar, true)
-            binding.btnAddFriend.isVisible = !item.isFriend
-            binding.btnAddFriend.setOnSafeClickListener {
-                onClick(item.id)
+            with(binding) {
+                tvUserName.text = item.username
+                ivAvatar.loadImage(item.avatar, true)
+                if (item.userStatus == null) return@with
+                when (item.userStatus) {
+                    is UserStatus.Friend -> {
+                        btnCancel.isVisible = false
+                        btnAddFriend.isVisible = false
+                    }
+
+                    is UserStatus.RequestSent -> {
+                        btnAddFriend.isVisible = false
+                        btnCancel.isVisible = true
+                    }
+
+                    is UserStatus.NotFriend -> {
+                        btnAddFriend.isVisible = true
+                        btnCancel.isVisible = false
+                    }
+                }
+                btnAddFriend.setOnSafeClickListener {
+                    onClick(item.userStatus)
+                }
+                btnCancel.setOnSafeClickListener {
+                    onClick(item.userStatus)
+                }
             }
         }
     }

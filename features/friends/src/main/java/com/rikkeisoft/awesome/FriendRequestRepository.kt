@@ -12,11 +12,13 @@ import com.project.core.model.firebase.FriendRequestStatus
 import com.project.core.model.firebase.FriendShip
 import com.project.core.model.firebase.FriendShipStatus
 import com.project.core.model.firebase.User
-import com.rikkeisoft.awesome.friendrequest.FriendRequestPagingSource
+import com.rikkeisoft.awesome.friendrequest.ReceivedFriendRequestPagingSource
 import com.rikkeisoft.awesome.friendrequest.SentFriendRequestPagingSource
 import com.rikkeisoft.awesome.model.FriendRequestUI
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class FriendRequestRepository @Inject constructor(
@@ -25,11 +27,11 @@ class FriendRequestRepository @Inject constructor(
     fun loadReceivedFriendRequest(): Flow<PagingData<FriendRequestUI>> {
         return Pager(
             config = PagingConfig(
-                pageSize = FriendRequestPagingSource.PAGE_SIZE,
+                pageSize = ReceivedFriendRequestPagingSource.PAGE_SIZE,
                 enablePlaceholders = true,
-                initialLoadSize = FriendRequestPagingSource.PAGE_SIZE
+                initialLoadSize = ReceivedFriendRequestPagingSource.PAGE_SIZE
             ), pagingSourceFactory = {
-                FriendRequestPagingSource(db, auth.currentUser?.uid)
+                ReceivedFriendRequestPagingSource(db, auth.currentUser?.uid)
             }).flow
     }
 
@@ -44,7 +46,25 @@ class FriendRequestRepository @Inject constructor(
             }).flow
     }
 
+    suspend fun sendFriendRequest(receiverId: String): String {
+        return withContext(Dispatchers.IO) {
+            val senderId = auth.currentUser?.uid ?: throw Exception("User not logged in")
+            val requestRef = db.collection("friends_request").document()
+            val requestId = requestRef.id
+            val friendRequest = FriendRequest(
+                id = requestId,
+                senderId = senderId,
+                receiverId = receiverId,
+                status = FriendRequestStatus.PENDING,
+                createdAt = Timestamp.now()
+            )
+            requestRef.set(friendRequest).await()
+            requestId
+        }
+    }
+
     suspend fun acceptFriendRequest(requestId: String) {
+        withContext(Dispatchers.IO){
         db.runTransaction { transaction ->
             val requestRef = db.collection("friends_request").document(requestId)
             val requestDoc = transaction.get(requestRef)
@@ -105,17 +125,20 @@ class FriendRequestRepository @Inject constructor(
             )
             transaction.set(receiverFriendShipRef, receiverFriendShip)
         }.await()
+            }
     }
 
     suspend fun cancelFriendRequest(requestId: String) {
+        withContext(Dispatchers.IO){
         db.collection("friends_request").document(requestId)
             .update("status", FriendRequestStatus.CANCELED)
-            .await()
+            .await()}
     }
 
     suspend fun rejectFriendRequest(requestId: String) {
+        withContext(Dispatchers.IO){
         db.collection("friends_request").document(requestId)
             .update("status", FriendRequestStatus.REJECTED)
-            .await()
+            .await()}
     }
 }

@@ -35,7 +35,7 @@ class SentFriendRequestAdapter(private val onCancelClick: (FriendRequestUI) -> U
             with(binding) {
                 ivAvatar.loadImage(item.sender?.avatar, isCircle = true)
                 tvUserName.text = item.sender?.username
-                btnAccept.setOnClickListener {
+                btnCancel.setOnClickListener {
                     onCancelClick(item)
                 }
             }

@@ -6,7 +6,9 @@ fun main() {
     // ConversationSeeder.seed()
 //    FriendShipSeeder.seed()
 //    FriendRequestSeeder.seed()
-//    FriendRequestSeeder.createMockUsersAndRequests("9XMtQAMCW1YZkN3gKVnCgYbBh7n2", count = 1)
+//    for (i in 1..12){
+//        FriendRequestSeeder.createMockUsersAndRequests("9XMtQAMCW1YZkN3gKVnCgYbBh7n2", count = 1)
+//    }
 
 //    UserUidMigration.migrateUserUids()
 }
