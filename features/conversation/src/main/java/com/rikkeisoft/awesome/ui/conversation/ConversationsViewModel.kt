@@ -91,6 +91,7 @@ class ConversationsViewModel @Inject constructor(
                     conversations.map { conversation ->
                         async {
                             val user = repo.handleGetFriendByMembers(conversation.members) ?: User()
+                            Timber.tag("log123").d(user.toString())
 
                             ConversationItem.ConversationUi(
                                 id = conversation.id,

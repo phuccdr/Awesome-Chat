@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -68,6 +69,7 @@ class RegisterViewModel @Inject constructor(
         isLoading.value = true
         val handlerException = CoroutineExceptionHandler { _, e ->
             isLoading.value = false
+            Timber.d(e.toString())
             viewModelScope.launch {
                 _isShowNoticeDialog.emit(
                     Pair(

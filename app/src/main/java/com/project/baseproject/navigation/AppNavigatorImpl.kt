@@ -35,5 +35,9 @@ class AppNavigatorImpl @Inject constructor() : BaseNavigatorImpl(), AppNavigatio
         navigateUp()
     }
 
+    override fun openRegisterToHome(bundle: Bundle?) {
+        openScreen(R.id.action_registerFragment_to_homeFragment)
+    }
+
 
 }

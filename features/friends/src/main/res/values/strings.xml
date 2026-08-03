@@ -11,4 +11,9 @@
     <string name="accept">Đồng ý</string>
     <string name="cancel">Hủy</string>
     <string name="reject">Từ chối</string>
+    <string name="title_cancel_friend_request_dialog">Hủy lời mời kết bạn</string>
+    <string name="content_cancel_friend_request_dialog">
+    Bạn có chắc chắn muốn hủy lời mời kết bạn này không?
+</string>
+
 </resources>

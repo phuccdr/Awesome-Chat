@@ -15,9 +15,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -36,6 +39,9 @@ class FriendsViewModel @Inject constructor(
 ) : BaseViewModel() {
     val searchQuery = MutableStateFlow("")
     val isSearchMode = MutableStateFlow(false)
+    private val _actionState: MutableSharedFlow<FriendActionState> =
+        MutableSharedFlow<FriendActionState>()
+    val actionState: SharedFlow<FriendActionState> = _actionState.asSharedFlow()
     private val processedRequestIds = MutableStateFlow<Set<String>>(emptySet())
     private val userStatusOverrides = MutableStateFlow<Map<String, UserStatus>>(emptyMap())
     val receivedFriendRequests: Flow<PagingData<FriendRequestUI>> =
@@ -98,6 +104,7 @@ class FriendsViewModel @Inject constructor(
             }
         }
     }.cachedIn(viewModelScope)
+    private var pendingCancelFriendRequest: UserStatus? = null
 
     fun setSearchMode(mode: Boolean) {
         isSearchMode.value = mode
@@ -153,12 +160,12 @@ class FriendsViewModel @Inject constructor(
                     is UserStatus.RequestSent -> {
                         val friendReq = userStatus.friendRequestId
                         Timber.tag("friendRequestId").d(friendReq)
-                        friendRequestRepository.cancelFriendRequest(friendReq)
-                        userStatusOverrides.update {
-                            it + (userStatus.receivedId to UserStatus.NotFriend(
-                                userStatus.receivedId
-                            ))
-                        }
+                        pendingCancelFriendRequest = userStatus
+                        _actionState.emit(
+                            FriendActionState.ShowConfirmCancelFriendRequestDialog(
+                                friendReq,
+                            )
+                        )
                     }
 
                     is UserStatus.NotFriend -> {
@@ -178,4 +185,37 @@ class FriendsViewModel @Inject constructor(
             }
         }
     }
+
+    fun onClickOkCancelFriendRequest() {
+        viewModelScope.launch {
+            try {
+                pendingCancelFriendRequest?.let { userStatus ->
+                    if (userStatus is UserStatus.RequestSent) {
+                        friendRequestRepository.cancelFriendRequest(userStatus.friendRequestId)
+                        userStatusOverrides.update {
+                            it + (userStatus.receivedId to UserStatus.NotFriend(
+                                userStatus.receivedId
+                            ))
+                        }
+                        processedRequestIds.update { it + userStatus.friendRequestId }
+                    }
+                }
+            } catch (e: Exception) {
+                messageError.value = e.message
+            }
+        }
+    }
+
+    fun onClickItemFriend(conversationId: String) {
+        viewModelScope.launch {
+            _actionState.emit(FriendActionState.NavToChatScreen(conversationId))
+        }
+
+    }
+}
+
+sealed class FriendActionState {
+    data class NavToChatScreen(val conversationId: String) : FriendActionState()
+    data class ShowConfirmCancelFriendRequestDialog(val friendRequestId: String) :
+        FriendActionState()
 }

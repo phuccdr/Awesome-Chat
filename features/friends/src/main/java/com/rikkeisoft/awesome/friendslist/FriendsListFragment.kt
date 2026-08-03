@@ -14,7 +14,11 @@ class FriendsListFragment :
     BaseFragmentNotRequireViewModel<FragmentFriendsListBinding>(R.layout.fragment_friends_list) {
     private val viewModel: FriendsViewModel by viewModels<FriendsViewModel>(
         ownerProducer = { requireParentFragment() })
-    private val friendAdapter by lazy { FriendListAdapter() }
+    private val friendAdapter by lazy {
+        FriendListAdapter { conversationId ->
+            viewModel.onClickItemFriend(conversationId)
+        }
+    }
 
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)

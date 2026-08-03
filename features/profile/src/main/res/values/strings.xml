@@ -1,4 +1,13 @@
 <resources>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="notification">Thông báo</string>
+    <string name="version">Phiên bản ứng dụng</string>
+    <string name="vietnamese">Tiếng Việt</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="save">Lưu</string>
+    <string name="title_edit_profile">Chỉnh sửa thông tin</string>
+    <string name="error_invalid_date_format">Ngày sinh không đúng định dạng (dd/MM/yyyy)</string>
+    <string name="error_future_date">Ngày sinh không thể ở tương lai</string>
 </resources>

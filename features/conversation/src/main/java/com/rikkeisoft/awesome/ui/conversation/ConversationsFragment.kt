@@ -127,6 +127,7 @@ class ConversationsFragment : BaseFragment<FragmentListConversationBinding, Conv
                     binding.rvConversations.scrollToPosition(0)
                 }
             }
+            Timber.e(it.toString())
         }
         viewModel.resultSearch.collectFlowOnView(viewLifecycleOwner) { state ->
             adapterSearch?.submitList(state.results)

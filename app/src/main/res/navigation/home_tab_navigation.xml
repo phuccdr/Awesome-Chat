@@ -6,4 +6,8 @@
     <include app:graph="@navigation/conversation_navigation" />
     <include app:graph="@navigation/friends_navigation" />
     <include app:graph="@navigation/profile_navigation" />
+    <action
+        android:id="@+id/action_global_to_chatFragment"
+        app:destination="@id/chatFragment" />
+
 </navigation>

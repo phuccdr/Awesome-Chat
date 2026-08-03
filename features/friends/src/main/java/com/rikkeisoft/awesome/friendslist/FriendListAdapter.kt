@@ -6,11 +6,13 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.loadImage
+import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.friends.databinding.ItemAlphabetHeaderBinding
 import com.rikkeisoft.awesome.friends.databinding.ItemFriendBinding
 import com.rikkeisoft.awesome.model.FriendShipUI
 
-class FriendListAdapter : PagingDataAdapter<FriendShipUI, RecyclerView.ViewHolder>(DiffCallback()) {
+class FriendListAdapter(val onItemClick: (conversationId: String) -> Unit) :
+    PagingDataAdapter<FriendShipUI, RecyclerView.ViewHolder>(DiffCallback()) {
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
             is FriendShipUI.FriendUI -> TYPE_FRIEND
@@ -46,12 +48,17 @@ class FriendListAdapter : PagingDataAdapter<FriendShipUI, RecyclerView.ViewHolde
         }
     }
 
-    class FriendViewHolder(private val binding: ItemFriendBinding) :
+    inner class FriendViewHolder(private val binding: ItemFriendBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FriendShipUI.FriendUI) {
-            binding.apply {
+            with(binding) {
                 tvUserName.text = item.friend?.username
                 ivAvatar.loadImage(item.friend?.avatar, isCircle = true)
+                root.setOnSafeClickListener {
+                    item.conversationId?.let {
+                        onItemClick(it)
+                    }
+                }
             }
         }
     }

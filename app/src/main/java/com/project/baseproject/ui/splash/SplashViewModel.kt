@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
@@ -23,7 +24,7 @@ class SplashViewModel @Inject constructor(
                 action = SplashActionState.NavToHomeScreen
             }
             val endTime = System.currentTimeMillis()
-            delay(maxOf(0, 1000 - endTime + startTime))
+            delay(maxOf(0, 1000 - endTime + startTime).milliseconds)
             actionSPlash.value = action
         }
     }

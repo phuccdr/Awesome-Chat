@@ -8,4 +8,5 @@ interface AuthNavigation {
     fun openLoginToRegisterScreen(bundle: Bundle? = null)
 
     fun openRegisterToLogin(bundle: Bundle? = null)
+    fun openRegisterToHome(bundle: Bundle? = null)
 }

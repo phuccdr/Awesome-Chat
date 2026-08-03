@@ -209,7 +209,7 @@ class RegisterFragment :
             if(action == RegisterViewModel.RegisterActionState.NavToLoginScreen){
                 appNavigator.openRegisterToLogin()
             }else if(action == RegisterViewModel.RegisterActionState.NavToHomeScreen){
-
+                    appNavigator.openRegisterToHome()
             }
         }
 }

@@ -16,4 +16,6 @@
     <string name="send">Gửi</string>
     <string name="Cancel">Hủy</string>
     <string name="no_result">Không tìm thấy kết quả phù hợp</string>
+    <string name="title_username">HỌ VÀ TÊN</string>
+    <string name="email">EMAIL</string>
 </resources>

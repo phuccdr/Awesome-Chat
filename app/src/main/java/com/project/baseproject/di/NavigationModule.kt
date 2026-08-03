@@ -8,6 +8,8 @@ import com.project.core.navigationComponent.BaseNavigator
 import com.project.setting.DemoNavigation
 import com.rikkeisoft.awesome.AuthNavigation
 import com.rikkeisoft.awesome.ConversationNavigation
+import com.rikkeisoft.awesome.FriendNavigation
+import com.rikkeisoft.awesome.ProfileNavigation
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -40,5 +42,13 @@ abstract class NavigationModule {
     @Binds
     @ActivityScoped
     abstract fun provideConversationNavigation(navigation: HomeNavigatorImpl): ConversationNavigation
+
+    @Binds
+    @ActivityScoped
+    abstract fun provideFriendsNavigation(navigation: HomeNavigatorImpl): FriendNavigation
+
+    @Binds
+    @ActivityScoped
+    abstract fun provideProfileNavigation(navigation: HomeNavigatorImpl): ProfileNavigation
 
 }

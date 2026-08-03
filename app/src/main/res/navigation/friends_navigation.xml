@@ -8,6 +8,8 @@
         android:id="@+id/friendsFragment"
         android:name="com.rikkeisoft.awesome.FriendsFragment"
         android:label="FriendsFragment"
-        tools:layout="@layout/fragment_friends" />
+        tools:layout="@layout/fragment_friends">
+
+    </fragment>
 
 </navigation>

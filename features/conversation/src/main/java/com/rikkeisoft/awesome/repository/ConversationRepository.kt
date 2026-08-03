@@ -41,7 +41,7 @@ class ConversationRepository @Inject constructor(
     }
 
     fun observeConversations(limit: Long = PAGE_SIZE): Flow<List<Conversation>> = callbackFlow {
-        Timber.d("Called: observeConversations limit: $limit")
+        Timber.d("Called: observeConversations limit: $limit currentUserUid: $currentUserUid")
         val query = db.collection("conversations").whereNotEqualTo("lastMessage", "")
             .whereArrayContains("members", currentUserUid)
             .orderBy("lastUpdate", Query.Direction.DESCENDING).limit(limit)
@@ -53,7 +53,6 @@ class ConversationRepository @Inject constructor(
             val conversations = snapshot?.documents?.mapNotNull { document ->
                 document.toObject(Conversation::class.java)?.copy(id = document.id)
             } ?: emptyList()
-
             trySend(conversations)
         }
 

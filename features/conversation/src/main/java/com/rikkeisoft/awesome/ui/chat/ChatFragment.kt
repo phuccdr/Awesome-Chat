@@ -73,7 +73,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
             val isPermanentlyDenied = requiredPermissions.all {
                 !shouldShowRequestPermissionRationale(it)
             }
-
             if (isPermanentlyDenied) {
                 pickMultipleMedia.launch(
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
