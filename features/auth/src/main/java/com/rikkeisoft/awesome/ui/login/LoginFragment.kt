@@ -7,6 +7,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
+import androidx.core.view.updatePadding
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import com.project.core.base.dialog.CONFIRM_DIALOG_FRAGMENT
@@ -24,6 +25,7 @@ import com.rikkeisoft.awesome.auth.databinding.FragmentLoginBinding
 import com.rikkeisoft.awesome.ui.AsteriskPasswordTransformationMethod
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filter
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,6 +36,32 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
     private val viewModel: LoginViewModel by viewModels()
     override fun getVM(): LoginViewModel {
         return viewModel
+    }
+
+    override fun onKeyboardVisibilityChanged(isKeyboardVisible: Boolean, keyboardHeight: Int) {
+        with(binding) {
+            val systemBarsBottom = androidx.core.view.ViewCompat.getRootWindowInsets(root)
+                ?.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars())?.bottom ?: 0
+            val paddingBottom = if (isKeyboardVisible) keyboardHeight else systemBarsBottom
+            loginLayoutScroll.updatePadding(0, 0, 0, paddingBottom)
+
+            if (isKeyboardVisible) {
+                val focusedView = constraintLayout.findFocus()
+                if (focusedView != null) {
+                    if (focusedView.y + focusedView.height < keyboardHeight + 16) {
+                        loginLayoutScroll.post {
+                            loginLayoutScroll.scrollTo(0, focusedView.top - 56)
+                        }
+                    }
+                }
+            } else {
+                loginLayoutScroll.post {
+                    loginLayoutScroll.scrollTo(0, 0)
+                }
+            }
+            Timber.d("isKeyboardVisible: $isKeyboardVisible - keyboardHeight: $keyboardHeight - paddingBottom: $paddingBottom")
+        }
+        super.onKeyboardVisibilityChanged(isKeyboardVisible, keyboardHeight)
     }
 
     override fun initView(savedInstanceState: Bundle?) {

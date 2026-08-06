@@ -62,20 +62,36 @@
         <item name="android:textSize">@dimen/text_size_18</item>
     </style>
 
-    <style name="AppText.Lato.Bold.14" parent="AppText.Lato.Bold">
-        <item name="android:textSize">@dimen/text_size_14</item>
+    <style name="AppText.Lato.Bold.18" parent="AppText.Lato.Bold">
+        <item name="android:textSize">@dimen/text_size_18</item>
     </style>
 
     <style name="AppText.Lato.Bold.16" parent="AppText.Lato.Bold">
         <item name="android:textSize">@dimen/text_size_16</item>
     </style>
 
-    <style name="AppText.Lato.Bold.18" parent="AppText.Lato.Bold">
-        <item name="android:textSize">@dimen/text_size_18</item>
+    <style name="AppText.Lato.Bold.14" parent="AppText.Lato.Bold">
+        <item name="android:textSize">@dimen/text_size_14</item>
+    </style>
+
+    <style name="AppText.Lato.Bold.12" parent="AppText.Lato.Bold">
+        <item name="android:textSize">@dimen/text_size_12</item>
+    </style>
+
+    <style name="AppText.Lato.Bold.10" parent="AppText.Lato.Bold">
+        <item name="android:textSize">@dimen/text_size_10</item>
     </style>
 
     <style name="AppText.Lato.Bold.22" parent="AppText.Lato.Bold">
         <item name="android:textSize">@dimen/text_size_22</item>
+    </style>
+
+    <style name="AppText.Lato.Regular.18" parent="AppText.Lato.Regular">
+        <item name="android:textSize">@dimen/text_size_18</item>
+    </style>
+
+    <style name="AppText.Lato.Regular.16" parent="AppText.Lato.Regular">
+        <item name="android:textSize">@dimen/text_size_16</item>
     </style>
 
     <style name="AppText.Lato.Regular.14" parent="AppText.Lato.Regular">
@@ -84,6 +100,10 @@
 
     <style name="AppText.Lato.Regular.12" parent="AppText.Lato.Regular">
         <item name="android:textSize">@dimen/text_size_12</item>
+    </style>
+
+    <style name="AppText.Lato.Regular.10" parent="AppText.Lato.Regular">
+        <item name="android:textSize">@dimen/text_size_10</item>
     </style>
 
 </resources>

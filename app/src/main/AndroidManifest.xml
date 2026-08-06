@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- Devices running Android 12L (API level 32) or lower  -->
+    <!-- Devices running Android 12L (API level 32) or lower -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -13,8 +13,10 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
-    <!-- To handle the reselection within the app on devices running Android 14
-         or higher if your app targets Android 14 (API level 34) or higher.  -->
+    <!--
+         To handle the reselection within the app on devices running Android 14
+         or higher if your app targets Android 14 (API level 34) or higher.
+    -->
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
 
     <application
@@ -26,17 +28,15 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/Theme.AwesomeChat"
         android:usesCleartextTraffic="false"
         tools:ignore="DataExtractionRules">
-
         <activity
             android:name=".container.MainActivity"
             android:configChanges="keyboard|keyboardHidden|screenSize"
             android:exported="true"
             android:launchMode="singleTask"
-            android:theme="@style/SplashTheme"
-            android:windowSoftInputMode="adjustResize|stateVisible">
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

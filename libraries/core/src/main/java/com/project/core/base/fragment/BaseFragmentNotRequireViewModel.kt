@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
@@ -28,11 +30,27 @@ abstract class BaseFragmentNotRequireViewModel<BD : ViewDataBinding>(@LayoutRes 
         logLifecycle("onViewCreated")
         _binding = DataBindingUtil.bind(view)
         _binding?.lifecycleOwner = viewLifecycleOwner
-
+        setupKeyboardListener(view)
         if (savedInstanceState == null) {
             onInit()
         }
     }
+
+    private fun setupKeyboardListener(rootView:View){
+        ViewCompat.setOnApplyWindowInsetsListener(rootView){_,insets->
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val isKeyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val keyBoardHeight = imeInsets.bottom
+            onKeyboardVisibilityChanged(isKeyboardVisible,keyBoardHeight)
+            insets
+        }
+    }
+
+
+    open fun onKeyboardVisibilityChanged(isKeyboardVisible:Boolean, keyboardHeight:Int){
+
+    }
+
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)

@@ -16,7 +16,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvName"
-            style="@style/text_12"
+            style="@style/AppText.Lato.Regular.12"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_item_setting"
             android:gravity="center"
@@ -29,7 +29,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvEmail"
-            style="@style/text_12"
+            style="@style/AppText.Lato.Regular.12"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_item_setting"
             android:gravity="center"

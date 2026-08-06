@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.paging.LoadState
@@ -80,6 +81,13 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
             } else {
                 toastMessage(ResourceUtils.getString(R.string.gallery_permission_needed))
             }
+        }
+    }
+
+    override fun onKeyboardVisibilityChanged(isKeyboardVisible: Boolean, keyboardHeight: Int) {
+        super.onKeyboardVisibilityChanged(isKeyboardVisible, keyboardHeight)
+        with(binding) {
+            constraintLayout.updatePadding(0, 0, 0, keyboardHeight)
         }
     }
 

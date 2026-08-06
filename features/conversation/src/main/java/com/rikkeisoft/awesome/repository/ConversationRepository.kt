@@ -88,4 +88,11 @@ class ConversationRepository @Inject constructor(
             }.awaitAll().filterNotNull()
         }
     }
+
+    suspend fun abc() {
+        withContext(Dispatchers.IO) {
+            val deferred1 = async {}
+            val deferred2 = async {}
+        }
+    }
 }

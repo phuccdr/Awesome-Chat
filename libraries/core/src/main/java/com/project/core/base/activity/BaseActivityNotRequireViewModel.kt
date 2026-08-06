@@ -22,7 +22,6 @@ abstract class BaseActivityNotRequireViewModel<BD : ViewDataBinding> : AppCompat
         super.onCreate(savedInstanceState)
         _binding = DataBindingUtil.setContentView(this, layoutId)
         _binding?.lifecycleOwner = this
-
     }
 
     override fun onDestroy() {

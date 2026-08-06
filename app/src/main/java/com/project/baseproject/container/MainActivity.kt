@@ -3,6 +3,7 @@ package com.project.baseproject.container
 import android.os.Bundle
 import android.view.MotionEvent
 import android.widget.ImageView
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.project.baseproject.R
@@ -37,6 +38,8 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
         appNavigation.bind(navHostFragment.navController)
@@ -59,7 +62,6 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
     override fun shouldHideKeyboard(event: MotionEvent): Boolean {
         val inputMessageLayout =
             findViewById<ImageView>(com.rikkeisoft.awesome.conversation.R.id.btn_send_message)
-
         if (inputMessageLayout != null && inputMessageLayout.isTouched(event)) {
             return false
         }
