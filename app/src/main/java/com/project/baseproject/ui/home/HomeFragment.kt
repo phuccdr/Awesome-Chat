@@ -10,14 +10,12 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.project.baseproject.R
 import com.project.baseproject.databinding.FragmentHomeBinding
-import com.project.baseproject.navigation.AppNavigation
 import com.project.baseproject.navigation.HomeNavigation
 import com.project.core.base.fragment.BaseFragment
 import com.project.core.utils.collectFlowOnView
@@ -29,9 +27,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.fragment_home) {
-    @Inject
-    lateinit var appNavigation: AppNavigation
-
     @Inject
     lateinit var homeNavigation: HomeNavigation
     lateinit var navController: NavController
@@ -86,17 +81,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     }
 
     private fun updateBottomNavUI() {
-        navController.addOnDestinationChangedListener(object :
-            NavController.OnDestinationChangedListener {
-            override fun onDestinationChanged(
-                controller: NavController, destination: NavDestination, arguments: Bundle?
-            ) {
-                val selectedIndex = when {
-                    destination.hierarchy.any { it.id == R.id.conversations_graph } -> 1
-                    destination.hierarchy.any { it.id == R.id.friends_graph } -> 2
-                    destination.hierarchy.any { it.id == R.id.profile_graph } -> 3
-                    else -> return
-                }
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            val selectedIndex = when {
+                destination.hierarchy.any { it.id == R.id.conversations_graph } -> 1
+                destination.hierarchy.any { it.id == R.id.friends_graph } -> 2
+                destination.hierarchy.any { it.id == R.id.profile_graph } -> 3
+                else -> -1
+            }
+
+            if (selectedIndex != -1) {
                 with(binding.bottomNav) {
                     val navItems = listOf(
                         Triple(ivConversation, tvConversation, indicatorConversation),
@@ -108,11 +101,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                         updateNavItemState(icon, label, indicator, isSelected)
                     }
                 }
-                val isTopLevelDestination =
-                    destination.id == R.id.listConversationFragment || destination.id == R.id.friendsFragment || destination.id == R.id.profileFragment
-                binding.bottomNav.root.isVisible = isTopLevelDestination
             }
-        })
+            val isTopLevelDestination =
+                destination.id == R.id.listConversationFragment || destination.id == R.id.friendsFragment || destination.id == R.id.profileFragment
+            binding.bottomNav.root.isVisible = isTopLevelDestination
+        }
 
     }
 

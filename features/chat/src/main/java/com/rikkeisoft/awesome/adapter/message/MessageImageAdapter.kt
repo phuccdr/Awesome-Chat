@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.loadImage
 import com.project.core.utils.setOnSafeClickListener
-import com.rikkeisoft.awesome.conversation.databinding.ItemImageMessageBinding
+import com.rikkeisoft.awesome.chat.databinding.ItemImageMessageBinding
 
 class MessageImageAdapter(
     private val onClick: (imageUrl: String) -> Unit

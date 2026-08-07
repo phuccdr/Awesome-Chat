@@ -2,6 +2,7 @@ package com.rikkeisoft.awesome.ui.chat
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.PickVisualMediaRequest
@@ -24,12 +25,12 @@ import com.project.core.utils.resource.ResourceUtils
 import com.project.core.utils.setOnSafeClickListener
 import com.project.core.utils.toastMessage
 import com.project.permission.isPermissionGranted
-import com.rikkeisoft.awesome.ConversationNavigation
-import com.rikkeisoft.awesome.adapter.gallery.GalleryAdapter
 import com.rikkeisoft.awesome.adapter.message.MessageAdapter
 import com.rikkeisoft.awesome.adapter.sticker.StickerAdapter
-import com.rikkeisoft.awesome.conversation.R
-import com.rikkeisoft.awesome.conversation.databinding.FragmentChatBinding
+import com.rikkeisoft.awesome.chat.ChatNavigation
+import com.rikkeisoft.awesome.chat.R
+import com.rikkeisoft.awesome.chat.adapter.gallery.GalleryAdapter
+import com.rikkeisoft.awesome.chat.databinding.FragmentChatBinding
 import com.rikkeisoft.awesome.custom.ChatItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -92,7 +93,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
     }
 
     @Inject
-    lateinit var appNavigator: ConversationNavigation
+    lateinit var chatNavigator: ChatNavigation
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView(savedInstanceState: Bundle?) {
@@ -100,7 +101,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
         binding.viewModel = viewModel
         binding.apply {
             btnBack.setOnSafeClickListener {
-                appNavigator.back()
+                chatNavigator.back()
             }
             layoutInput.btnAddImage.setOnSafeClickListener {
                 if (viewModel?.inputMode?.value == ChatInputMode.GALLERY) {
@@ -228,8 +229,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
             } else {
                 ResourceUtils.getColor(com.project.core.R.color.color_button_disable)
             }
-            binding.layoutInput.btnSendMessage.imageTintList =
-                android.content.res.ColorStateList.valueOf(tintColor)
+            binding.layoutInput.btnSendMessage.imageTintList = ColorStateList.valueOf(tintColor)
         }
     }
 

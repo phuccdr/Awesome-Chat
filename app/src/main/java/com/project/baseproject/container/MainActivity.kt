@@ -61,7 +61,7 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
 
     override fun shouldHideKeyboard(event: MotionEvent): Boolean {
         val inputMessageLayout =
-            findViewById<ImageView>(com.rikkeisoft.awesome.conversation.R.id.btn_send_message)
+            findViewById<ImageView>(com.rikkeisoft.awesome.chat.R.id.btn_send_message)
         if (inputMessageLayout != null && inputMessageLayout.isTouched(event)) {
             return false
         }

@@ -9,7 +9,9 @@
         android:name="com.rikkeisoft.awesome.FriendsFragment"
         android:label="FriendsFragment"
         tools:layout="@layout/fragment_friends">
-
+        <action
+            android:id="@+id/action_friendsFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
     </fragment>
 
 </navigation>

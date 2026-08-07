@@ -1,5 +1,6 @@
-package com.rikkeisoft.awesome.adapter.gallery
+package com.rikkeisoft.awesome.chat.adapter.gallery
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,8 +9,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.loadImage
-import com.rikkeisoft.awesome.conversation.R
-import com.rikkeisoft.awesome.conversation.databinding.ItemGalleryImageBinding
+import com.rikkeisoft.awesome.chat.R
+import com.rikkeisoft.awesome.chat.databinding.ItemGalleryImageBinding
 import com.rikkeisoft.awesome.model.GalleryImage
 
 class GalleryAdapter(
@@ -17,6 +18,7 @@ class GalleryAdapter(
 ) : PagingDataAdapter<GalleryImage, GalleryAdapter.VH>(DIFF) {
     private var selectedUris: List<Uri> = emptyList()
 
+    @SuppressLint("NotifyDataSetChanged")
     fun submitSelection(selection: List<Uri>) {
         selectedUris = selection
         notifyDataSetChanged()

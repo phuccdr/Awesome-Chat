@@ -5,6 +5,7 @@ import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
+import com.project.core.R
 import com.project.core.utils.dp
 import com.project.core.utils.resource.ResourceUtils
 import com.rikkeisoft.awesome.model.MessagePosition
@@ -15,12 +16,10 @@ class MessageChatTextView @JvmOverloads constructor(
     private val LARGE_RADIUS: Float = 30F.dp()
     private val SMALL_RADIUS: Float = 2F.dp()
     private val backgroundReceiveMessageColor: Int =
-        ResourceUtils.getColor(com.project.core.R.color.background_color_message)
-    private val backgroundSentMessageColor: Int =
-        ResourceUtils.getColor(com.project.core.R.color.primary_color)
-    private val textReceivedMessageColor =
-        ResourceUtils.getColor(com.project.core.R.color.text_primary)
-    private val textSentMessageColor = ResourceUtils.getColor(com.project.core.R.color.text_white)
+        ResourceUtils.getColor(R.color.background_color_message)
+    private val backgroundSentMessageColor: Int = ResourceUtils.getColor(R.color.primary_color)
+    private val textReceivedMessageColor = ResourceUtils.getColor(R.color.text_primary)
+    private val textSentMessageColor = ResourceUtils.getColor(R.color.text_white)
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()

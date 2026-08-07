@@ -192,4 +192,5 @@ sealed class FriendActionState {
     data class NavToChatScreen(val conversationId: String) : FriendActionState()
     data class ShowConfirmCancelFriendRequestDialog(val friendRequestId: String) :
         FriendActionState()
+
 }

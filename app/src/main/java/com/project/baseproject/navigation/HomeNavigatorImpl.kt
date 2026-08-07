@@ -6,12 +6,13 @@ import com.project.core.navigationComponent.BaseNavigatorImpl
 import com.rikkeisoft.awesome.ConversationNavigation
 import com.rikkeisoft.awesome.FriendNavigation
 import com.rikkeisoft.awesome.ProfileNavigation
+import com.rikkeisoft.awesome.chat.ChatNavigation
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 
 @ActivityScoped
 class HomeNavigatorImpl @Inject constructor() : BaseNavigatorImpl(), ConversationNavigation,
-    HomeNavigation, FriendNavigation, ProfileNavigation {
+    HomeNavigation, FriendNavigation, ProfileNavigation, ChatNavigation {
     override fun openListConversationToChat(bundle: Bundle?) {
         openScreen(R.id.action_listConversationFragment_to_chatFragment, bundle)
 
@@ -22,7 +23,7 @@ class HomeNavigatorImpl @Inject constructor() : BaseNavigatorImpl(), Conversatio
     }
 
     override fun openFriendsToChat(bundle: Bundle?) {
-        openScreen(R.id.action_global_to_chatFragment, bundle)
+        openScreen(R.id.action_friendsFragment_to_chatFragment, bundle)
     }
 
     override fun openProfileToEditProfile(bundle: Bundle?) {

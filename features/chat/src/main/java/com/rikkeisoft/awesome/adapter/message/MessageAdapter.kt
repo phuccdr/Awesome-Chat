@@ -11,14 +11,14 @@ import com.rikkeisoft.awesome.adapter.message.viewholdermessage.ReceivedTextMess
 import com.rikkeisoft.awesome.adapter.message.viewholdermessage.SentImageMessageViewHolder
 import com.rikkeisoft.awesome.adapter.message.viewholdermessage.SentStickerMessageViewHolder
 import com.rikkeisoft.awesome.adapter.message.viewholdermessage.SentTextMessageViewHolder
-import com.rikkeisoft.awesome.conversation.R
-import com.rikkeisoft.awesome.conversation.databinding.ItemHeaderTimeMessageBinding
-import com.rikkeisoft.awesome.conversation.databinding.ItemReceivedImageMessageBinding
-import com.rikkeisoft.awesome.conversation.databinding.ItemReceivedStickerMessageBinding
-import com.rikkeisoft.awesome.conversation.databinding.ItemReceivedTextMessageBinding
-import com.rikkeisoft.awesome.conversation.databinding.ItemSentImageMessageBinding
-import com.rikkeisoft.awesome.conversation.databinding.ItemSentStickerMessageBinding
-import com.rikkeisoft.awesome.conversation.databinding.ItemSentTextMessageBinding
+import com.rikkeisoft.awesome.chat.R
+import com.rikkeisoft.awesome.chat.databinding.ItemHeaderTimeMessageBinding
+import com.rikkeisoft.awesome.chat.databinding.ItemReceivedImageMessageBinding
+import com.rikkeisoft.awesome.chat.databinding.ItemReceivedStickerMessageBinding
+import com.rikkeisoft.awesome.chat.databinding.ItemReceivedTextMessageBinding
+import com.rikkeisoft.awesome.chat.databinding.ItemSentImageMessageBinding
+import com.rikkeisoft.awesome.chat.databinding.ItemSentStickerMessageBinding
+import com.rikkeisoft.awesome.chat.databinding.ItemSentTextMessageBinding
 import com.rikkeisoft.awesome.model.MessageItem
 
 class MessageAdapter(

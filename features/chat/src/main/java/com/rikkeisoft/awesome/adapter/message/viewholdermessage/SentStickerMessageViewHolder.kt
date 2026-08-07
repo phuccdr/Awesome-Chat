@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.format
 import com.project.core.utils.loadImage
 import com.project.core.utils.setOnSafeClickListener
-import com.rikkeisoft.awesome.conversation.databinding.ItemSentStickerMessageBinding
+import com.rikkeisoft.awesome.chat.databinding.ItemSentStickerMessageBinding
 import com.rikkeisoft.awesome.model.MessageItem
 import com.rikkeisoft.awesome.model.MessagePosition
 

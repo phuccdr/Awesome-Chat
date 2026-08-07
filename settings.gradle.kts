@@ -11,3 +11,4 @@ rootProject.name = "Awesome Chat 2026"
 
 
 include(":features:initdata")
+include(":features:chat")

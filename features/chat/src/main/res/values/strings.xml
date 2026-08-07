@@ -1,0 +1,8 @@
+<resources>
+    <string name="conversation_not_found">Cuộc hội thoại không tồn tại</string>
+    <string name="gallery_permission_needed">Cần cấp quyền truy cập ảnh để chọn ảnh.</string>
+    <string name="send">Gửi</string>
+    <string name="sent_image">đã gửi ảnh</string>
+    <string name="sent_sticker">đã gửi sticker</string>
+    <string name="sent_message">đã gửi tin nhắn</string>
+</resources>

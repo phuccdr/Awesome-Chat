@@ -15,7 +15,7 @@ import com.project.core.navigationComponent.BundleKeys.CONVERSATION_ID
 import com.project.core.utils.isSameDay
 import com.project.core.utils.resource.ResourceUtils
 import com.project.core.utils.toLocalDate
-import com.rikkeisoft.awesome.conversation.R
+import com.rikkeisoft.awesome.chat.R
 import com.rikkeisoft.awesome.ext.copyMessageItem
 import com.rikkeisoft.awesome.model.ConversationChat
 import com.rikkeisoft.awesome.model.GalleryImage

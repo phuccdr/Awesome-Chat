@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.loadImage
-import com.rikkeisoft.awesome.conversation.databinding.ItemStickerBinding
+import com.rikkeisoft.awesome.chat.databinding.ItemStickerBinding
 import com.rikkeisoft.awesome.model.Sticker
 
 class StickerAdapter(

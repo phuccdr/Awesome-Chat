@@ -4,19 +4,26 @@ import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.format
+import com.project.core.utils.loadImage
 import com.project.core.utils.setOnSafeClickListener
 import com.rikkeisoft.awesome.adapter.message.MessageImageAdapter
-import com.rikkeisoft.awesome.conversation.databinding.ItemSentImageMessageBinding
+import com.rikkeisoft.awesome.chat.databinding.ItemReceivedImageMessageBinding
 import com.rikkeisoft.awesome.model.MessageItem
 import com.rikkeisoft.awesome.model.MessagePosition
 
-class SentImageMessageViewHolder(
-    private val binding: ItemSentImageMessageBinding,
+class ReceivedImageMessageViewHolder(
+    private val binding: ItemReceivedImageMessageBinding,
     private val onImageClick: (imageUrl: String) -> Unit,
     private val onMessageClick: (itemId: String) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(item: MessageItem.ImageMessage) {
         binding.apply {
+            if (item.messagePosition == MessagePosition.SINGLE || item.messagePosition == MessagePosition.TOP) {
+                imvAvatar.visibility = View.VISIBLE
+                imvAvatar.loadImage(urlImage = item.avatarFriend, isCircle = true)
+            } else {
+                imvAvatar.visibility = View.INVISIBLE
+            }
             val imageCount = item.imageUrls.size
             val spanCount = when {
                 imageCount == 0 -> 1
@@ -34,6 +41,7 @@ class SentImageMessageViewHolder(
             tvTime.text = item.createdAt.format()
             tvTime.visibility =
                 if (item.isSelected || item.messagePosition == MessagePosition.BOTTOM || item.messagePosition == MessagePosition.SINGLE) View.VISIBLE else View.GONE
+
             root.setOnSafeClickListener {
                 onMessageClick(item.id)
             }

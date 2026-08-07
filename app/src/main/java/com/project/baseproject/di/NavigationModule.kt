@@ -10,6 +10,7 @@ import com.rikkeisoft.awesome.AuthNavigation
 import com.rikkeisoft.awesome.ConversationNavigation
 import com.rikkeisoft.awesome.FriendNavigation
 import com.rikkeisoft.awesome.ProfileNavigation
+import com.rikkeisoft.awesome.chat.ChatNavigation
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -21,34 +22,38 @@ import dagger.hilt.android.scopes.ActivityScoped
 abstract class NavigationModule {
     @Binds
     @ActivityScoped
-    abstract fun provideBaseNavigation(navigation: AppNavigatorImpl): BaseNavigator
+    abstract fun bindBaseNavigation(navigation: AppNavigatorImpl): BaseNavigator
 
     @Binds
     @ActivityScoped
-    abstract fun provideAppNavigation(navigation: AppNavigatorImpl): AppNavigation
+    abstract fun bindAppNavigation(navigation: AppNavigatorImpl): AppNavigation
 
     @Binds
     @ActivityScoped
-    abstract fun provideDemoNavigation(navigation: AppNavigatorImpl): DemoNavigation
+    abstract fun bindDemoNavigation(navigation: AppNavigatorImpl): DemoNavigation
 
     @Binds
     @ActivityScoped
-    abstract fun provideAuthNavigation(navigation: AppNavigatorImpl): AuthNavigation
+    abstract fun bindAuthNavigation(navigation: AppNavigatorImpl): AuthNavigation
 
     @Binds
     @ActivityScoped
-    abstract fun provideHomeAppNavigation(navigation: HomeNavigatorImpl): HomeNavigation
+    abstract fun bindHomeAppNavigation(navigation: HomeNavigatorImpl): HomeNavigation
 
     @Binds
     @ActivityScoped
-    abstract fun provideConversationNavigation(navigation: HomeNavigatorImpl): ConversationNavigation
+    abstract fun bindConversationNavigation(navigation: HomeNavigatorImpl): ConversationNavigation
 
     @Binds
     @ActivityScoped
-    abstract fun provideFriendsNavigation(navigation: HomeNavigatorImpl): FriendNavigation
+    abstract fun bindFriendsNavigation(navigation: HomeNavigatorImpl): FriendNavigation
 
     @Binds
     @ActivityScoped
-    abstract fun provideProfileNavigation(navigation: HomeNavigatorImpl): ProfileNavigation
+    abstract fun bindProfileNavigation(navigation: HomeNavigatorImpl): ProfileNavigation
+
+    @Binds
+    @ActivityScoped
+    abstract fun bindChatNavigation(navigation: HomeNavigatorImpl): ChatNavigation
 
 }

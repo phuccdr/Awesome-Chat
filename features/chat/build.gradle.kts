@@ -11,7 +11,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.rikkeisoft.awesome.conversation"
+    namespace = "com.rikkeisoft.awesome.chat"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -37,7 +37,6 @@ dependencies {
 
     implementation(project(":libraries:core"))
     implementation(project(":libraries:permission"))
-    implementation(project(":features:chat"))
 
     //appcompat
     implementation(libs.bundles.common)
