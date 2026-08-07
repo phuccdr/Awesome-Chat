@@ -9,6 +9,7 @@ import com.project.core.utils.collectLatestFlowOnView
 import com.rikkeisoft.awesome.FriendsViewModel
 import com.rikkeisoft.awesome.friends.R
 import com.rikkeisoft.awesome.friends.databinding.FragmentFriendRequestBinding
+import timber.log.Timber
 
 class FriendRequestFragment :
     BaseFragmentNotRequireViewModel<FragmentFriendRequestBinding>(R.layout.fragment_friend_request) {
@@ -56,9 +57,11 @@ class FriendRequestFragment :
         super.bindingStateView()
         viewModel.sentFriendRequests.collectLatestFlowOnView(viewLifecycleOwner) {
             sentAdapter.submitData(it)
+            Timber.d("sentFriendRequestsData: $it")
         }
 
         viewModel.receivedFriendRequests.collectLatestFlowOnView(viewLifecycleOwner) {
+            Timber.d("receivedFriendRequest: $it")
             receivedAdapter.submitData(it)
         }
     }

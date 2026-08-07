@@ -8,5 +8,6 @@ data class Conversation(
     val lastSenderId: String = "",
     val lastUpdate: Timestamp = Timestamp.now(),
     val members: List<String> = emptyList(),
-    val unreadMessage: Map<String, Int> = emptyMap()
+    val unreadMessage: Map<String, Int> = emptyMap(),
+    val status: ConversationStatus = ConversationStatus.ACTIVE
 )

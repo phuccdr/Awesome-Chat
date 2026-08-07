@@ -4,7 +4,7 @@
 
     <!--    setting-->
     <string name="ok">OK</string>
-    <string name="cancel">キャンセル</string>
+    <string name="cancel">Hủy</string>
     <string name="not_connected_internet">ネットワーク接続をご確認ください。</string>
     <string name="viet_nam">VietNam</string>
     <string name="english">English</string>

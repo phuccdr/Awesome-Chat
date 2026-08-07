@@ -23,14 +23,14 @@ class FriendsRepository @Inject constructor(
 ) {
     fun getCurrentUserId(): String? = auth.currentUser?.uid
 
-    fun loadFriendsPaging(): Flow<PagingData<FriendShipUI.FriendUI>> {
+    fun loadFriendsPaging(onInvalidated: (() -> Unit)? = null): Flow<PagingData<FriendShipUI.FriendUI>> {
         return Pager(
             config = PagingConfig(
                 pageSize = FriendShipPagingSource.PAGE_SIZE,
                 enablePlaceholders = false,
                 initialLoadSize = FriendShipPagingSource.PAGE_SIZE
             ), pagingSourceFactory = {
-                FriendShipPagingSource(db, getCurrentUserId())
+                FriendShipPagingSource(db, getCurrentUserId(), onInvalidated)
             }).flow
     }
 

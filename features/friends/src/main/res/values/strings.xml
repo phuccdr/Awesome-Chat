@@ -9,7 +9,6 @@
     <string name="friend_request">Lời mời kết bạn</string>
     <string name="sent_friend_request">Đã gửi kết bạn</string>
     <string name="accept">Đồng ý</string>
-    <string name="cancel">Hủy</string>
     <string name="reject">Từ chối</string>
     <string name="title_cancel_friend_request_dialog">Hủy lời mời kết bạn</string>
     <string name="content_cancel_friend_request_dialog">

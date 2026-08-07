@@ -3,7 +3,6 @@ package com.rikkeisoft.awesome
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.filter
 import androidx.paging.insertSeparators
 import androidx.paging.map
 import com.project.core.base.BaseViewModel
@@ -25,7 +24,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -39,23 +37,20 @@ class FriendsViewModel @Inject constructor(
 ) : BaseViewModel() {
     val searchQuery = MutableStateFlow("")
     val isSearchMode = MutableStateFlow(false)
+    private val _userRefreshTrigger = MutableStateFlow(0L)
+
+    fun invalidateUserPaging() {
+        _userRefreshTrigger.value = System.currentTimeMillis()
+    }
+
     private val _actionState: MutableSharedFlow<FriendActionState> =
         MutableSharedFlow<FriendActionState>()
     val actionState: SharedFlow<FriendActionState> = _actionState.asSharedFlow()
-    private val processedRequestIds = MutableStateFlow<Set<String>>(emptySet())
-    private val userStatusOverrides = MutableStateFlow<Map<String, UserStatus>>(emptyMap())
     val receivedFriendRequests: Flow<PagingData<FriendRequestUI>> =
-        processedRequestIds.flatMapLatest { processedIds ->
-            friendRequestRepository.loadReceivedFriendRequest().map { pagingData ->
-                pagingData.filter { it.id !in processedIds }
-            }
-        }.cachedIn(viewModelScope)
+        friendRequestRepository.loadReceivedFriendRequest().cachedIn(viewModelScope)
     val sentFriendRequests: Flow<PagingData<FriendRequestUI>> =
-        processedRequestIds.flatMapLatest { processedIds ->
-            friendRequestRepository.loadSentFriendRequest().map { pagingData ->
-                pagingData.filter { it.id !in processedIds }
-            }
-        }.cachedIn(viewModelScope)
+        friendRequestRepository.loadSentFriendRequest(onInvalidated = ::invalidateUserPaging)
+            .cachedIn(viewModelScope)
 
     @OptIn(FlowPreview::class)
     val searchResult: StateFlow<List<FriendShipUI>> =
@@ -63,44 +58,36 @@ class FriendsViewModel @Inject constructor(
             friendsRepository.search(keyword)
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
     val friendShipsPaging: Flow<PagingData<FriendShipUI>> =
-        friendsRepository.loadFriendsPaging().map { pagingData ->
-            pagingData.map { item: FriendShipUI.FriendUI ->
-                item as FriendShipUI
-            }.insertSeparators { before: FriendShipUI?, after: FriendShipUI? ->
-                val bef = ((before as? FriendShipUI.FriendUI)?.friendFirstName
-                    ?: (before as? FriendShipUI.FriendUI)?.friend?.username)?.firstOrNull()
-                    ?.uppercaseChar()
-                val aft = ((after as? FriendShipUI.FriendUI)?.friendFirstName
-                    ?: (after as? FriendShipUI.FriendUI)?.friend?.username)?.firstOrNull()
-                    ?.uppercaseChar()
-                if ((bef == null || bef != aft) && aft != null) {
-                    FriendShipUI.AlphabetHeader(aft.toString())
-                } else {
-                    null
+        friendsRepository.loadFriendsPaging(onInvalidated = ::invalidateUserPaging)
+            .map { pagingData ->
+                pagingData.map { item: FriendShipUI.FriendUI ->
+                    item as FriendShipUI
+                }.insertSeparators { before: FriendShipUI?, after: FriendShipUI? ->
+                    val bef = ((before as? FriendShipUI.FriendUI)?.friendFirstName
+                        ?: (before as? FriendShipUI.FriendUI)?.friend?.username)?.firstOrNull()
+                        ?.uppercaseChar()
+                    val aft = ((after as? FriendShipUI.FriendUI)?.friendFirstName
+                        ?: (after as? FriendShipUI.FriendUI)?.friend?.username)?.firstOrNull()
+                        ?.uppercaseChar()
+                    if ((bef == null || bef != aft) && aft != null) {
+                        FriendShipUI.AlphabetHeader(aft.toString())
+                    } else {
+                        null
+                    }
                 }
-            }
-        }.cachedIn(viewModelScope)
-    val users: Flow<PagingData<UserUI>> = userStatusOverrides.flatMapLatest { overrides ->
-        friendsRepository.loadAllUserPaging().map { pagingData ->
-            pagingData.map { userItem ->
-                val overriddenStatus = overrides[userItem.id]
-                if (overriddenStatus != null) {
-                    userItem.copy(userStatus = overriddenStatus)
-                } else {
-                    userItem
-                }
-            }
-        }.map { pagingData ->
-            pagingData.map { userItem: UserUI.UserItem ->
-                userItem as UserUI
-            }.insertSeparators { before, after ->
-                val bef = (before as? UserUI.UserItem)?.firstName?.firstOrNull()?.uppercaseChar()
-                val aft = (after as? UserUI.UserItem)?.firstName?.firstOrNull()?.uppercaseChar()
-                if ((bef == null || bef != aft) && aft != null) {
-                    UserUI.AlphabetHeader(aft.toString())
-                } else {
-                    null
-                }
+            }.cachedIn(viewModelScope)
+    val users: Flow<PagingData<UserUI>> = _userRefreshTrigger.flatMapLatest {
+        friendsRepository.loadAllUserPaging()
+    }.map { pagingData ->
+        pagingData.map { userItem: UserUI.UserItem ->
+            userItem as UserUI
+        }.insertSeparators { before, after ->
+            val bef = (before as? UserUI.UserItem)?.firstName?.firstOrNull()?.uppercaseChar()
+            val aft = (after as? UserUI.UserItem)?.firstName?.firstOrNull()?.uppercaseChar()
+            if ((bef == null || bef != aft) && aft != null) {
+                UserUI.AlphabetHeader(aft.toString())
+            } else {
+                null
             }
         }
     }.cachedIn(viewModelScope)
@@ -112,29 +99,25 @@ class FriendsViewModel @Inject constructor(
 
     fun acceptFriendRequest(friendRequestId: String) {
         viewModelScope.launch {
-            isLoading.value = true
             try {
+                Timber.d("friendRequestId: $friendRequestId")
                 friendRequestRepository.acceptFriendRequest(friendRequestId)
-                processedRequestIds.update { it + friendRequestId }
             } catch (e: Exception) {
+                Timber.e("acceptFriendRequest: $e")
                 handleError(e, null)
             } finally {
-                isLoading.value = false
             }
         }
     }
 
     fun cancelFriendRequest(friendRequestId: String) {
         viewModelScope.launch {
-            isLoading.value = true
             try {
                 friendRequestRepository.cancelFriendRequest(friendRequestId)
                 Timber.tag("friendRequestId").d(friendRequestId)
-                processedRequestIds.update { it + friendRequestId }
             } catch (e: Exception) {
                 handleError(e, null)
             } finally {
-                isLoading.value = false
             }
         }
     }
@@ -144,7 +127,6 @@ class FriendsViewModel @Inject constructor(
             isLoading.value = true
             try {
                 friendRequestRepository.rejectFriendRequest(friendRequestId)
-                processedRequestIds.update { it + friendRequestId }
             } catch (e: Exception) {
                 handleError(e, null)
             } finally {
@@ -154,6 +136,7 @@ class FriendsViewModel @Inject constructor(
     }
 
     fun handleClickItem(userStatus: UserStatus) {
+        Timber.d("handleClickItem: userStatus $userStatus")
         viewModelScope.launch {
             try {
                 when (userStatus) {
@@ -170,17 +153,13 @@ class FriendsViewModel @Inject constructor(
 
                     is UserStatus.NotFriend -> {
                         val receiverId = userStatus.receiverId
-                        val requestId = friendRequestRepository.sendFriendRequest(receiverId)
-                        userStatusOverrides.update {
-                            it + (receiverId to UserStatus.RequestSent(
-                                requestId, receiverId
-                            ))
-                        }
+                        friendRequestRepository.sendFriendRequest(receiverId)
                     }
 
                     else -> return@launch
                 }
             } catch (e: Exception) {
+                Timber.e(e.toString())
                 messageError.value = e.message
             }
         }
@@ -192,16 +171,11 @@ class FriendsViewModel @Inject constructor(
                 pendingCancelFriendRequest?.let { userStatus ->
                     if (userStatus is UserStatus.RequestSent) {
                         friendRequestRepository.cancelFriendRequest(userStatus.friendRequestId)
-                        userStatusOverrides.update {
-                            it + (userStatus.receivedId to UserStatus.NotFriend(
-                                userStatus.receivedId
-                            ))
-                        }
-                        processedRequestIds.update { it + userStatus.friendRequestId }
                     }
                 }
             } catch (e: Exception) {
                 messageError.value = e.message
+                Timber.e(e.toString())
             }
         }
     }

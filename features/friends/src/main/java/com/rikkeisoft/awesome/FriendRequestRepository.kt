@@ -7,6 +7,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.project.core.model.firebase.Conversation
+import com.project.core.model.firebase.ConversationStatus
 import com.project.core.model.firebase.FriendRequest
 import com.project.core.model.firebase.FriendRequestStatus
 import com.project.core.model.firebase.FriendShip
@@ -19,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class FriendRequestRepository @Inject constructor(
@@ -35,22 +37,21 @@ class FriendRequestRepository @Inject constructor(
             }).flow
     }
 
-    fun loadSentFriendRequest(): Flow<PagingData<FriendRequestUI>> {
+    fun loadSentFriendRequest(onInvalidated: (() -> Unit)? = null): Flow<PagingData<FriendRequestUI>> {
         return Pager(
             config = PagingConfig(
                 pageSize = SentFriendRequestPagingSource.PAGE_SIZE,
                 enablePlaceholders = true,
                 initialLoadSize = SentFriendRequestPagingSource.PAGE_SIZE
             ), pagingSourceFactory = {
-                SentFriendRequestPagingSource(db, auth.currentUser?.uid)
+                SentFriendRequestPagingSource(db, auth.currentUser?.uid, onInvalidated)
             }).flow
     }
-
     suspend fun sendFriendRequest(receiverId: String): String {
         return withContext(Dispatchers.IO) {
             val senderId = auth.currentUser?.uid ?: throw Exception("User not logged in")
-            val requestRef = db.collection("friends_request").document()
-            val requestId = requestRef.id
+            val requestId = "${senderId}-$receiverId"
+            val requestRef = db.collection("friends_request").document(requestId)
             val friendRequest = FriendRequest(
                 id = requestId,
                 senderId = senderId,
@@ -59,77 +60,89 @@ class FriendRequestRepository @Inject constructor(
                 createdAt = Timestamp.now()
             )
             requestRef.set(friendRequest).await()
+            Timber.d("sendFriendRequest: requestId: $requestId")
             requestId
         }
     }
 
     suspend fun acceptFriendRequest(requestId: String) {
-        withContext(Dispatchers.IO){
-        db.runTransaction { transaction ->
-            val requestRef = db.collection("friends_request").document(requestId)
-            val requestDoc = transaction.get(requestRef)
-            val friendRequest = requestDoc.toObject(FriendRequest::class.java)
-                ?: throw Exception("Friend request not found")
+        withContext(Dispatchers.IO) {
+            db.runTransaction { transaction ->
+                val requestRef = db.collection("friends_request").document(requestId)
+                val requestDoc = transaction.get(requestRef)
+                val friendRequest = requestDoc.toObject(FriendRequest::class.java)
+                    ?: throw Exception("Friend request not found")
 
-            if (friendRequest.status != FriendRequestStatus.PENDING) {
-                return@runTransaction
-            }
+                if (friendRequest.status != FriendRequestStatus.PENDING) {
+                    return@runTransaction
+                }
+                Timber.d("friendRequest: $friendRequest")
+                val senderId = friendRequest.senderId
+                val receiverId = friendRequest.receiverId
 
-            val senderId = friendRequest.senderId
-            val receiverId = friendRequest.receiverId
+                val senderRef = db.collection("users").document(senderId)
+                val receiverRef = db.collection("users").document(receiverId)
 
-            val senderRef = db.collection("users").document(senderId)
-            val receiverRef = db.collection("users").document(receiverId)
+                val senderUser = transaction.get(senderRef).toObject(User::class.java)
+                    ?: throw Exception("Sender user not found")
+                val receiverUser = transaction.get(receiverRef).toObject(User::class.java)
+                    ?: throw Exception("Receiver user not found")
 
-            val senderUser = transaction.get(senderRef).toObject(User::class.java)
-                ?: throw Exception("Sender user not found")
-            val receiverUser = transaction.get(receiverRef).toObject(User::class.java)
-                ?: throw Exception("Receiver user not found")
+                // Pre-read conversation (Reads must come before writes)
+                val members = listOf(senderId, receiverId).sorted()
+                val conversationId = members.joinToString("_")
+                val conversationRef = db.collection("conversations").document(conversationId)
+                val conversationDoc = transaction.get(conversationRef)
 
-            // 1. Update friend request status
-            transaction.update(requestRef, "status", FriendRequestStatus.ACCEPTED)
-            transaction.update(requestRef, "acceptedAt", Timestamp.now())
+                // 1. Update friend request status
+                transaction.update(requestRef, "status", FriendRequestStatus.ACCEPTED)
+                transaction.update(requestRef, "acceptedAt", Timestamp.now())
 
-            // 2. Create conversation
-            val conversationRef = db.collection("conversations").document()
-            val conversationId = conversationRef.id
-            val conversation = Conversation(
-                id = conversationId,
-                members = listOf(senderId, receiverId),
-                lastUpdate = Timestamp.now(),
-                unreadMessage = mapOf(senderId to 0,requestId to 0),
-            )
-            transaction.set(conversationRef, conversation)
+                // 2. Create or update conversation
+                if (conversationDoc.exists()) {
+                    transaction.update(conversationRef, "status", ConversationStatus.ACTIVE)
+                    transaction.update(conversationRef, "lastUpdate", Timestamp.now())
+                } else {
+                    val conversation = Conversation(
+                        id = conversationId,
+                        members = members,
+                        lastUpdate = Timestamp.now(),
+                        unreadMessage = members.associateWith { 0 },
+                        status = ConversationStatus.ACTIVE
+                    )
+                    transaction.set(conversationRef, conversation)
+                }
 
-            // 3. Create friendship for sender
-            val senderFriendShipRef = senderRef.collection("friends").document(receiverId)
-            val senderFriendShip = FriendShip(
-                id = receiverId,
-                friendId = receiverId,
-                friendFirstName = receiverUser.username,
-                createdAt = Timestamp.now(),
-                conversationId = conversationId,
-                status = FriendShipStatus.ACTIVE
-            )
-            transaction.set(senderFriendShipRef, senderFriendShip)
+                // 3. Create/Overwrite friendship for sender
+                val senderFriendShipRef = senderRef.collection("friends").document(receiverId)
+                val senderFriendShip = FriendShip(
+                    id = receiverId,
+                    friendId = receiverId,
+                    friendFirstName = receiverUser.username,
+                    createdAt = Timestamp.now(),
+                    conversationId = conversationId,
+                    status = FriendShipStatus.ACTIVE
+                )
+                transaction.set(senderFriendShipRef, senderFriendShip)
 
-            // 4. Create friendship for receiver
-            val receiverFriendShipRef = receiverRef.collection("friends").document(senderId)
-            val receiverFriendShip = FriendShip(
-                id = senderId,
-                friendId = senderId,
-                friendFirstName = senderUser.username,
-                createdAt = Timestamp.now(),
-                conversationId = conversationId,
-                status = FriendShipStatus.ACTIVE
-            )
-            transaction.set(receiverFriendShipRef, receiverFriendShip)
-        }.await()
-            }
+                // 4. Create/Overwrite friendship for receiver
+                val receiverFriendShipRef = receiverRef.collection("friends").document(senderId)
+                val receiverFriendShip = FriendShip(
+                    id = senderId,
+                    friendId = senderId,
+                    friendFirstName = senderUser.username,
+                    createdAt = Timestamp.now(),
+                    conversationId = conversationId,
+                    status = FriendShipStatus.ACTIVE
+                )
+                transaction.set(receiverFriendShipRef, receiverFriendShip)
+            }.await()
+        }
     }
 
     suspend fun cancelFriendRequest(requestId: String) {
         withContext(Dispatchers.IO){
+            Timber.d("cancelFriendRequest: $requestId")
         db.collection("friends_request").document(requestId)
             .update("status", FriendRequestStatus.CANCELED)
             .await()}

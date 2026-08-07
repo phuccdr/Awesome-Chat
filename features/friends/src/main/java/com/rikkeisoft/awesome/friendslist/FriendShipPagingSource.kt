@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.project.core.model.firebase.FriendShip
 import com.project.core.model.firebase.User
 import com.rikkeisoft.awesome.model.FriendShipUI
@@ -15,8 +16,34 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class FriendShipPagingSource(
-    private val db: FirebaseFirestore, private val currentUserId: String?
+    private val db: FirebaseFirestore,
+    private val currentUserId: String?,
+    private val onInvalidated: (() -> Unit)? = null
 ) : PagingSource<DocumentSnapshot, FriendShipUI.FriendUI>() {
+
+    private var isFirstSnapshot = true
+    private var registration: ListenerRegistration? = null
+
+    init {
+        if (currentUserId != null) {
+            val query = db.collection("users").document(currentUserId).collection("friends")
+                .whereEqualTo("status", "ACTIVE")
+
+            registration = query.addSnapshotListener { _, _ ->
+                if (isFirstSnapshot) {
+                    isFirstSnapshot = false
+                } else {
+                    invalidate()
+                    onInvalidated?.invoke()
+                }
+            }
+
+            registerInvalidatedCallback {
+                registration?.remove()
+            }
+        }
+    }
+
     companion object {
         const val PAGE_SIZE = 32
     }

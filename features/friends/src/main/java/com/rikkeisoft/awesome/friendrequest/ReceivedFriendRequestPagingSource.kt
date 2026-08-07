@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.project.core.model.firebase.FriendRequest
 import com.project.core.model.firebase.User
@@ -18,6 +19,27 @@ import timber.log.Timber
 class ReceivedFriendRequestPagingSource(
     private val db: FirebaseFirestore, private val currentUserId: String?
 ) : PagingSource<DocumentSnapshot, FriendRequestUI>() {
+    private var isFirstSnapshot = true
+    private var registration: ListenerRegistration? = null
+
+    init {
+        if (currentUserId != null) {
+            val query = db.collection("friends_request").whereEqualTo("receiverId", currentUserId)
+                .whereEqualTo("status", "PENDING")
+
+            registration = query.addSnapshotListener { _, _ ->
+                if (isFirstSnapshot) {
+                    isFirstSnapshot = false
+                } else {
+                    invalidate()
+                }
+            }
+            registerInvalidatedCallback {
+                registration?.remove()
+            }
+        }
+    }
+
     override suspend fun load(params: LoadParams<DocumentSnapshot>): LoadResult<DocumentSnapshot, FriendRequestUI> =
         withContext(Dispatchers.IO) {
             try {
@@ -27,43 +49,46 @@ class ReceivedFriendRequestPagingSource(
                         .whereEqualTo("status", "PENDING")
                         .orderBy("createdAt", Query.Direction.DESCENDING)
                         .limit(params.loadSize.toLong())
-                var preKey: DocumentSnapshot? = null
                 params.key?.let {
                     query = query.startAfter(it)
-                    preKey = it
                 }
                 val snapshot = query.get().await()
                 val friendRequests =
                     snapshot.documents.mapNotNull { it.toObject(FriendRequest::class.java) }
                 val friendRequestUIs = friendRequests.map { friendRequest ->
                     async {
-                        val senderUser =
-                            db.collection("users").document(friendRequest.senderId).get().await()
-                                .toObject(User::class.java)
-                        FriendRequestUI(
-                            id = friendRequest.id,
-                            sender = senderUser,
-                            createdAt = friendRequest.createdAt
-                        )
+                        runCatching {
+                            val senderUser =
+                                db.collection("users").document(friendRequest.senderId).get()
+                                    .await().toObject(User::class.java)
+                            Timber.d("senderUser: $senderUser")
+                            if (senderUser == null) {
+                                return@runCatching null
+                            }
+                            FriendRequestUI(
+                                id = friendRequest.id,
+                                sender = senderUser,
+                                createdAt = friendRequest.createdAt
+                            )
+                        }.getOrNull()
                     }
-                }.awaitAll()
+                }.awaitAll().filterNotNull()
 
-                Timber.tag("123asd").d("${friendRequestUIs} - size: ${friendRequestUIs.size}")
+                Timber.d("$friendRequestUIs - size: ${friendRequestUIs.size}")
 
                 LoadResult.Page(
                     data = friendRequestUIs,
-                    prevKey = preKey,
-                    nextKey = snapshot.documents.lastOrNull()
+                    prevKey = null,
+                    nextKey = if (snapshot.isEmpty) null else snapshot.documents.lastOrNull()
                 )
             } catch (e: Exception) {
+                Timber.e(e, "ReceivedFriendRequestPagingSource load error")
                 LoadResult.Error(e)
             }
         }
 
     override fun getRefreshKey(state: PagingState<DocumentSnapshot, FriendRequestUI>): DocumentSnapshot? {
-        val anchor = state.anchorPosition ?: return null
-        val page = state.closestPageToPosition(anchor)
-        return page?.prevKey ?: page?.nextKey
+        return null
     }
 
     companion object {

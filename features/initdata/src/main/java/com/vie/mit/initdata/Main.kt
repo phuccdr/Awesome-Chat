@@ -1,13 +1,11 @@
 package com.vie.mit.initdata
 
-import com.google.cloud.Timestamp
-
 fun main() {
     FirebaseInitializer.init()
-    UserProfileFieldsMigration.migrateUserProfileFields(
-        phoneNumber = "0355636999",
-        birthOfDay = Timestamp.now(),
-    )
+//    UserProfileFieldsMigration.migrateUserProfileFields(
+//        phoneNumber = "0355636999",
+//        birthOfDay = Timestamp.now(),
+//    )
 //    FirestoreSeeder.seedUsers()
     // ConversationSeeder.seed()
 //    FriendShipSeeder.seed()
@@ -17,4 +15,5 @@ fun main() {
 //    }
 
 //    UserUidMigration.migrateUserUids()
+//    UserUidFixer.fixMissingUids()
 }

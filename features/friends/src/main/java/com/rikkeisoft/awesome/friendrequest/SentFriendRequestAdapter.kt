@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.project.core.utils.loadImage
 import com.rikkeisoft.awesome.friends.databinding.ItemSentFriendRequestBinding
 import com.rikkeisoft.awesome.model.FriendRequestUI
+import timber.log.Timber
 
 class SentFriendRequestAdapter(private val onCancelClick: (FriendRequestUI) -> Unit) :
     PagingDataAdapter<FriendRequestUI, SentFriendRequestAdapter.SentFriendRequestViewHolder>(
@@ -33,8 +34,13 @@ class SentFriendRequestAdapter(private val onCancelClick: (FriendRequestUI) -> U
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FriendRequestUI) {
             with(binding) {
-                ivAvatar.loadImage(item.sender?.avatar, isCircle = true)
-                tvUserName.text = item.sender?.username
+                ivAvatar.loadImage(
+                    item.receiver?.avatar,
+                    isCircle = true,
+                    placeHolder = com.project.core.R.drawable.ic_avatar_default
+                )
+                tvUserName.text = item.receiver?.username
+                Timber.d(item.receiver.toString())
                 btnCancel.setOnClickListener {
                     onCancelClick(item)
                 }
