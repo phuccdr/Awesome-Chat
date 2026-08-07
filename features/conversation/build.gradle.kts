@@ -37,7 +37,6 @@ dependencies {
 
     implementation(project(":libraries:core"))
     implementation(project(":libraries:permission"))
-    implementation(project(":features:chat"))
 
     //appcompat
     implementation(libs.bundles.common)

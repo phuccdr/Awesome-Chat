@@ -3,7 +3,10 @@ package com.project.baseproject.container
 import android.os.Bundle
 import android.view.MotionEvent
 import android.widget.ImageView
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.project.baseproject.R
@@ -40,6 +43,16 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            view.setPadding(
+                0, 0, 0, systemBars.bottom
+            )
+
+            insets
+        }
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
         appNavigation.bind(navHostFragment.navController)

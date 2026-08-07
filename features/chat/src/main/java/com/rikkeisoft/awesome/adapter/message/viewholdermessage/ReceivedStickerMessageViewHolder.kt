@@ -23,9 +23,7 @@ class ReceivedStickerMessageViewHolder(
             } else {
                 imvAvatar.visibility = View.INVISIBLE
             }
-
-            ivSticker.loadImage(urlImage = item.stickerId)
-
+            ivSticker.loadImage(urlImage = item.stickerUrl)
             tvTime.text = item.createdAt.format()
             tvTime.visibility = if (item.isSelected || item.messagePosition == MessagePosition.BOTTOM || item.messagePosition == MessagePosition.SINGLE) {
                 View.VISIBLE

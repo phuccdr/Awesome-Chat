@@ -126,7 +126,7 @@ class FriendsFragment :
                 ResourceUtils.getString(R.string.request_friend)
             itemAllUsersTabLayout.tvTitle.text = ResourceUtils.getString(R.string.all_user)
 
-            viewPagerFriends.adapter = FriendsViewPagerAdapter(this@FriendsFragment)
+            viewPagerFriends.adapter = FriendsViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
             viewPagerFriends.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
@@ -156,6 +156,11 @@ class FriendsFragment :
 
     override fun onClickCancel(type: Int?) {
 
+    }
+
+    override fun onDestroyView() {
+        binding.viewPagerFriends.adapter = null
+        super.onDestroyView()
     }
 
 }
