@@ -29,9 +29,7 @@ class PermissionDialogFragment : DialogFragment() {
         requestCode = arguments?.getInt(REQUEST_CODE)
         when {
             permissions.isNullOrEmpty() -> dismiss()
-
             permissions?.size == 1 -> setLauncherSingle()
-
             else -> setLauncherMultiple()
         }
     }
@@ -63,29 +61,23 @@ class PermissionDialogFragment : DialogFragment() {
     }
 
     private fun handleActivityResult(isGranted: Boolean, permission: String) {
-        val permissionStatus =
-            requireActivity().checkPermissionsStatus(permission)
+        val permissionStatus = requireActivity().checkPermissionsStatus(permission)
         if (isGranted) {
             permissionListener?.onPermissionGranted(requestCode)
         } else {
             permissionListener?.onPermissionDenied(
-                requestCode,
-                listOf(permissionStatus),
-                listOf(permissionStatus).isDoNotAskAgain()
+                requestCode, listOf(permissionStatus), listOf(permissionStatus).isDoNotAskAgain()
             )
         }
     }
 
     private fun handleActivityResult(mapPermission: Map<String, @JvmSuppressWildcards Boolean>) {
-        val permissionStatus =
-            requireActivity().checkPermissionsStatus(mapPermission.keys.toList())
+        val permissionStatus = requireActivity().checkPermissionsStatus(mapPermission.keys.toList())
         if (permissionStatus.allGranted()) {
             permissionListener?.onPermissionGranted(requestCode)
         } else {
             permissionListener?.onPermissionDenied(
-                requestCode,
-                permissionStatus,
-                permissionStatus.isDoNotAskAgain()
+                requestCode, permissionStatus, permissionStatus.isDoNotAskAgain()
             )
         }
     }

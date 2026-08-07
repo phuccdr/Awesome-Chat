@@ -5,28 +5,35 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
 import com.project.baseproject.R
 import com.project.baseproject.databinding.FragmentHomeBinding
-import com.project.baseproject.navigation.AppNavigation
+import com.project.baseproject.navigation.HomeNavigation
 import com.project.core.base.fragment.BaseFragment
+import com.project.core.utils.collectFlowOnView
+import com.project.core.utils.setOnSafeClickListener
+import com.project.core.utils.tint
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.fragment_home) {
-
     @Inject
-    lateinit var appNavigation: AppNavigation
-
+    lateinit var homeNavigation: HomeNavigation
+    lateinit var navController: NavController
     private val viewModel: HomeViewModel by viewModels()
 
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
-
         setupBottomNavigationBar()
     }
 
@@ -34,8 +41,85 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         val navHostFragment = childFragmentManager.findFragmentById(
             R.id.nav_host_container
         ) as NavHostFragment
-        val navController = navHostFragment.navController
-        binding.bottomNav.setupWithNavController(navController)
+        navController = navHostFragment.navController
+        homeNavigation.bind(navController)
+        binding.apply {
+            bottomNav.btnConversation.setOnSafeClickListener {
+                viewModel.onItemSelected(1)
+            }
+            bottomNav.btnFriends.setOnSafeClickListener {
+                viewModel.onItemSelected(2)
+            }
+            bottomNav.btnProfile.setOnSafeClickListener {
+                viewModel.onItemSelected(3)
+            }
+        }
+        updateBottomNavUI()
+    }
+
+    override fun bindingAction() {
+        super.bindingAction()
+        val options =
+            NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true).setPopUpTo(
+                navController.graph.findStartDestination().id, inclusive = false, saveState = true
+            ).build()
+        viewModel.bottomNavSelected.collectFlowOnView(viewLifecycleOwner) { idSelected ->
+            when (idSelected) {
+                1 -> {
+                    navController.navigate(R.id.conversations_graph, null, options)
+                }
+
+                2 -> {
+                    navController.navigate(R.id.friends_graph, null, options)
+                }
+
+                3 -> {
+                    navController.navigate(R.id.profile_graph, null, options)
+                }
+            }
+        }
+    }
+
+    private fun updateBottomNavUI() {
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            val selectedIndex = when {
+                destination.hierarchy.any { it.id == R.id.conversations_graph } -> 1
+                destination.hierarchy.any { it.id == R.id.friends_graph } -> 2
+                destination.hierarchy.any { it.id == R.id.profile_graph } -> 3
+                else -> -1
+            }
+
+            if (selectedIndex != -1) {
+                with(binding.bottomNav) {
+                    val navItems = listOf(
+                        Triple(ivConversation, tvConversation, indicatorConversation),
+                        Triple(ivFriends, tvFriends, indicatorFriends),
+                        Triple(ivProfile, tvProfile, indicatorProfile)
+                    )
+                    navItems.forEachIndexed { index, (icon, label, indicator) ->
+                        val isSelected = (index + 1 == selectedIndex)
+                        updateNavItemState(icon, label, indicator, isSelected)
+                    }
+                }
+            }
+            val isTopLevelDestination =
+                destination.id == R.id.listConversationFragment || destination.id == R.id.friendsFragment || destination.id == R.id.profileFragment
+            binding.bottomNav.root.isVisible = isTopLevelDestination
+        }
+
+    }
+
+    private fun updateNavItemState(
+        icon: ImageView, tv: TextView, indicator: View, isSelected: Boolean
+    ) {
+        val colorRes =
+            if (isSelected) com.project.core.R.color.primary_color else com.project.core.R.color.text_gray_secondary
+        val styleRes =
+            if (isSelected) R.style.BottomNavTextActive else R.style.BottomNavTextInactive
+
+        icon.tint(colorRes)
+        tv.setTextAppearance(styleRes)
+        indicator.visibility = if (isSelected) View.VISIBLE else View.GONE
     }
 
     override fun getVM() = viewModel
@@ -51,9 +135,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         Timber.tag("VietBH").d("A   " + "onCreateView")
         return super.onCreateView(inflater, container, savedInstanceState)
@@ -98,6 +180,4 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         Timber.tag("VietBH").d("A   " + "onCreate")
         super.onDetach()
     }
-
-
 }

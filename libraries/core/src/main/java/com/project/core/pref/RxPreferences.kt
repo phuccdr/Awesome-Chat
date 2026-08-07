@@ -5,7 +5,6 @@ import javax.inject.Singleton
 
 @Singleton
 interface RxPreferences : BasePreferences {
-
     fun getToken(): Flow<String?>
 
     suspend fun setUserToken(userToken: String)

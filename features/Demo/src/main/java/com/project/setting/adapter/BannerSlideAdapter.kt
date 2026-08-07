@@ -12,15 +12,11 @@ import com.project.setting.databinding.ItemBannerLayoutBinding
 
 class BannerSlideAdapter :
     ListAdapter<String, BannerSlideAdapter.BannerSlideHolder>(BannerSlideDiffUtil()) {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        BannerSlideHolder(
-            ItemBannerLayoutBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = BannerSlideHolder(
+        ItemBannerLayoutBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
         )
+    )
 
     override fun getItemCount(): Int {
         return 100000
@@ -33,15 +29,11 @@ class BannerSlideAdapter :
     class BannerSlideHolder(val binding: ItemBannerLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.root.setOnClickListener {
-
-            }
+            binding.root.setOnClickListener {}
         }
 
         fun bindData(image: String) {
-            Glide.with(binding.itemBanner)
-                .load(image)
-                .transform(CenterCrop(), RoundedCorners(24))
+            Glide.with(binding.itemBanner).load(image).transform(CenterCrop(), RoundedCorners(24))
                 .into(binding.itemBanner)
         }
     }

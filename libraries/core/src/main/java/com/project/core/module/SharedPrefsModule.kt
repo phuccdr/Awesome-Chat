@@ -11,7 +11,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class SharedPrefsModule {
-
     @Binds
     @Singleton
     abstract fun provideRxPreference(preferences: AppPreferences): RxPreferences

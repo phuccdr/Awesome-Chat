@@ -24,7 +24,6 @@ fun Context.getDimension(@DimenRes resourceId: Int) = resources.getDimension(res
 
 val Context.screenWidth: Int
     get() = resources.displayMetrics.widthPixels
-
 val Context.screenHeight: Int
     get() = resources.displayMetrics.heightPixels
 
@@ -32,8 +31,8 @@ fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(this, msg, duration).show()
 }
 
-fun Context.getPxFromDp(dp: Float) = TypedValue
-    .applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
+fun Context.getPxFromDp(dp: Float) =
+    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
 
 fun AppCompatTextView.setTextCompute(text: CharSequence) {
     setTextFuture(PrecomputedTextCompat.getTextFuture(text, textMetricsParamsCompat, null))

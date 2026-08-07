@@ -11,20 +11,15 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 class CoroutinesViewHolderSupplier(
-    context: Context,
-    viewHolderProducer: ViewHolderProducer
-) : ViewHolderSupplier(context, viewHolderProducer),
-    CoroutineScope {
-
+    context: Context, viewHolderProducer: ViewHolderProducer
+) : ViewHolderSupplier(context, viewHolderProducer), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = SupervisorJob() + Dispatchers.Default
-
     private val channelFlow = Channel<Int>()
 
     override fun start() {
         launch {
-            channelFlow.receiveAsFlow()
-                .collect { viewType -> launch { createItem(viewType) } }
+            channelFlow.receiveAsFlow().collect { viewType -> launch { createItem(viewType) } }
         }
     }
 

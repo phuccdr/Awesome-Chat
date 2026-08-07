@@ -190,9 +190,7 @@ class HomeSlideViewHolder(
         binding.viewPager.setCurrentItem(currentPosition, false)
 
         handleLoop()
-
     }
-
 }
 
 class HomePageDiffUtil : DiffUtil.ItemCallback<HomePageItem>() {

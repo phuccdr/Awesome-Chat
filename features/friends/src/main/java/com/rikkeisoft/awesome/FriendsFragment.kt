@@ -1,0 +1,166 @@
+package com.rikkeisoft.awesome
+
+import android.os.Bundle
+import android.view.View
+import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.viewModels
+import androidx.paging.PagingData
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
+import com.project.core.base.dialog.CONFIRM_DIALOG_FRAGMENT
+import com.project.core.base.dialog.ConfirmDialogFragment
+import com.project.core.base.dialog.ConfirmDialogListener
+import com.project.core.base.fragment.BaseFragment
+import com.project.core.navigationComponent.BundleKeys.CONVERSATION_ID
+import com.project.core.utils.collectFlowOnView
+import com.project.core.utils.collectLatestFlowOnView
+import com.project.core.utils.resource.ResourceUtils
+import com.project.core.utils.setOnSafeClickListener
+import com.rikkeisoft.awesome.friends.R
+import com.rikkeisoft.awesome.friends.databinding.FragmentFriendsBinding
+import com.rikkeisoft.awesome.friendslist.FriendListAdapter
+import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
+import javax.inject.Inject
+
+@AndroidEntryPoint
+class FriendsFragment :
+    BaseFragment<FragmentFriendsBinding, FriendsViewModel>(R.layout.fragment_friends),
+    ConfirmDialogListener {
+    private val viewModel: FriendsViewModel by viewModels()
+    override fun getVM() = viewModel
+
+    @Inject
+    lateinit var appNavigation: FriendNavigation
+    private val searchAdapter by lazy {
+        FriendListAdapter { conversationId ->
+            viewModel.onClickItemFriend(conversationId)
+        }
+    }
+
+    override fun initView(savedInstanceState: Bundle?) {
+        super.initView(savedInstanceState)
+        setupViewPager2()
+        setupSearch()
+    }
+
+    override fun bindingStateView() {
+        super.bindingStateView()
+        viewModel.searchResult.collectLatestFlowOnView(viewLifecycleOwner) {
+            searchAdapter.submitData(PagingData.from(it))
+            binding.tvNoResult.isVisible = it.isEmpty() && viewModel.isSearchMode.value
+            binding.icNoResult.isVisible = it.isEmpty() && viewModel.isSearchMode.value
+            Timber.tag("SearchMode").d("searchResult: $it+ ${binding.tvNoResult.visibility}")
+        }
+        viewModel.isSearchMode.collectLatestFlowOnView(viewLifecycleOwner) { isSearchMode ->
+            handleSearchVisibility(isSearchMode)
+            Timber.tag("SearchMode").d("isSearchMode: $isSearchMode")
+        }
+    }
+
+    override fun bindingAction() {
+        super.bindingAction()
+        viewModel.actionState.collectFlowOnView(viewLifecycleOwner) { actionEvent ->
+            when (actionEvent) {
+                is FriendActionState.NavToChatScreen -> {
+                    val bundle = Bundle().apply {
+                        putString(CONVERSATION_ID, actionEvent.conversationId)
+                    }
+                    appNavigation.openFriendsToChat(bundle)
+                }
+
+                is FriendActionState.ShowConfirmCancelFriendRequestDialog -> {
+                    ConfirmDialogFragment.getInstance(
+                        title = getString(R.string.title_cancel_friend_request_dialog),
+                        content = getString(R.string.content_cancel_friend_request_dialog)
+                    ).show(childFragmentManager, CONFIRM_DIALOG_FRAGMENT)
+                }
+            }
+        }
+    }
+
+    private fun setupSearch() {
+        binding.apply {
+            edtSearch.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    viewModel.setSearchMode(true)
+                }
+            }
+            rvSearchFriend.layoutManager = LinearLayoutManager(requireContext())
+            rvSearchFriend.adapter = searchAdapter
+
+            edtSearch.doAfterTextChanged {
+                val query = it?.toString().orEmpty()
+                viewModel.searchQuery.value = query
+                Timber.tag("SearchMode").d("query: $query")
+            }
+
+            btnCancelSearch.setOnSafeClickListener {
+                edtSearch.text?.clear()
+                edtSearch.clearFocus()
+                viewModel.setSearchMode(false)
+            }
+        }
+    }
+
+    private fun handleSearchVisibility(isSearching: Boolean) {
+        binding.apply {
+            groupSearchFriend.isVisible = isSearching
+            viewPagerFriends.isVisible = !isSearching
+            itemFriendTabLayout.root.isVisible = !isSearching
+            itemAllUsersTabLayout.root.isVisible = !isSearching
+            itemFriendRequestTabLayout.root.isVisible = !isSearching
+            divideTabLayout.isVisible = !isSearching
+        }
+    }
+
+    private fun setupViewPager2() {
+        binding.apply {
+            val tabs = listOf(
+                itemFriendTabLayout, itemAllUsersTabLayout, itemFriendRequestTabLayout
+            )
+
+            itemFriendTabLayout.tvTitle.text = ResourceUtils.getString(R.string.friend)
+            itemFriendRequestTabLayout.tvTitle.text =
+                ResourceUtils.getString(R.string.request_friend)
+            itemAllUsersTabLayout.tvTitle.text = ResourceUtils.getString(R.string.all_user)
+
+            viewPagerFriends.adapter = FriendsViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+            viewPagerFriends.registerOnPageChangeCallback(object :
+                ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    tabs.forEachIndexed { index, tab ->
+                        val selected = index == position
+                        tab.tvTitle.isSelected = selected
+                        tab.underscore.visibility = if (selected) View.VISIBLE else View.INVISIBLE
+                    }
+                }
+            })
+            itemFriendTabLayout.root.setOnSafeClickListener {
+                viewPagerFriends.currentItem = 0
+            }
+            itemAllUsersTabLayout.root.setOnSafeClickListener {
+                viewPagerFriends.currentItem = 1
+            }
+            itemFriendRequestTabLayout.root.setOnSafeClickListener {
+                viewPagerFriends.currentItem = 2
+            }
+        }
+    }
+
+    override fun onClickOk(type: Int?) {
+        viewModel.onClickOkCancelFriendRequest()
+    }
+
+    override fun onClickCancel(type: Int?) {
+
+    }
+
+    override fun onDestroyView() {
+        binding.viewPagerFriends.adapter = null
+        super.onDestroyView()
+    }
+
+}

@@ -12,7 +12,6 @@ import javax.inject.Inject
 class FavoriteViewModel @Inject constructor(
     private val rxPreferences: RxPreferences
 ) : BaseViewModel() {
-
     fun setLanguage(language: String) = viewModelScope.launch(Dispatchers.IO) {
         rxPreferences.setLanguage(language)
     }

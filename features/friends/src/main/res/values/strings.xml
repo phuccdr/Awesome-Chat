@@ -1,0 +1,18 @@
+<resources>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="friend">Bạn Bè</string>
+    <string name="all_user">Tất cả</string>
+    <string name="request_friend">Yêu cầu</string>
+    <string name="searching_friend">Tìm kiếm bạn bè</string>
+    <string name="add_friend">Kết bạn</string>
+    <string name="friend_request">Lời mời kết bạn</string>
+    <string name="sent_friend_request">Đã gửi kết bạn</string>
+    <string name="accept">Đồng ý</string>
+    <string name="reject">Từ chối</string>
+    <string name="title_cancel_friend_request_dialog">Hủy lời mời kết bạn</string>
+    <string name="content_cancel_friend_request_dialog">
+    Bạn có chắc chắn muốn hủy lời mời kết bạn này không?
+</string>
+
+</resources>

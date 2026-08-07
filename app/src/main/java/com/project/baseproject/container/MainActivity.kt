@@ -1,6 +1,12 @@
 package com.project.baseproject.container
 
 import android.os.Bundle
+import android.view.MotionEvent
+import android.widget.ImageView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.project.baseproject.R
@@ -10,6 +16,7 @@ import com.project.core.base.activity.BaseActivityNotRequireViewModel
 import com.project.core.base.dialog.ConfirmDialogListener
 import com.project.core.network.connectivity.NetworkConnectionManager
 import com.project.core.pref.RxPreferences
+import com.project.core.utils.isTouched
 import com.project.core.utils.setLanguage
 import com.project.core.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +29,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), ConfirmDialogListener {
-
     @Inject
     lateinit var appNavigation: AppNavigation
 
@@ -31,13 +37,24 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
 
     @Inject
     lateinit var rxPreferences: RxPreferences
-
     override val layoutId = R.layout.activity_main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host) as NavHostFragment
+        setContentView(binding.root)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            view.setPadding(
+                0, 0, 0, systemBars.bottom
+            )
+
+            insets
+        }
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
         appNavigation.bind(navHostFragment.navController)
 
         lifecycleScope.launch {
@@ -45,15 +62,23 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
             language?.let { setLanguage(it) }
         }
 
-        networkConnectionManager.isNetworkConnectedFlow
-            .onEach {
-                if (it) {
-                    Timber.tag("VietBH").d("onCreate: Network connected")
-                } else {
-                    Timber.tag("VietBH").d("onCreate: Network disconnected")
-                }
+        networkConnectionManager.isNetworkConnectedFlow.onEach {
+            if (it) {
+                Timber.tag("VietBH").d("onCreate: Network connected")
+            } else {
+                Timber.tag("VietBH").d("onCreate: Network disconnected")
             }
-            .launchIn(lifecycleScope)
+        }.launchIn(lifecycleScope)
+
+    }
+
+    override fun shouldHideKeyboard(event: MotionEvent): Boolean {
+        val inputMessageLayout =
+            findViewById<ImageView>(com.rikkeisoft.awesome.chat.R.id.btn_send_message)
+        if (inputMessageLayout != null && inputMessageLayout.isTouched(event)) {
+            return false
+        }
+        return super.shouldHideKeyboard(event)
     }
 
     override fun onStart() {
@@ -62,7 +87,7 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
     }
 
     override fun onStop() {
-        Timber.tag("ahihi").d("onStop")
+        Timber.tag("Activity Lifecycle").d("onStop")
         super.onStop()
         networkConnectionManager.stopListenNetworkState()
     }
@@ -76,8 +101,14 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Con
     }
 
     override fun onDestroy() {
-        Timber.tag("ahihi").d("onDestroy")
+        Timber.tag("Activity Lifecycle").d("onDestroy")
         super.onDestroy()
     }
+
+    override fun onRestart() {
+        Timber.tag("Activity Lifecycle").d("onRestart")
+        super.onRestart()
+    }
+
 
 }

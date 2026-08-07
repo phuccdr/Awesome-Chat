@@ -33,7 +33,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class ApiModule {
-
     @Provides
     @Singleton
     fun provideGson(): Gson {
@@ -42,29 +41,20 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun provideApiInterface(gson: Gson, client: OkHttpClient)
-            : ApiInterface {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(Constants.ApiComponents.BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
+    fun provideApiInterface(gson: Gson, client: OkHttpClient): ApiInterface {
+        val retrofit = Retrofit.Builder().baseUrl(Constants.ApiComponents.BASE_URL).client(client)
+            .addConverterFactory(GsonConverterFactory.create(gson)).build()
         return retrofit.create(ApiInterface::class.java)
     }
-
 
     @Provides
     @Singleton
     fun provideAuthApiInterface(
-        gson: Gson,
-        client: OkHttpClient
+        gson: Gson, client: OkHttpClient
     ): AuthApiInterface {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(Constants.ApiComponents.BASE_URL)
-            .client(client)
+        val retrofit = Retrofit.Builder().baseUrl(Constants.ApiComponents.BASE_URL).client(client)
             .addConverterFactory(NullOnEmptyConverterFactory())
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
+            .addConverterFactory(GsonConverterFactory.create(gson)).build()
         return retrofit.create(AuthApiInterface::class.java)
     }
 
@@ -73,33 +63,25 @@ class ApiModule {
     fun provideHttpClient(cache: Cache?, rxPreferences: RxPreferences): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
-
         }
-        val okHttpClientBuilder = OkHttpClient.Builder()
-            .cache(cache)
+        val okHttpClientBuilder = OkHttpClient.Builder().cache(cache)
         if (BuildConfig.DEBUG) {
             okHttpClientBuilder.addInterceptor(loggingInterceptor)
         }
-        return okHttpClientBuilder
-            .addInterceptor(Interceptor { chain: Interceptor.Chain ->
-                val token = runBlocking {
-                    rxPreferences.getToken().first()
-                }
-
-                val requestBuilder = chain.request()
-                    .newBuilder()
-                    .header("Content-Type", "application/json")
-                if (!TextUtils.isEmpty(token)) {
-                    requestBuilder.addHeader("Authorization", token!!)
-                }
-                chain.proceed(requestBuilder.build())
-            })
-
-            .addInterceptor(NetworkInterceptor())
+        return okHttpClientBuilder.addInterceptor(Interceptor { chain: Interceptor.Chain ->
+            val token = runBlocking {
+                rxPreferences.getToken().first()
+            }
+            val requestBuilder =
+                chain.request().newBuilder().header("Content-Type", "application/json")
+            if (!TextUtils.isEmpty(token)) {
+                requestBuilder.addHeader("Authorization", token!!)
+            }
+            chain.proceed(requestBuilder.build())
+        }).addInterceptor(NetworkInterceptor())
             .connectTimeout(Constants.DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
             .readTimeout(Constants.DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
-            .writeTimeout(Constants.DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
-            .build()
+            .writeTimeout(Constants.DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS).build()
     }
 
     @Provides
@@ -113,9 +95,7 @@ class ApiModule {
 
 class NullOnEmptyConverterFactory : Converter.Factory() {
     override fun responseBodyConverter(
-        type: Type,
-        annotations: Array<Annotation>,
-        retrofit: Retrofit
+        type: Type, annotations: Array<Annotation>, retrofit: Retrofit
     ): Converter<ResponseBody, *> {
         val delegate: Converter<ResponseBody, Any> =
             retrofit.nextResponseBodyConverter(this, type, annotations)

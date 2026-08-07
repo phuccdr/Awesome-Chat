@@ -17,3 +17,5 @@ local.properties
 /.idea
 /features/home/build/
 /features/login/build/
+features/initdata/src/main/resources/service-account.json
+.artifacts/

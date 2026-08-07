@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.rikkeisoft.awesome.custom.MessageChatTextView
+            android:id="@+id/tvMessage"
+            style="@style/AppText.Lato.Medium.16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:padding="16dp"
+            android:text="Ld ggg ggHoàng giaosdsds đs    djdjjd hhdhdhhdhdhdhhd chưa??"
+            android:textColor="@color/text_primary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            style="@style/AppText.Lato.Regular.14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="10:03"
+            android:textColor="@color/text_gray_secondary"
+            app:layout_constraintEnd_toEndOf="@id/tvMessage"
+            app:layout_constraintTop_toBottomOf="@id/tvMessage" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

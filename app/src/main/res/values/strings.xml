@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Awesome Chat</string>
-    <string name="home">Home</string>
-    <string name="favorite">Favorite</string>
-    <string name="splash">Splash</string>
+    <string name="app_name">Awesome chat</string>
+    <string name="conversation">Tin nhắn</string>
+    <string name="friends">Bạn bè</string>
+    <string name="profile">Trang cá nhân</string>
+
 </resources>

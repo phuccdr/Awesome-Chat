@@ -7,7 +7,6 @@ import com.project.core.base.BaseViewModel
 
 abstract class BaseViewModelDialogFragment<BD : ViewDataBinding, VM : BaseViewModel>(@LayoutRes id: Int) :
     BaseViewBindingDialogFragment<BD>(id) {
-
     private lateinit var viewModel: VM
 
     abstract fun getVM(): VM

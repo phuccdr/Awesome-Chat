@@ -2,11 +2,13 @@ package com.project.core.utils
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Rect
 import android.os.SystemClock
 import android.text.Editable
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.EditText
@@ -154,4 +156,9 @@ fun ViewPager2.getCurrentFragment(fragmentManager: FragmentManager): Fragment? {
 
 fun ViewPager2.getFragmentAt(fragmentManager: FragmentManager, index: Int): Fragment? {
     return fragmentManager.findFragmentByTag("f$index")
+}
+fun View.isTouched(event: MotionEvent): Boolean {
+    val rect = Rect()
+    this.getGlobalVisibleRect(rect)
+    return rect.contains(event.rawX.toInt(), event.rawY.toInt())
 }

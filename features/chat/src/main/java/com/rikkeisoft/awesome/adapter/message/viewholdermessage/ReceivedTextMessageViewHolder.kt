@@ -1,0 +1,38 @@
+package com.rikkeisoft.awesome.adapter.message.viewholdermessage
+
+import android.view.View
+import androidx.recyclerview.widget.RecyclerView
+import com.project.core.utils.format
+import com.project.core.utils.loadImage
+import com.project.core.utils.setOnSafeClickListener
+import com.rikkeisoft.awesome.chat.databinding.ItemReceivedTextMessageBinding
+import com.rikkeisoft.awesome.model.MessageItem
+import com.rikkeisoft.awesome.model.MessagePosition
+
+class ReceivedTextMessageViewHolder(
+    private val binding: ItemReceivedTextMessageBinding,
+    private val onMessageClick: (String) -> Unit
+) : RecyclerView.ViewHolder(binding.root) {
+    fun bind(item: MessageItem.TextMessage) {
+        binding.apply {
+            root.setOnSafeClickListener {
+                onMessageClick(item.id)
+            }
+            tvMessage.bindWithTextMessage(
+                isMine = item.isMine, messagePosition = item.messagePosition, content = item.content
+            )
+            if (item.messagePosition == MessagePosition.SINGLE || item.messagePosition == MessagePosition.TOP) {
+                imvAvatar.visibility = View.VISIBLE
+                imvAvatar.loadImage(urlImage = item.avatarFriend, isCircle = true)
+            } else {
+                imvAvatar.visibility = View.INVISIBLE
+            }
+            if (item.isSelected || item.messagePosition == MessagePosition.BOTTOM || item.messagePosition == MessagePosition.SINGLE) {
+                tvTime.text = item.createdAt.format()
+                tvTime.visibility = View.VISIBLE
+            } else {
+                tvTime.visibility = View.GONE
+            }
+        }
+    }
+}

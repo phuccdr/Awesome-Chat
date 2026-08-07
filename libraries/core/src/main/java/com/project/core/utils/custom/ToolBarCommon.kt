@@ -4,7 +4,6 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.View
-import android.view.View.OnClickListener
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
@@ -51,18 +50,18 @@ class ToolBarCommon : Toolbar {
 
     private fun init() {
         setContentInsetsAbsolute(0, 0)
-        View.inflate(context, R.layout.tool_bar_common, this)
+        inflate(context, R.layout.tool_bar_common, this)
         btnLeft = findViewById(R.id.btn_left)
         btnRight = findViewById(R.id.tvRight)
         tvTitle = findViewById(R.id.tv_title)
         viewStatusBar = findViewById(R.id.view_status_bar)
         if (isTransStatusBar) {
-            viewStatusBar.visibility = View.VISIBLE
+            viewStatusBar.visibility = VISIBLE
             val layoutParams =
                 viewStatusBar.layoutParams as ConstraintLayout.LayoutParams
             layoutParams.height = DeviceUtil.getStatusBarHeight(context)
         } else {
-            viewStatusBar.visibility = View.GONE
+            viewStatusBar.visibility = GONE
         }
         btnLeft.setOnClickListener(OnClickListener {
             if (onToolBarClickListener != null) {
@@ -81,19 +80,19 @@ class ToolBarCommon : Toolbar {
 
     fun setSrcLeft(@DrawableRes src: Int) {
         if (src != -1) {
-            btnLeft.visibility = View.VISIBLE
+            btnLeft.visibility = VISIBLE
             btnLeft.setImageResource(src)
         } else {
-            btnLeft.visibility = View.INVISIBLE
+            btnLeft.visibility = INVISIBLE
         }
     }
 
     fun setSrcRight(src: String?) {
         if (src != null) {
-            btnRight.visibility = View.VISIBLE
+            btnRight.visibility = VISIBLE
             btnRight.text = src
         } else {
-            btnRight.visibility = View.INVISIBLE
+            btnRight.visibility = INVISIBLE
         }
     }
 

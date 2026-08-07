@@ -20,10 +20,8 @@ typealias ViewHolderConsumer = (viewHolder: RecyclerView.ViewHolder, creationTim
  * (e.g. [androidx.recyclerview.widget.RecyclerView.Adapter]'s onCreateViewHolder() method)
  */
 abstract class ViewHolderSupplier(
-    context: Context,
-    private val viewHolderProducer: ViewHolderProducer
+    context: Context, private val viewHolderProducer: ViewHolderProducer
 ) {
-
     /**
      * Invoked once item is created in [createItem]
      */
@@ -80,7 +78,6 @@ abstract class ViewHolderSupplier(
         val created = itemsCreated.getOrZero(viewType) + 1
         val queued = itemsQueued.getOrZero(viewType)
         if (created > queued) return
-
         val holder: RecyclerView.ViewHolder
         val start: Long
         val end: Long
@@ -104,7 +101,6 @@ abstract class ViewHolderSupplier(
     internal fun setPrefetchBound(viewType: Int, count: Int) {
         if (itemsQueued.getOrZero(viewType) >= count) return
         itemsQueued[viewType] = count
-
         val created = itemsCreated.getOrZero(viewType)
         if (created >= count) return
 

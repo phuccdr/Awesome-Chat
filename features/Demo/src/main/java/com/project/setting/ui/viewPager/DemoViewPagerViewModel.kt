@@ -7,7 +7,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DemoViewPagerViewModel @Inject constructor() : BaseViewModel() {
-
     val isCanRequestPoint = MutableLiveData(false)
 
     fun canLoadData() {

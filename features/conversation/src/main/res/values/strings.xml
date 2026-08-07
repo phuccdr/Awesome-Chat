@@ -1,0 +1,13 @@
+<resources>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search_message">Tìm kiếm tin nhắn...</string>
+    <string name="you_last_message">Bạn: %1$s</string>
+    <string name="message_match">%1$s tin nhắn phù hợp</string>
+    <string name="conversation_not_found">Cuộc hội thoại không tồn tại</string>
+    <string name="gallery_permission_needed">Cần cấp quyền truy cập ảnh để chọn ảnh.</string>
+    <string name="send">Gửi</string>
+    <string name="sent_image">đã gửi ảnh</string>
+    <string name="sent_sticker">đã gửi sticker</string>
+    <string name="sent_message">đã gửi tin nhắn</string>
+</resources>

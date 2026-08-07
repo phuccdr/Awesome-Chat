@@ -6,9 +6,17 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+kotlin {
+    jvmToolchain(libs.versions.javaVersion.get().toInt())
+}
+
 android {
-    namespace = "com.rikkeisoft.awesome"
+    namespace = "com.rikkeisoft.awesome.auth"
     compileSdk = libs.versions.compileSdk.get().toInt()
+
+    defaultConfig {
+        minSdk = libs.versions.minSdk.get().toInt()
+    }
 
     buildTypes {
         release {
@@ -26,6 +34,7 @@ android {
 }
 
 dependencies {
+
     implementation(project(":libraries:core"))
     implementation(project(":libraries:permission"))
 
@@ -42,4 +51,12 @@ dependencies {
     ksp(libs.glideCompiler)
     // Network
     implementation(libs.bundles.network)
+
+    //firestore
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseFirestore)
+
+    //fireauth
+    implementation(libs.firebaseAuth)
+
 }

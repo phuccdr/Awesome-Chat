@@ -6,7 +6,6 @@ import androidx.navigation.NavController
 import timber.log.Timber
 
 abstract class BaseNavigatorImpl : BaseNavigator {
-
     override var navController: NavController? = null
 
     override fun bind(navController: NavController) {
@@ -14,7 +13,7 @@ abstract class BaseNavigatorImpl : BaseNavigator {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             run {
-                Timber.tag("Back stack Navigation").d(destination.navigatorName)
+                Timber.tag("Back stack Navigation").d(destination.label.toString())
             }
         }
     }
@@ -24,8 +23,7 @@ abstract class BaseNavigatorImpl : BaseNavigator {
     }
 
     override fun openScreen(
-        @IdRes id: Int,
-        bundle: Bundle?
+        @IdRes id: Int, bundle: Bundle?
     ) {
         navController?.navigate(id, bundle)
     }
@@ -34,6 +32,7 @@ abstract class BaseNavigatorImpl : BaseNavigator {
 
     override fun currentFragmentId() = navController?.currentDestination?.id
 
+    //    Hàm này dùng để làm gì nhỉ ?
     override fun setStartDestination(@IdRes id: Int) {
         if (navController == null) {
             return

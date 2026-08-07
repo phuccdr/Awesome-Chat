@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_tab_navigation"
-    app:startDestination="@+id/common">
-
-    <include app:graph="@navigation/tab_common_navigation" />
-
-    <include app:graph="@navigation/tab_favorite_navigation" />
+    app:startDestination="@+id/conversations_graph">
+    <include app:graph="@navigation/conversation_navigation" />
+    <include app:graph="@navigation/friends_navigation" />
+    <include app:graph="@navigation/profile_navigation" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.rikkeisoft.awesome.ui.chat.ChatFragment"
+        android:label="ChatFragment"
+        tools:layout="@layout/fragment_chat" />
 
 </navigation>

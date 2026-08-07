@@ -1,0 +1,79 @@
+{
+  "stickers": [
+    {
+      "id": "001",
+      "name": "Bee",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/bee.png"
+    },
+    {
+      "id": "002",
+      "name": "Buffalo",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/buffalo.png"
+    },
+    {
+      "id": "003",
+      "name": "Crocodile",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/crocodile.png"
+    },
+    {
+      "id": "004",
+      "name": "Dolphin",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/dolphin.png"
+    },
+    {
+      "id": "005",
+      "name": "Frog",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/frog.png"
+    },
+    {
+      "id": "006",
+      "name": "Happy",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/happy.png"
+    },
+    {
+      "id": "007",
+      "name": "Hen",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/hen.png"
+    },
+    {
+      "id": "008",
+      "name": "Monkey",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/monkey.png"
+    },
+    {
+      "id": "009",
+      "name": "Panda",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/panda.png"
+    },
+    {
+      "id": "010",
+      "name": "Perch",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/perch.png"
+    },
+    {
+      "id": "011",
+      "name": "Shark",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/shark.png"
+    },
+    {
+      "id": "012",
+      "name": "Snail",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/snail.png"
+    },
+    {
+      "id": "013",
+      "name": "Turtle",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/turtle.png"
+    },
+    {
+      "id": "014",
+      "name": "White Shark",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/white_shark.png"
+    },
+    {
+      "id": "015",
+      "name": "Zebra",
+      "url": "https://drjqnmcgygmqfkxxdvva.supabase.co/storage/v1/object/public/stickers/stickers/zebra.png"
+    }
+  ]
+}

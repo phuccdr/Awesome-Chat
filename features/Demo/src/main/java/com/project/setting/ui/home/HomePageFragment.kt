@@ -3,9 +3,6 @@ package com.project.setting.ui.home
 import android.Manifest
 import android.os.Bundle
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.project.core.adapter.OnItemClickListener
 import com.project.core.base.dialog.CONFIRM_DIALOG_FRAGMENT
@@ -14,6 +11,7 @@ import com.project.core.base.dialog.NOTICE_DIALOG_FRAGMENT
 import com.project.core.base.dialog.NoticeDialog
 import com.project.core.base.dialog.NoticeDialogListener
 import com.project.core.base.fragment.BaseFragment
+import com.project.core.utils.collectFlowOnView
 import com.project.core.utils.prefetcher.bindToLifecycle
 import com.project.core.utils.prefetcher.setupWithPrefetchViewPool
 import com.project.core.utils.setOnSafeClickListener
@@ -25,7 +23,6 @@ import com.project.setting.adapter.HomePageAdapter
 import com.project.setting.adapter.HomeSlideViewHolder
 import com.project.setting.databinding.FragmentHomePageBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -88,12 +85,8 @@ class HomePageFragment :
     override fun bindingStateView() {
         super.bindingStateView()
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.listHomePage.collect {
-                    adapterHomePage?.submitList(it)
-                }
-            }
+        viewModel.listHomePage.collectFlowOnView(viewLifecycleOwner) {
+            adapterHomePage?.submitList(it)
         }
 
     }

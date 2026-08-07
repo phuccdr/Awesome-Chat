@@ -24,7 +24,9 @@
 
     <TextView
         android:id="@+id/tv_title"
-        style="@style/text_bold_18"
+        style="@style/AppText.Lato.Bold.18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -35,7 +37,9 @@
 
     <TextView
         android:id="@+id/tvRight"
-        style="@style/text_bold_18"
+        style="@style/AppText.Lato.Bold.18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         android:gravity="center"
         android:textColor="@color/white"

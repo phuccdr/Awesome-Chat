@@ -1,0 +1,4 @@
+<resources>
+    <string name="error_invalid_date_format">Ngày sinh không đúng định dạng (dd/MM/yyyy)</string>
+    <string name="error_future_date">Ngày sinh không thể ở tương lai</string>
+</resources>

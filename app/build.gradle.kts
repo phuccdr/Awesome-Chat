@@ -66,6 +66,11 @@ dependencies {
     implementation(project(":libraries:core"))
     implementation(project(":libraries:permission"))
     implementation(project(":features:Demo"))
+    implementation(project(":features:auth"))
+    implementation(project(":features:conversation"))
+    implementation(project(":features:chat"))
+    implementation(project(":features:friends"))
+    implementation(project(":features:profile"))
 
     //appcompat
     implementation(libs.bundles.common)
@@ -83,4 +88,8 @@ dependencies {
     ksp(libs.glideCompiler)
 
     debugImplementation(libs.leak)
+
+    //fireauth
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseAuth)
 }

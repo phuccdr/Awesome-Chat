@@ -4,8 +4,18 @@
 
     <!--    setting-->
     <string name="ok">OK</string>
-    <string name="cancel">キャンセル</string>
+    <string name="cancel">Hủy</string>
     <string name="not_connected_internet">ネットワーク接続をご確認ください。</string>
     <string name="viet_nam">VietNam</string>
     <string name="english">English</string>
+    <string name="register_account">Chưa có tài khoản? Đăng ký ngay</string>
+    <string name="message">Tin nhắn</string>
+    <string name="yesterday">Hôm qua</string>
+    <string name="today">Hôm nay</string>
+    <string name="gallery_permission_needed">Cần cấp quyền truy cập ảnh để chọn ảnh.</string>
+    <string name="send">Gửi</string>
+    <string name="Cancel">Hủy</string>
+    <string name="no_result">Không tìm thấy kết quả phù hợp</string>
+    <string name="title_username">HỌ VÀ TÊN</string>
+    <string name="email">EMAIL</string>
 </resources>

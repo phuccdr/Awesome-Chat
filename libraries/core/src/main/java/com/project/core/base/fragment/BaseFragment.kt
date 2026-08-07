@@ -5,6 +5,7 @@ import android.text.TextUtils
 import androidx.annotation.LayoutRes
 import androidx.databinding.ViewDataBinding
 import com.project.core.base.BaseViewModel
+import com.project.core.utils.toast
 
 abstract class BaseFragment<BD : ViewDataBinding, VM : BaseViewModel>(@LayoutRes id: Int) :
     BaseFragmentNotRequireViewModel<BD>(id) {
@@ -34,13 +35,17 @@ abstract class BaseFragment<BD : ViewDataBinding, VM : BaseViewModel>(@LayoutRes
                 }
             }
             if (TextUtils.isEmpty(message)) return@observe
-            //                showMessageError(message)
+                            showMessageError(message)
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) {
             showHideLoading(it)
         }
 
+    }
+
+    private fun showMessageError(title: String) {
+        title.toast(requireContext().applicationContext)
     }
 
 }

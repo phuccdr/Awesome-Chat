@@ -1,8 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-
     extra.apply {
-        set("versionJava", JavaVersion.VERSION_1_8)
+        set("versionJava", JavaVersion.VERSION_17)
     }
     repositories {
         google()
@@ -38,9 +37,6 @@ allprojects {
     }
 }
 
-task("clean") {
-    delete(project.buildDir)
-}
 
 task<Exec>("buildAppDebugToFirebase") {
     commandLine("git", "tag", createTagDistribute("firebase", "debug"))
@@ -65,7 +61,13 @@ task<Exec>("runSonar") {
     commandLine("./gradlew", "sonar")
 }
 
+//subprojects {
+//    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+//        kotlinOptions {
+//            jvmTarget = "17"
+//        }
+//    }
+//}
+
 fun createTagDistribute(targetDeploy: String, buildType: String) =
-    targetDeploy + "_" + buildType + "_" +
-            libs.versions.versionName + "+" +
-            libs.versions.versionCode
+    targetDeploy + "_" + buildType + "_" + libs.versions.versionName + "+" + libs.versions.versionCode

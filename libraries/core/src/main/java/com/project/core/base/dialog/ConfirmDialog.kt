@@ -9,7 +9,6 @@ import com.project.core.R
 const val CONFIRM_DIALOG_FRAGMENT = "ConfirmDialogFragment"
 
 class ConfirmDialogFragment : BaseDialogFragment() {
-
     var dialogListener: ConfirmDialogListener? = null
 
     override fun onAttach(context: Context) {
@@ -30,14 +29,11 @@ class ConfirmDialogFragment : BaseDialogFragment() {
         val content = arguments?.getString(CONFIRM_DIALOG_CONTENT) ?: ""
         val type = arguments?.getInt(CONFIRM_DIALOG_TYPE)
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-        builder.setTitle(title)
-            .setMessage(content)
-            .setPositiveButton(R.string.ok) { _, _ ->
-                dialogListener?.onClickOk(type)
-            }
-            .setNegativeButton(R.string.cancel) { _, _ ->
-                dialogListener?.onClickCancel(type)
-            }
+        builder.setTitle(title).setMessage(content).setPositiveButton(R.string.ok) { _, _ ->
+            dialogListener?.onClickOk(type)
+        }.setNegativeButton(R.string.cancel) { _, _ ->
+            dialogListener?.onClickCancel(type)
+        }
         return builder.create()
     }
 

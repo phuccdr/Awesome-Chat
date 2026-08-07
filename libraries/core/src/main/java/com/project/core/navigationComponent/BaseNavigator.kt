@@ -6,8 +6,7 @@ import androidx.navigation.NavController
 
 interface BaseNavigator {
     fun openScreen(
-        @IdRes id: Int,
-        bundle: Bundle? = null
+        @IdRes id: Int, bundle: Bundle? = null
     )
 
     val navController: NavController?
